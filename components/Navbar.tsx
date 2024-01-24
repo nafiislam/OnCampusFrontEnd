@@ -23,7 +23,7 @@ export function NavbarDark() {
     <Navbar
           variant="gradient"
           color="blue-gray"
-          className="max-w-full from-blue-gray-900 to-blue-gray-600 px-4 py-3"   placeholder={undefined}    >
+          className="max-w-full from-blue-gray-400 to-blue-gray-900 px-4 py-3"   placeholder={undefined}    >
       <div className="flex flex-wrap items-center justify-between gap-y-4 text-white">
         <Link href={"#"}><Image src="/images/logo.png" width={50} height={40} alt="logo" className="m-0 p-0 rounded-full" /></Link>
         <div className="relative flex w-full gap-2 md:w-max ml-8">
