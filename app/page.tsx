@@ -5,10 +5,9 @@ import React from "react";
 
 export default function Home() {
  return(
-  <div className="m-4">
-    <NavbarDark />
-    <SidebarWithContentSeparator />
- </div>
+  <div>
+    <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Eaque natus ipsum laborum error aperiam totam earum quibusdam nesciunt sequi quis autem soluta quo amet dolore quaerat est, recusandae numquam dolores?</p>
+  </div>
  )
 }
 

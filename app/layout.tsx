@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "./globals.css";
-import { ThemeProvider } from "../components/Mat_tail_export";
 import React from "react";
+import { ThemeProvider } from "../components/Mat_tail_export";
+import "./globals.css";
+import { SidebarWithContentSeparator } from "../components/sidebar";
+import { NavbarDark } from "../components/Navbar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,7 +21,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <ThemeProvider>
-        <body className={inter.className}>{children}</body>
+        <body className={inter.className}>
+          <div className="m-4">
+            <NavbarDark />
+          </div>
+            <div className="flex flex-row gap-10 mt-0">
+            <SidebarWithContentSeparator />
+              <div className="mt-8">
+                {children}
+              </div>
+            </div>
+        </body>
       </ThemeProvider>
     </html>
   );
