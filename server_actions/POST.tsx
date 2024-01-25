@@ -12,6 +12,7 @@ export default async function POST(path: string, body: any) {
         authorization: token ? token : "",
       },
         body: JSON.stringify(body),
+        cache: "no-store",
     })
     const data = await res.json();
     console.log(data);

@@ -11,6 +11,7 @@ export default async function GET(path: string) {
           Accept: "application/json",
           authorization: token ? token : "",
         },
+        cache: "no-store",
       })
       const data = await res.json();
       return data;
