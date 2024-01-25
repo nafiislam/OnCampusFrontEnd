@@ -14,6 +14,9 @@ export default async function POST(path: string, body: any) {
         body: JSON.stringify(body),
         cache: "no-store",
     })
+    if(res.status != 200){
+      return null;
+    }
     const data = await res.json();
     console.log(data);
     return data;

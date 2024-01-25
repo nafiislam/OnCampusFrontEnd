@@ -13,6 +13,9 @@ export default async function GET(path: string) {
         },
         cache: "no-store",
       })
+      if(res.status != 200){
+        return null;
+      }
       const data = await res.json();
       return data;
     }
