@@ -33,12 +33,12 @@ function DownLoadIcon() {
 
 export function FileList() {
   return (
-    <Card className="w-full my-3" placeholder={undefined}>
+    <Card className="w-full my-8 border-2" placeholder={undefined}>
       <List placeholder={undefined}>
         <Link href={"http://www.google.com"}>
           <ListItem
             ripple={false}
-            className="py-1 pr-1 pl-4"
+            className="py-1 pr-1 pl-4 border-2 m-2 w-auto"
             placeholder={undefined}
           >
             Item One
@@ -56,7 +56,7 @@ export function FileList() {
         <Link href={"http://www.google.com"}>
           <ListItem
             ripple={false}
-            className="py-1 pr-1 pl-4"
+            className="py-1 pr-1 pl-4 border-2 m-2 w-auto"
             placeholder={undefined}
           >
             Item Two
@@ -74,7 +74,7 @@ export function FileList() {
         <Link href={"http://www.google.com"}>
           <ListItem
             ripple={false}
-            className="py-1 pr-1 pl-4"
+            className="py-1 pr-1 pl-4 border-2 m-2 w-auto"
             placeholder={undefined}
           >
             Item Three

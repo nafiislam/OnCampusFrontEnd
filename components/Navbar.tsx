@@ -12,29 +12,12 @@ import {
 import { ProfileMenu } from "./AvatarMenu";
 import { NotificationsMenu } from "./NotiMenu";
 
-import { NavbarProps } from "@material-tailwind/react";
 
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
 export function NavbarDark() {
-
-  const [stickyClass, setStickyClass] = React.useState('');
-
-  React.useEffect(() => {
-    window.addEventListener('scroll', stickNavbar);
-    return () => window.removeEventListener('scroll', stickNavbar);
-  }, []);
-
-  const stickNavbar = () => {
-    if (window !== undefined) {
-      let windowHeight = window.scrollY;
-      // window height changed for the demo
-      windowHeight > 150 ? setStickyClass('sticky-nav') : setStickyClass('');
-    }
-  };
-
   return (
     <div className="">
     <Navbar

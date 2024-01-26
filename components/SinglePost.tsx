@@ -49,13 +49,13 @@ export default function PostBody() {
       <hr className="my-2 border-blue-gray-900" />
 
       <div className="flex flex-col gap-8 w-full">
-        <CommentBody flag={0} />
-        <CommentBody flag={3}/>
-        <CommentBody flag={2}/>
-        {/* <div className="flex flex-row gap-10 group relative">
+        <CommentBody  />
+        <CommentBody />
+        <CommentBody />
+        <div className="flex flex-row gap-10 group relative">
           <div className="before:absolute before:content-[''] before:w-[0.05rem] before:bg-blue-gray-100 before:left-0 before:top-0 before:bottom-0 before:h-full group-hover:h-auto"></div>
           <div>
-            <CommentBody flag={0} />
+            <CommentBody/>
             <CommentBody />
             <div className="flex flex-row gap-10 group relative">
               <div className="before:absolute before:content-[''] before:w-[0.05rem] before:bg-blue-gray-100 before:left-0 before:top-0 before:bottom-0 before:h-full group-hover:h-auto"></div>
@@ -66,8 +66,8 @@ export default function PostBody() {
             </div>
             <CommentBody />
           </div> 
-        </div>  */}
-         <CommentBody flag={1} />
+        </div> 
+         <CommentBody />
       </div>
     </div>
   );
