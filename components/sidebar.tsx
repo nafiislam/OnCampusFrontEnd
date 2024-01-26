@@ -615,7 +615,7 @@ export function SidebarWithContentSeparator() {
             >
               <Link href="/admin/createClub">
                 <ListItem className="p-0" selected={open === 2} placeholder={undefined}>
-                  <AccordionHeader onClick={() => handleOpen(2)} className="border-b-0 p-3" placeholder={undefined}>
+                  <AccordionHeader className="border-b-0 p-3" placeholder={undefined}>
                     <ListItemPrefix placeholder={undefined}>
                       <Square3Stack3DIcon className="h-5 w-5" />
                     </ListItemPrefix>

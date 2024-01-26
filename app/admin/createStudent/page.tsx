@@ -5,12 +5,16 @@ import ClubRoleComponent from "./clubRoles";
 
 import { useState } from 'react';
 import createStudent from "@/server_actions/createStudent";
+import AlertCustomCloseIcon from "@/components/alert";
 
 export default function CreateStudentPage() {
   const [state, setState] = useState(1);
   const [clubRoles, setClubRoles] = useState([]); // [clubName, role]
   const [studentInfo, setStudentInfo] = useState({ name: "", id: "", department: "", batch: "", session: "" });
-  const [result, setResult] = useState("");
+
+  const [showAlert, setShowAlert] = useState(false);
+  const [message, setMessage] = useState("");
+
 
   useEffect(() => {
     if (state === 3) {
@@ -19,11 +23,11 @@ export default function CreateStudentPage() {
           // console.log(clubRoles)
           const newStudentInfo = { ...studentInfo, clubRoles: clubRoles };
           const response = await createStudent(newStudentInfo);
-
-          alert(response.message)
-
+          setMessage(response.message);
+          setShowAlert(true);
         } catch (error) {
-          alert("Error occurred while creating student")
+          setMessage("Error occurred while creating student");
+          setShowAlert(true);
         } finally {
           setState(1);
           setClubRoles([]);
@@ -36,6 +40,9 @@ export default function CreateStudentPage() {
 
   return (
     <>
+      {showAlert && (
+        <AlertCustomCloseIcon message={message} setShowAlert={setShowAlert} setMessage={setMessage} />
+      )}
       {state === 1 && (
         // Render content when state is 1
         <StudentInformationComponent

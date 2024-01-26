@@ -17,15 +17,18 @@ import {
 
 export default function ClubRoleComponent({ state, setState, clubRoles, setClubRoles }:
     { state: number, setState: React.Dispatch<React.SetStateAction<number>>, clubRoles: [], setClubRoles: React.Dispatch<React.SetStateAction<any>> }) {
-    let selectedClub = "";
-    let selectedRole = "";
+
+    const [selectedClub, setSelectedClub] = React.useState("");
+    const [selectedRole, setSelectedRole] = React.useState("");
 
     const addNewClubRole = () => {
+        console.log(selectedClub, selectedRole);
         if (selectedClub === "" || selectedRole === "") {
             return;
         }
-        console.log(selectedClub, selectedRole);
         setClubRoles([...clubRoles, { clubName: selectedClub, role: selectedRole }]);
+        setSelectedClub("");
+        setSelectedRole("");
     }
 
     const createNewStudent = async () => {
@@ -33,6 +36,7 @@ export default function ClubRoleComponent({ state, setState, clubRoles, setClubR
     }
 
     const deleteClubRole = (index: number) => {
+        console.log('deleting club role', index)
         const newClubRoles = clubRoles.filter((_, i) => i !== index);
         setClubRoles(newClubRoles);
     }
@@ -106,11 +110,13 @@ export default function ClubRoleComponent({ state, setState, clubRoles, setClubR
                                             </div>
                                         </td>
                                         <td className={classes}>
-                                            <Tooltip content="Edit User">
-                                                <IconButton variant="text">
-                                                    <MinusCircleIcon className="h-5 w-5" color="red" onClick={() => { deleteClubRole(index) }} />
-                                                </IconButton>
-                                            </Tooltip>
+                                            <div onClick={() => { deleteClubRole(index) }}>
+                                                <Tooltip content="Edit User">
+                                                    <IconButton variant="text">
+                                                        <MinusCircleIcon className="h-5 w-5" color="red" />
+                                                    </IconButton>
+                                                </Tooltip>
+                                            </div>
                                         </td>
                                     </tr>
                                 );
@@ -120,8 +126,8 @@ export default function ClubRoleComponent({ state, setState, clubRoles, setClubR
                         <tr key={"addNewClubRole"}>
                             <td className="p-4 border-b border-blue-gray-50">
                                 <div className="flex flex-col">
-                                    <Select variant="outlined" color="teal" label="Select Club" onChange={(e) => selectedClub = e}>
-                                        <Option value="BUET Gaming Club">BUET Gaming Club</Option>
+                                    <Select variant="outlined" color="teal" label="Select Club" onChange={(e) => setSelectedClub(e)} value={selectedClub}>
+                                        <Option value="Buet Gaming Club">Buet Gaming Club</Option>
                                         <Option value="Buet Chess Club">Buet Chess Club</Option>
 
                                     </Select>
@@ -129,7 +135,7 @@ export default function ClubRoleComponent({ state, setState, clubRoles, setClubR
                             </td>
                             <td className="p-4 border-b border-blue-gray-50">
                                 <div className="flex flex-col">
-                                    <Select variant="outlined" color="teal" label="Select Role" onChange={(e) => selectedRole = e}>
+                                    <Select variant="outlined" color="teal" label="Select Role" onChange={(e) => setSelectedRole(e)} value={selectedRole}>
                                         <Option value="President">President</Option>
                                         <Option value="Vice President">Vice President</Option>
                                         <Option value="General Secretary">General Secretary</Option>

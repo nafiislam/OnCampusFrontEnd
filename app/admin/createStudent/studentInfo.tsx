@@ -1,30 +1,53 @@
 import { Input, Select, Option, Button } from "@material-tailwind/react";
 import React from "react";
 
+import AlertCustomCloseIcon from "@/components/alert";
+
 export default function StudentInformationComponent({ state, setState, studentInfo, setStudentInfo }: { state: number, setState: React.Dispatch<React.SetStateAction<number>>, studentInfo: any, setStudentInfo: any }) {
+
+    const [message, setMessage] = React.useState("");
+    const [showAlert, setShowAlert] = React.useState(false);
+
+    const validateStidentInfo = (studentInfo) => {
+
+        if (studentInfo.department === "") {
+            // <AlertCustomCloseIcon message="Department can't be empty" />
+            setMessage("Department can't be empty");
+            setShowAlert(true);
+            return false;
+        }
+        if (studentInfo.batch === "") {
+            setMessage("Batch can't be empty");
+            setShowAlert(true);
+            return false;
+        }
+        if (studentInfo.session === "") {
+            setMessage("Session can't be empty");
+            setShowAlert(true);
+            return false;
+        }
+        return true
+    }
 
     const nextButtonClick = (e) => {
         e.preventDefault()
-        // console.log(newStudentInfo);
-        setStudentInfo(newStudentInfo);
+        console.log(studentInfo);
+        const res = validateStidentInfo(studentInfo);
+        if (!res) {
+            return;
+        }
         setState(2);
     }
 
-    const newStudentInfo = {
-        name: "",
-        department: "",
-        batch: "",
-        session: "",
-        id: "",
-        meritPosition: -1,
-    }
+    const newStudentInfo = {}
 
     return (
-        <div className="ml-20">
+        <div className="ml-40 mt-10">
+
             <form onSubmit={nextButtonClick}>
                 <div className="flex w-72 flex-col gap-6">
-                    <Input variant="outlined" color="teal" label="Student's Name" placeholder="" type="text" onChange={(e) => newStudentInfo.name = e.target.value} required />
-                    <Select variant="outlined" color="teal" label="Select Department" onChange={(e) => { newStudentInfo.department = e }} >
+                    <Input variant="outlined" color="teal" label="Student's Name" placeholder="" type="text" onChange={(e) => setStudentInfo({ ...studentInfo, name: e.target.value })} required />
+                    <Select variant="outlined" color="teal" label="Select Department" onChange={(e) => setStudentInfo({ ...studentInfo, department: e })} >
                         <Option value="cse">Computer Science & Engineering</Option>
                         <Option value="me">Mechanical Engineering</Option>
                         <Option value="ce">Civil Engineering</Option>
@@ -40,7 +63,7 @@ export default function StudentInformationComponent({ state, setState, studentIn
                         <Option value="eee">Electrical & Electronics Engineering</Option>
                     </Select>
 
-                    <Select variant="outlined" color="teal" label="Select Batch" onChange={(e) => { newStudentInfo.batch = e }}>
+                    <Select variant="outlined" color="teal" label="Select Batch" onChange={(e) => setStudentInfo({ ...studentInfo, batch: e })}>
                         <Option value="2022">2022</Option>
                         <Option value="2021">2021</Option>
                         <Option value="2020">2020</Option>
@@ -48,15 +71,15 @@ export default function StudentInformationComponent({ state, setState, studentIn
                         <Option value="2018">2018</Option>
                     </Select>
 
-                    <Select variant="outlined" color="teal" label="Select Session" onChange={(e) => { newStudentInfo.session = e }}>
+                    <Select variant="outlined" color="teal" label="Select Session" onChange={(e) => setStudentInfo({ ...studentInfo, session: e })}>
                         <Option value="2021-2022">2021 - 2022</Option>
                         <Option value="2020-2021">2020 - 2021</Option>
                         <Option value="2019-2020">2019 - 2020</Option>
                         <Option value="2018-2019">2018 - 2019</Option>
                     </Select>
 
-                    <Input variant="outlined" color="teal" label="Student's ID" placeholder="" type="number" onChange={(e) => newStudentInfo.id = e.target.value} required />
-                    <Input variant="outlined" color="teal" label="Student's merit position" placeholder="" type="number" onChange={(e) => newStudentInfo.meritPosition = parseInt(e.target.value, 10)} required />
+                    <Input variant="outlined" color="teal" label="Student's ID" placeholder="" type="number" onChange={(e) => setStudentInfo({ ...studentInfo, id: e.target.value })} required />
+                    <Input variant="outlined" color="teal" label="Student's merit position" placeholder="" type="number" onChange={(e) => setStudentInfo({ ...studentInfo, meritPosition: parseInt(e.target.value) })} required />
 
                 </div>
 
@@ -64,6 +87,8 @@ export default function StudentInformationComponent({ state, setState, studentIn
                     <Button type="submit" color="black" >Next</Button>
                 </div>
             </form>
+            {showAlert && <AlertCustomCloseIcon message={message} setMessage={setMessage} setShowAlert={setShowAlert} />}
+
         </div>
     )
 }
