@@ -19,11 +19,28 @@ import Link from "next/link";
 import React from "react";
 
 export function NavbarDark() {
+
+  const [stickyClass, setStickyClass] = React.useState('');
+
+  React.useEffect(() => {
+    window.addEventListener('scroll', stickNavbar);
+    return () => window.removeEventListener('scroll', stickNavbar);
+  }, []);
+
+  const stickNavbar = () => {
+    if (window !== undefined) {
+      let windowHeight = window.scrollY;
+      // window height changed for the demo
+      windowHeight > 150 ? setStickyClass('sticky-nav') : setStickyClass('');
+    }
+  };
+
   return (
+    <div className="">
     <Navbar
           variant="gradient"
           color="blue-gray"
-          className="max-w-full from-blue-gray-400 to-blue-gray-900 px-4 py-3"   placeholder={undefined}    >
+          className="sticky top-0 z-10 h-max max-w-full from-blue-gray-400 to-blue-gray-900 px-4 py-3" placeholder={undefined}    >
       <div className="flex flex-wrap items-center justify-between gap-y-4 text-white">
         <Link href={"#"}><Image src="/images/logo.png" width={50} height={40} alt="logo" className="m-0 p-0 rounded-full" /></Link>
         <div className="relative flex w-full gap-2 md:w-max ml-8">
@@ -50,5 +67,6 @@ export function NavbarDark() {
         
       </div>
     </Navbar>
+    </div>
   );
 }
