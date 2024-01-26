@@ -32,8 +32,11 @@ import Link from "next/link";
 export function SidebarWithContentSeparator() {
   const [open, setOpen] = React.useState(0);
   const { data: session, status } = useSession();
-  
+
+  const [isAdmin, setIsAdmin] = React.useState(false);
+
   useEffect(() => {
+    console.log(session);
     if (
       status != "loading" &&
       session &&
@@ -41,14 +44,19 @@ export function SidebarWithContentSeparator() {
     ) {
       signOut({ callbackUrl: "/" });
     }
+    console.log(session?.roles);
+    if (session?.roles.includes('admin')) {
+      setIsAdmin(true);
+    }
+
   }, [session, status]);
 
   if (!session) {
     return (<>
-    <Card
-      placeholder={""}
-      className="h-[calc(130vh-2rem)] w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/2"
-    ><></></Card>
+      <Card
+        placeholder={""}
+        className="h-[calc(130vh-2rem)] w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/2"
+      ><></></Card>
     </>);
   }
 
@@ -75,9 +83,8 @@ export function SidebarWithContentSeparator() {
           icon={
             <ChevronRightIcon
               strokeWidth={2.5}
-              className={`mx-auto h-4 w-4 transition-transform ${
-                open === 1 ? "rotate-90" : ""
-              }`}
+              className={`mx-auto h-4 w-4 transition-transform ${open === 1 ? "rotate-90" : ""
+                }`}
             />
           }
         >
@@ -164,9 +171,8 @@ export function SidebarWithContentSeparator() {
           icon={
             <ChevronRightIcon
               strokeWidth={2.5}
-              className={`mx-auto h-4 w-4 transition-transform ${
-                open === 2 ? "rotate-90" : ""
-              }`}
+              className={`mx-auto h-4 w-4 transition-transform ${open === 2 ? "rotate-90" : ""
+                }`}
             />
           }
           placeholder={undefined}
@@ -258,9 +264,8 @@ export function SidebarWithContentSeparator() {
           icon={
             <ChevronRightIcon
               strokeWidth={2.5}
-              className={`mx-auto h-4 w-4 transition-transform ${
-                open === 3 ? "rotate-90" : ""
-              }`}
+              className={`mx-auto h-4 w-4 transition-transform ${open === 3 ? "rotate-90" : ""
+                }`}
             />
           }
           placeholder={undefined}
@@ -352,9 +357,8 @@ export function SidebarWithContentSeparator() {
           icon={
             <ChevronRightIcon
               strokeWidth={2.5}
-              className={`mx-auto h-4 w-4 transition-transform ${
-                open === 4 ? "rotate-90" : ""
-              }`}
+              className={`mx-auto h-4 w-4 transition-transform ${open === 4 ? "rotate-90" : ""
+                }`}
             />
           }
           placeholder={undefined}
@@ -446,9 +450,8 @@ export function SidebarWithContentSeparator() {
           icon={
             <ChevronRightIcon
               strokeWidth={2.5}
-              className={`mx-auto h-4 w-4 transition-transform ${
-                open === 5 ? "rotate-90" : ""
-              }`}
+              className={`mx-auto h-4 w-4 transition-transform ${open === 5 ? "rotate-90" : ""
+                }`}
             />
           }
           placeholder={undefined}
@@ -495,9 +498,8 @@ export function SidebarWithContentSeparator() {
           icon={
             <ChevronRightIcon
               strokeWidth={2.5}
-              className={`mx-auto h-4 w-4 transition-transform ${
-                open === 6 ? "rotate-90" : ""
-              }`}
+              className={`mx-auto h-4 w-4 transition-transform ${open === 6 ? "rotate-90" : ""
+                }`}
             />
           }
           placeholder={undefined}
@@ -544,9 +546,8 @@ export function SidebarWithContentSeparator() {
           icon={
             <ChevronRightIcon
               strokeWidth={2.5}
-              className={`mx-auto h-4 w-4 transition-transform ${
-                open === 7 ? "rotate-90" : ""
-              }`}
+              className={`mx-auto h-4 w-4 transition-transform ${open === 7 ? "rotate-90" : ""
+                }`}
             />
           }
           placeholder={undefined}
@@ -587,6 +588,47 @@ export function SidebarWithContentSeparator() {
             </List>
           </AccordionBody>
         </Accordion>
+
+        {isAdmin && (
+          <>
+            <Accordion
+              placeholder={""}
+              open={open === 1}
+            >
+              <Link href="/admin/createStudent">
+                <ListItem placeholder={""} className="p-0" selected={open === 1}>
+                  <AccordionHeader placeholder={""} className="border-b-0 p-3" >
+                    <ListItemPrefix placeholder={""}>
+                      <Square3Stack3DIcon className="h-5 w-5" />
+                    </ListItemPrefix>
+                    <Typography placeholder={""} color="blue-gray" className="mr-auto font-normal">
+                      Create New Student
+                    </Typography>
+                  </AccordionHeader>
+                </ListItem>
+              </Link>
+            </Accordion>
+
+            <Accordion
+              open={open === 2}
+              placeholder={undefined}
+            >
+              <Link href="/admin/createClub">
+                <ListItem className="p-0" selected={open === 2} placeholder={undefined}>
+                  <AccordionHeader onClick={() => handleOpen(2)} className="border-b-0 p-3" placeholder={undefined}>
+                    <ListItemPrefix placeholder={undefined}>
+                      <Square3Stack3DIcon className="h-5 w-5" />
+                    </ListItemPrefix>
+                    <Typography color="blue-gray" className="mr-auto font-normal" placeholder={undefined}>
+                      Create New Club
+                    </Typography>
+                  </AccordionHeader>
+                </ListItem>
+              </Link>
+            </Accordion>
+          </>
+        )}
+
       </List>
     </Card>
   );
