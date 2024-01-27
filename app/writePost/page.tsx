@@ -283,11 +283,10 @@ const WritePost = () => {
 
   const config =
 		{
-			readonly: false,
-      autofocus: true,
-      useSearch: false,
-      toolbarSticky: false,
-      disablePlugins: "speech-recognize,print,preview,image"
+			autofocus: true,
+  useSearch: false,
+  toolbarSticky: false,
+  disablePlugins: "speech-recognize,print,preview,image,drag-and-drop,drag-and-drop-element,dtd,file,image-processor,image-properties,media,mobile,video"
 		}
 
 
