@@ -6,6 +6,9 @@ import CommentCount from "./CommentCount";
 import DateTime from "./DateTime";
 import Reaction from "./Reaction";
 import { useState } from "react";
+import Parser from "html-react-parser";
+
+
 export default function CommentBody({ comment,mapper }: { comment: any,mapper:any }) {
   comment.createdAt = new Date(comment.createdAt).toLocaleString();
   const [thisComment, setThisComment] = useState(comment);
@@ -18,9 +21,12 @@ export default function CommentBody({ comment,mapper }: { comment: any,mapper:an
           <DateTime date={comment.createdAt} />
         </div>
 
-        <Typography className="pt-2" placeholder={""} variant="paragraph">
+        {/* <Typography className="pt-2" placeholder={""} variant="paragraph">
           {comment.content ?? ""}
-        </Typography>
+        </Typography> */}
+        <div className="pt-2">
+        {comment.content ?Parser(comment.content):""}
+        </div>
 
         <div className="flex flex-row gap-4">
           <Reaction likedBy={comment.likedBy} type="comment" id={comment.id}/>

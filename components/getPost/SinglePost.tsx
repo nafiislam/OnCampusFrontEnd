@@ -79,7 +79,7 @@ export default function PostBody({ post }: { post: any }) {
         {post.isPoll ? <PollList options={post.options} /> : ""}
 
         <div className="flex flex-row gap-4 justify-end my-8">
-          <AvatarStack />
+          <AvatarStack users={post.viewedBy}/>
         </div>
 
         <hr className="my-2 border-blue-gray-900" />

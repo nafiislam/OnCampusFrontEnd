@@ -277,8 +277,6 @@ const WritePost = () => {
   const [alertOpen, setAlertOpen] = React.useState(false);
   const [alertMsg, setAlertMsg] = React.useState('');
 
-  const[placeholder,setPlaceholder] = useState("Write a post")
-
   const router = useRouter()
 
   const config =
@@ -287,7 +285,7 @@ const WritePost = () => {
       autofocus: true,
       useSearch: false,
       toolbarSticky: false,
-      disablePlugins: "speech-recognize,print,preview,image"
+      disablePlugins: "speech-recognize,print,preview,image,drag-and-drop,drag-and-drop-element,dtd,file,image-processor,image-properties,media,mobile,video"
 		}
 
 

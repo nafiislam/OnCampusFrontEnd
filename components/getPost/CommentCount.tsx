@@ -8,11 +8,14 @@ import {
   IconButton,
   Textarea,
 } from "@material-tailwind/react";
-import React from "react";
+import React, { useRef } from "react";
 import { useContext } from "react";
 import {ContextProvider} from "./SinglePost";
 import POST from "@/server_actions/POST";
 import { set } from "zod";
+import dynamic from "next/dynamic";
+const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
+
 const CUSTOM_ANIMATION = {
   mount: { scale: 1 },
   unmount: { scale: 0.9 },
@@ -22,8 +25,19 @@ export default function CommentCount({type,cid=""}: {type: string,cid?:string}) 
   const [open, setOpen] = React.useState(0);
   const {comments,changeComments,pid} = useContext(ContextProvider)
   const [content, setContent] = React.useState("");
+  const editor = useRef(null);
   const [warning, setWarning] = React.useState("");
   const [isPending, startTransition] = React.useTransition();
+
+  const config =
+  {
+    readonly: false,
+    autofocus: true,
+    useSearch: false,
+    toolbarSticky: false,
+    toolbarAdaptive: false,
+    disablePlugins: "speech-recognize,print,preview,image,drag-and-drop,drag-and-drop-element,dtd,file,image-processor,image-properties,media,mobile,video"
+  }
 
   const handleOpen = (value: number) => setOpen(open === value ? 0 : value);
 
@@ -72,13 +86,18 @@ export default function CommentCount({type,cid=""}: {type: string,cid?:string}) 
         </AccordionHeader>
         <AccordionBody >
           <div className="relative w-[32rem]">
-            <Textarea
-              variant="outlined"
-              label="Type Your Comment Here..."
-              rows={8}
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-            />
+            <div >
+            <JoditEditor
+                ref={null}
+                value={content}
+                config={config}
+                onBlur={(newContent) => {
+                  setContent(newContent);
+                }}
+              />
+
+            </div>
+            
             <div className="text-red-500">
               {warning}
             </div>
