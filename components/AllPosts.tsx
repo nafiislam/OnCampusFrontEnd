@@ -1,7 +1,7 @@
 "use client";
-import AvatarImageText from "./AvatarImageText";
-import DateTime from "./DateTime";
-import PosText from "./Posttext";
+import AvatarImageText from "./getPost/AvatarImageText";
+import DateTime from "./getPost/DateTime";
+import PosText from "./getPost/Posttext";
 
 export default function AllPosts() {
   return (
@@ -30,6 +30,10 @@ export default function AllPosts() {
         </div>
 
         <PosText />
+
+        <a href="" className="underline text-blue-700">
+          See More...
+        </a>
 
         <hr className="border-1 border-gray-400" />
       </div>
