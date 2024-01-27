@@ -135,7 +135,7 @@ export default function PollOptions({opt, index,options}: {opt: any, index: numb
         </IconButton>
       </ListItemSuffix>
     </ListItem>
-    <Progress className="" size="lg" value={ Math.round((option.votedBy.length/totalVotes)*100)} label={` `} />
+    <Progress className="" size="lg" value={ totalVotes==0? 0 :Math.round((option.votedBy.length/totalVotes)*100)} label={` `} />
     </>
   );
 }
