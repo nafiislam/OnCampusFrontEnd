@@ -93,7 +93,8 @@ export default function PostBody({ post }: { post: any }) {
 
         {post.commentAllow ? (
           <div className="flex flex-col gap-8 w-full">
-            {post.comments["null"].map((comment: any) => (
+
+            {post.comments["null"]?.map((comment: any) => (
               <CommentBody
                 key={comment.id}
                 comment={comment}

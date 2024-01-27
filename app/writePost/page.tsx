@@ -1,5 +1,5 @@
 "use client";
-import React, { ReactEventHandler, useTransition } from "react";
+import React, { ReactEventHandler, useMemo, useTransition } from "react";
 import { useEffect, useRef, useState } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
 import writePost from "../../server_actions/writePost";
@@ -277,7 +277,19 @@ const WritePost = () => {
   const [alertOpen, setAlertOpen] = React.useState(false);
   const [alertMsg, setAlertMsg] = React.useState('');
 
+  const[placeholder,setPlaceholder] = useState("Write a post")
+
   const router = useRouter()
+
+  const config =
+		{
+			readonly: false,
+      autofocus: true,
+      useSearch: false,
+      toolbarSticky: false,
+      disablePlugins: "speech-recognize,print,preview,image"
+		}
+
 
   useEffect(() => {
     if (
@@ -472,6 +484,7 @@ const WritePost = () => {
               <JoditEditor
                 ref={null}
                 value={content}
+                config={config}
                 onBlur={(newContent) => {
                   setContent(newContent);
                 }}
