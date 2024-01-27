@@ -17,6 +17,10 @@ export default function AllPosts() {
 
         <PosText />
 
+        <a href="" className="underline text-blue-700">
+          See More...
+        </a>
+
         <hr className="border-1 border-gray-400" />
       </div>
 
@@ -30,6 +34,10 @@ export default function AllPosts() {
         </div>
 
         <PosText />
+
+        <a href="" className="underline text-blue-700">
+          See More...
+        </a>
 
         <hr className="border-1 border-gray-400" />
       </div>
