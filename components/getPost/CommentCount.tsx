@@ -42,7 +42,16 @@ export default function CommentCount({type,cid=""}: {type: string,cid?:string}) 
   const handleOpen = (value: number) => setOpen(open === value ? 0 : value);
 
   const handleComment = async() => {
-    if(content==""){
+    console.log(content);
+    if(content=="<p><br></p>"){
+      setWarning("Comment cannot be empty")
+      return
+    }
+    if(!content){
+      setWarning("Comment cannot be empty")
+      return
+    }
+    if(content===""){
       setWarning("Comment cannot be empty")
       return
     }

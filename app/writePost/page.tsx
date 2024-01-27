@@ -68,6 +68,13 @@ const WritePost = () => {
       return;
     }
 
+    if(content=="<p><br></p>"){
+      setAlertMsg("Content is required");
+      setAlertOpen(true);
+      scrollToTop();
+      return
+    }
+
     if (postType === "") {
       setAlertMsg("Post type is required");
       setAlertOpen(true);
