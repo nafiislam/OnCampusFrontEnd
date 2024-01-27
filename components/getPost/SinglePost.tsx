@@ -26,7 +26,7 @@ function processNestedComments(comments: any[]) {
   return groupedComments;
 }
 
-export const ContextProvider = createContext({ comments: [],changeComments: (comments: any) => { },pid: "",email: ""});
+export const ContextProvider = createContext({ comments: [],changeComments: (comments: any) => { },pid: "",user: {id: "",name: "",email: "",profilePicture: ""}});
 
 export default function PostBody({ post }: { post: any }) {
   const changeComments = (comments: any) => {
@@ -48,7 +48,7 @@ export default function PostBody({ post }: { post: any }) {
   };
   return (
     <ContextProvider.Provider
-      value={{ comments: comments, changeComments: changeComments, pid: post.id,email:post.email}}
+      value={{ comments: comments, changeComments: changeComments, pid: post.id,user:post.user}}
     >
       <div className="flex flex-col w-5/6">
         {!post.anonymous ? (
@@ -57,11 +57,13 @@ export default function PostBody({ post }: { post: any }) {
           <AvatarImageText user={anonymous} />
         )}
 
+        
+
         <div className="flex flex-row gap-2">
           <BreadcrumbsDefault type={post.type} tags={post.tags} />
           <DateTime date={post.createdAt} />
           <span className="ml-auto">
-            <Saveicon />
+            <Saveicon user={post.user} savedBy={post.savedBy} id={post.id}/>
           </span>
         </div>
 
@@ -83,7 +85,7 @@ export default function PostBody({ post }: { post: any }) {
         <hr className="my-2 border-blue-gray-900" />
 
         <div className="flex flex-row gap-4">
-          <Reaction likedBy={post.likedBy} />
+          <Reaction likedBy={post.likedBy} type="post" id={post.id}/>
           <CommentCount type="post"/>
         </div>
 

@@ -1,27 +1,50 @@
 import { IconButton } from "@material-tailwind/react";
 import React from "react";
+import POST from "@/server_actions/POST";
+export default function Saveicon({user,savedBy,id}: {user: any,savedBy: any[],id: string}) {
 
-export default function Saveicon() {
-  const [isFavorite, setIsFavorite] = React.useState(false);
-  const [icon, setIcon] = React.useState(
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      strokeWidth={1.5}
-      stroke="blue"
-      className="w-6 h-6"
+  var checker = false
+  savedBy.map((u: any) => {
+    if(u.email==user.email){
+      checker = true
+    }
+  })
+  const [isFavorite, setIsFavorite] = React.useState(checker);
+  const handleIsFavorite = async() => {
+    setIsFavorite(prev=>!prev);
+    if(isFavorite){
+
+      const res = await POST("post/save/",{
+        uid: user.id,
+        id: id,
+        type: "unsave"
+      })
+      if(res){
+        console.log(res);
+      }
+      
+    }
+    else{
+
+      const res = await POST("post/save/",{
+        uid: user.id,
+        id: id,
+        type: "save"
+      })
+      if(res){
+        console.log(res);
+      }
+    }
+  };
+
+  return (
+    <IconButton
+      placeholder={""}
+      variant="text"
+      color={isFavorite ? "red" : "blue-gray"}
+      onClick={handleIsFavorite}
     >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
-      />
-    </svg>
-  );
-  const handleIsFavorite = () => {
-    setIcon(
-      isFavorite ? (
+      {!isFavorite ? (
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -49,19 +72,7 @@ export default function Saveicon() {
             clipRule="evenodd"
           />
         </svg>
-      )
-    );
-    setIsFavorite(!isFavorite);
-  };
-
-  return (
-    <IconButton
-      placeholder={""}
-      variant="text"
-      color={isFavorite ? "red" : "blue-gray"}
-      onClick={handleIsFavorite}
-    >
-      {icon}
+      )}
     </IconButton>
   );
 }

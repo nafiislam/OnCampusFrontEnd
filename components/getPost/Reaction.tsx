@@ -10,24 +10,47 @@ import React from "react";
 import AvatarImageText from "./AvatarImageText";
 import { useContext } from "react";
 import { ContextProvider } from "./SinglePost";
-
-export default function Reaction({likedBy}: {likedBy: any[]}) {
-  const {email} = useContext(ContextProvider)
+import POST from "@/server_actions/POST";
+export default function Reaction({likedBy,type,id}: {likedBy: any[],type: string,id: string}) {
+  const {user} = useContext(ContextProvider)
   
   var checker = false
-  likedBy.map((user: any) => {
-    if(user.email==email){
+  likedBy.map((u: any) => {
+    if(u.email==user.email){
       checker = true
     }
   })
   const [isFavorite, setIsFavorite] = React.useState(checker);
-  const [reactionCount, setReactionCount] = React.useState(likedBy.length);
+  const [reactions, setReactions] = React.useState(likedBy);
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(!open);
 
-  const handleIsFavorite = () => {
-    setReactionCount(prev=>(isFavorite ? prev - 1 : prev + 1));
-    setIsFavorite(prev=>!prev);
+  const handleIsFavorite = async() => {
+    if(isFavorite){
+      setReactions(prev => prev.filter((u: any) => u.email!=user.email))
+      setIsFavorite(prev=>!prev);
+      const res = await POST("post/like/"+type,{
+        uid: user.id,
+        id: id,
+        type: "dislike"
+      })
+      if(res){
+        console.log(res);
+      }
+      
+    }
+    else{
+      setReactions(prev=>  [user,...prev])
+      setIsFavorite(prev=>!prev);
+      const res = await POST("post/like/"+type,{
+        uid: user.id,
+        id: id,
+        type: "like"
+      })
+      if(res){
+        console.log(res);
+      }
+    }
   };
 
   return (
@@ -71,7 +94,7 @@ export default function Reaction({likedBy}: {likedBy: any[]}) {
           placeholder={undefined}
           onClick={() => handleOpen()}
         >
-          <Chip value={reactionCount} variant="ghost" className="rounded-full" />
+          <Chip value={reactions.length} variant="ghost" className="rounded-full" />
         </IconButton>
       </div>
       <Dialog
@@ -86,7 +109,7 @@ export default function Reaction({likedBy}: {likedBy: any[]}) {
       <DialogHeader placeholder={undefined}>Reaction body</DialogHeader>
         <DialogBody placeholder={undefined}>
           <List placeholder={undefined}>
-            {likedBy.map((user: any, index: number) => (
+            {reactions.map((user: any, index: number) => (
               <ListItem key={index} placeholder={undefined}>
                 <AvatarImageText user={user} />
               </ListItem>

@@ -73,7 +73,7 @@ export default function CaroiuselImage({images,imageNames}: {images: string[], i
       )}
     >
       {images.map((image, index) => (
-        <Link href={image} key={index}>
+        <Link href={image} key={index} target="_blank">
           <Image
             key={index}
             alt="nature"

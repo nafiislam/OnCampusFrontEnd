@@ -22,7 +22,7 @@ export function FileList({
     <Card className="w-full my-8 border-2" placeholder={undefined}>
       <List placeholder={undefined}>
         {files.map((file, index) => (
-          <a key={index} href={files[index]}>
+          <a key={index} href={files[index]} target="_blank">
           <ListItem
             ripple={false}
             className="py-1 pr-1 pl-4 border-2 m-2 w-auto"

@@ -1,5 +1,5 @@
 "use client";
-import React, { ReactEventHandler } from "react";
+import React, { ReactEventHandler, useTransition } from "react";
 import { useEffect, useRef, useState } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
 import writePost from "../../server_actions/writePost";
@@ -165,59 +165,63 @@ const WritePost = () => {
       imgList,
       list,
     };
-    const res = await writePost(data);
-    if (res) {
-      console.log(res);
-      imgStates?.map(async (imgState) => {
-        try {
-          const res = await edgestore.myPublicFiles.confirmUpload({
-            url: imgUrls?.find((url) => url.key === imgState.key)?.url ?? "",
-          });
-        } catch (err) {
-          console.log(err);
-        }
-      });
+    startTransition(async() => {
+      const res = await writePost(data);
+      if (res) {
+        console.log(res);
+        imgStates?.map(async (imgState) => {
+          try {
+            const res = await edgestore.myPublicFiles.confirmUpload({
+              url: imgUrls?.find((url) => url.key === imgState.key)?.url ?? "",
+            });
+          } catch (err) {
+            console.log(err);
+          }
+        });
 
-      fileStates?.map(async (fileState) => {
-        try {
-          const res = await edgestore.myPublicFiles.confirmUpload({
-            url: urls?.find((url) => url.key === fileState.key)?.url ?? "",
-          });
-        } catch (err) {
-          console.log(err);
-        }
-      });
+        fileStates?.map(async (fileState) => {
+          try {
+            const res = await edgestore.myPublicFiles.confirmUpload({
+              url: urls?.find((url) => url.key === fileState.key)?.url ?? "",
+            });
+          } catch (err) {
+            console.log(err);
+          }
+        });
 
-        setAlertMsg("Post created successfully");
-        setAlertOpen(true);
-        setTitle("");
-        setContent("");
-        setPostType("");
-        setIsComment(false);
-        setIsNotify(false);
-        setIsAnonymous(false);
-        setReminderCheck(false);
-        setReminder("");
-        setDiscussionCheck(false);
-        setBloodCheck(false);
-        setTutionCheck(false);
-        setProductCheck(false);
-        setTechCheck(false);
-        setPollCheck(false);
-        setOptions([""]);
-        setImgStates([]);
-        setImgUrls([]);
-        setFileStates([]);
-        seturls([]);
-        scrollToTop();
-        return;
-    } else {
-      console.log("error");
-    }
+          setAlertMsg("Post created successfully");
+          setAlertOpen(true);
+          setTitle("");
+          setContent("");
+          setPostType("");
+          setIsComment(false);
+          setIsNotify(false);
+          setIsAnonymous(false);
+          setReminderCheck(false);
+          setReminder("");
+          setDiscussionCheck(false);
+          setBloodCheck(false);
+          setTutionCheck(false);
+          setProductCheck(false);
+          setTechCheck(false);
+          setPollCheck(false);
+          setOptions([""]);
+          setImgStates([]);
+          setImgUrls([]);
+          setFileStates([]);
+          seturls([]);
+          scrollToTop();
+          return;
+      } else {
+        console.log("error");
+      }
+    });
     setAlertMsg("Error happened!!");
     setAlertOpen(true);
     scrollToTop()
   };
+
+  const[isPending,startTransition] =  useTransition()
 
   const [open, setOpen] = React.useState(0);
   const { data: session, status } = useSession();
@@ -468,7 +472,7 @@ const WritePost = () => {
               <JoditEditor
                 ref={null}
                 value={content}
-                onChange={(newContent) => {
+                onBlur={(newContent) => {
                   setContent(newContent);
                 }}
               />
@@ -678,7 +682,7 @@ const WritePost = () => {
                   type="submit"
                   className="rounded-md"
                 >
-                  Post Comment
+                  {isPending?"Posting...":"Post Comment"}
                 </Button>
               </div>
             </div>

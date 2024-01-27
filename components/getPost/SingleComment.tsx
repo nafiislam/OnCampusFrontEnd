@@ -23,7 +23,7 @@ export default function CommentBody({ comment,mapper }: { comment: any,mapper:an
         </Typography>
 
         <div className="flex flex-row gap-4">
-          <Reaction likedBy={comment.likedBy}/>
+          <Reaction likedBy={comment.likedBy} type="comment" id={comment.id}/>
           <CommentCount type="comment" cid={comment.id}/>
         </div>
       </div>
