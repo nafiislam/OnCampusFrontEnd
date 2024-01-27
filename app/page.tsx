@@ -1,3 +1,4 @@
+import AllPosts from "@/components/AllPosts";
 import Button1 from "../components/Button1";
 import PostBody from "@/components/SinglePost";
 import React from "react";
@@ -5,7 +6,8 @@ import React from "react";
 export default function Home() {
  return(
   <div>
-    <PostBody />
+    {/* <PostBody /> */}
+    <AllPosts />
   </div>
  )
 }

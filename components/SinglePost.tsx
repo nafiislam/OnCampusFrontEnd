@@ -13,7 +13,6 @@ import CommentBody from "./SingleComment";
 import Saveicon from "./save";
 import PollLis from "./poll";
 import PollList from "./poll";
-import CollapseDefault from "./Collapse";
 
 export default function PostBody() {
   return (

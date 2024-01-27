@@ -3,7 +3,7 @@ import { Typography } from "@material-tailwind/react";
 function DateTime() {
   return (
     <>
-      <div className="m-2 flex flex-row gap-2 text-indigo-400">
+      <div className="flex flex-row gap-2 text-indigo-400">
         <svg
           className="w-4 h-5"
           aria-hidden="true"
