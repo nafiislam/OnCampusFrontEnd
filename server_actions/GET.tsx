@@ -1,7 +1,11 @@
+"use server";
 import {getAccessToken, getIdToken} from "@/utils/sessionTokenAccessor";
 export default async function GET(path: string) {
   "use server";
   const token = await getAccessToken();
+  if(!token){
+    return null;
+  }
   try{
       const res = await fetch(`http://localhost:5000/api/${path}`, {
         method: "GET",
