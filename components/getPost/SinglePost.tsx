@@ -86,7 +86,8 @@ export default function PostBody({ post }: { post: any }) {
 
         <div className="flex flex-row gap-4">
           <Reaction likedBy={post.likedBy} type="post" id={post.id}/>
-          <CommentCount type="post"/>
+          {post.commentAllow ? (<CommentCount type="post"/>) : ""}
+          
         </div>
 
         <hr className="my-2 border-blue-gray-900" />

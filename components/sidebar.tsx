@@ -101,7 +101,18 @@ export function SidebarWithContentSeparator() {
           </ListItem>
           <AccordionBody className="py-1 pl-2">
             <List placeholder={""} className="p-0">
-              <Link href="/General/Discussions">
+            <Link href="/General/all">
+                <ListItem placeholder={""}>
+                  <ListItemPrefix placeholder={""}>
+                    <ChatBubbleBottomCenterTextIcon
+                      strokeWidth={2}
+                      className="h-4 w-5"
+                    />
+                  </ListItemPrefix>
+                  All
+                </ListItem>
+              </Link>
+              <Link href="/General/DISCUSSION">
                 <ListItem placeholder={""}>
                   <ListItemPrefix placeholder={""}>
                     <ChatBubbleBottomCenterTextIcon
@@ -112,7 +123,7 @@ export function SidebarWithContentSeparator() {
                   Discussions
                 </ListItem>
               </Link>
-              <Link href="/General/Blood_Posts">
+              <Link href="/General/BLOOD">
                 <ListItem placeholder={""}>
                   <ListItemPrefix placeholder={undefined}>
                     <BeakerIcon strokeWidth={2} className="h-4 w-5" />
@@ -120,7 +131,7 @@ export function SidebarWithContentSeparator() {
                   Blood Posts
                 </ListItem>
               </Link>
-              <Link href="/General/Tution_Posts">
+              <Link href="/General/TUITION">
                 <ListItem placeholder={undefined}>
                   <ListItemPrefix placeholder={undefined}>
                     <CurrencyBangladeshiIcon
@@ -131,7 +142,7 @@ export function SidebarWithContentSeparator() {
                   Tution Posts
                 </ListItem>
               </Link>
-              <Link href="/General/Product_Posts">
+              <Link href="/General/PRODUCT">
                 <ListItem placeholder={undefined}>
                   <ListItemPrefix placeholder={undefined}>
                     <ShoppingBagIcon strokeWidth={2} className="h-4 w-5" />
@@ -139,20 +150,12 @@ export function SidebarWithContentSeparator() {
                   Product Posts
                 </ListItem>
               </Link>
-              <Link href="/General/Tech_talks">
+              <Link href="/General/TECH">
                 <ListItem placeholder={undefined}>
                   <ListItemPrefix placeholder={undefined}>
                     <ComputerDesktopIcon strokeWidth={2} className="h-4 w-5" />
                   </ListItemPrefix>
                   Tech talks
-                </ListItem>
-              </Link>
-              <Link href="/General/Polls">
-                <ListItem placeholder={undefined}>
-                  <ListItemPrefix placeholder={undefined}>
-                    <ScaleIcon strokeWidth={2} className="h-4 w-5" />
-                  </ListItemPrefix>
-                  Polls
                 </ListItem>
               </Link>
             </List>
@@ -195,7 +198,18 @@ export function SidebarWithContentSeparator() {
           </ListItem>
           <AccordionBody className="py-1 pl-2">
             <List className="p-0" placeholder={undefined}>
-              <Link href="/Batch/Discussions">
+            <Link href="/Batch/all">
+                <ListItem placeholder={undefined}>
+                  <ListItemPrefix placeholder={undefined}>
+                    <ChatBubbleBottomCenterTextIcon
+                      strokeWidth={2}
+                      className="h-4 w-5"
+                    />
+                  </ListItemPrefix>
+                  All
+                </ListItem>
+              </Link>
+              <Link href="/Batch/DISCUSSION">
                 <ListItem placeholder={undefined}>
                   <ListItemPrefix placeholder={undefined}>
                     <ChatBubbleBottomCenterTextIcon
@@ -206,7 +220,7 @@ export function SidebarWithContentSeparator() {
                   Discussions
                 </ListItem>
               </Link>
-              <Link href="/Batch/Blood_Posts">
+              <Link href="/Batch/BLOOD">
                 <ListItem placeholder={undefined}>
                   <ListItemPrefix placeholder={undefined}>
                     <BeakerIcon strokeWidth={2} className="h-4 w-5" />
@@ -214,7 +228,7 @@ export function SidebarWithContentSeparator() {
                   Blood Posts
                 </ListItem>
               </Link>
-              <Link href="/Batch/Tution_Posts">
+              <Link href="/Batch/TUITION">
                 <ListItem placeholder={undefined}>
                   <ListItemPrefix placeholder={undefined}>
                     <CurrencyBangladeshiIcon
@@ -225,7 +239,7 @@ export function SidebarWithContentSeparator() {
                   Tution Posts
                 </ListItem>
               </Link>
-              <Link href="/Batch/Product_Posts">
+              <Link href="/Batch/PRODUCT">
                 <ListItem placeholder={undefined}>
                   <ListItemPrefix placeholder={undefined}>
                     <ShoppingBagIcon strokeWidth={2} className="h-4 w-5" />
@@ -233,20 +247,12 @@ export function SidebarWithContentSeparator() {
                   Product Posts
                 </ListItem>
               </Link>
-              <Link href="/Batch/Tech_talks">
+              <Link href="/Batch/TECH">
                 <ListItem placeholder={undefined}>
                   <ListItemPrefix placeholder={undefined}>
                     <ComputerDesktopIcon strokeWidth={2} className="h-4 w-5" />
                   </ListItemPrefix>
                   Tech talks
-                </ListItem>
-              </Link>
-              <Link href="/Batch/Polls">
-                <ListItem placeholder={undefined}>
-                  <ListItemPrefix placeholder={undefined}>
-                    <ScaleIcon strokeWidth={2} className="h-4 w-5" />
-                  </ListItemPrefix>
-                  Polls
                 </ListItem>
               </Link>
             </List>
@@ -289,7 +295,18 @@ export function SidebarWithContentSeparator() {
           </ListItem>
           <AccordionBody className="py-1 pl-2">
             <List className="p-0" placeholder={undefined}>
-              <Link href="/Dept/Discussions">
+            <Link href="/Dept/all">
+                <ListItem placeholder={undefined}>
+                  <ListItemPrefix placeholder={undefined}>
+                    <ChatBubbleBottomCenterTextIcon
+                      strokeWidth={2}
+                      className="h-4 w-5"
+                    />
+                  </ListItemPrefix>
+                  All
+                </ListItem>
+              </Link>
+              <Link href="/Dept/DISCUSSION">
                 <ListItem placeholder={undefined}>
                   <ListItemPrefix placeholder={undefined}>
                     <ChatBubbleBottomCenterTextIcon
@@ -300,7 +317,7 @@ export function SidebarWithContentSeparator() {
                   Discussions
                 </ListItem>
               </Link>
-              <Link href="/Dept/Blood_Posts">
+              <Link href="/Dept/BLOOD">
                 <ListItem placeholder={undefined}>
                   <ListItemPrefix placeholder={undefined}>
                     <BeakerIcon strokeWidth={2} className="h-4 w-5" />
@@ -308,7 +325,7 @@ export function SidebarWithContentSeparator() {
                   Blood Posts
                 </ListItem>
               </Link>
-              <Link href="/Dept/Tution_Posts">
+              <Link href="/Dept/TUITION">
                 <ListItem placeholder={undefined}>
                   <ListItemPrefix placeholder={undefined}>
                     <CurrencyBangladeshiIcon
@@ -319,7 +336,7 @@ export function SidebarWithContentSeparator() {
                   Tution Posts
                 </ListItem>
               </Link>
-              <Link href="/Dept/Product_Posts">
+              <Link href="/Dept/PRODUCT">
                 <ListItem placeholder={undefined}>
                   <ListItemPrefix placeholder={undefined}>
                     <ShoppingBagIcon strokeWidth={2} className="h-4 w-5" />
@@ -327,20 +344,12 @@ export function SidebarWithContentSeparator() {
                   Product Posts
                 </ListItem>
               </Link>
-              <Link href="/Dept/Tech_talks">
+              <Link href="/Dept/TECH">
                 <ListItem placeholder={undefined}>
                   <ListItemPrefix placeholder={undefined}>
                     <ComputerDesktopIcon strokeWidth={2} className="h-4 w-5" />
                   </ListItemPrefix>
                   Tech talks
-                </ListItem>
-              </Link>
-              <Link href="/Dept/Polls">
-                <ListItem placeholder={undefined}>
-                  <ListItemPrefix placeholder={undefined}>
-                    <ScaleIcon strokeWidth={2} className="h-4 w-5" />
-                  </ListItemPrefix>
-                  Polls
                 </ListItem>
               </Link>
             </List>
@@ -383,7 +392,18 @@ export function SidebarWithContentSeparator() {
           </ListItem>
           <AccordionBody className="py-1 pl-2">
             <List className="p-0" placeholder={undefined}>
-              <Link href="/Batch_Dept/Discussions">
+            <Link href="/BatchDept/all">
+                <ListItem placeholder={undefined}>
+                  <ListItemPrefix placeholder={undefined}>
+                    <ChatBubbleBottomCenterTextIcon
+                      strokeWidth={2}
+                      className="h-4 w-5"
+                    />
+                  </ListItemPrefix>
+                  All
+                </ListItem>
+              </Link>
+              <Link href="/BatchDept/DISCUSSION">
                 <ListItem placeholder={undefined}>
                   <ListItemPrefix placeholder={undefined}>
                     <ChatBubbleBottomCenterTextIcon
@@ -394,7 +414,7 @@ export function SidebarWithContentSeparator() {
                   Discussions
                 </ListItem>
               </Link>
-              <Link href="/Batch_Dept/Blood_Posts">
+              <Link href="/BatchDept/BLOOD">
                 <ListItem placeholder={undefined}>
                   <ListItemPrefix placeholder={undefined}>
                     <BeakerIcon strokeWidth={2} className="h-4 w-5" />
@@ -402,7 +422,7 @@ export function SidebarWithContentSeparator() {
                   Blood Posts
                 </ListItem>
               </Link>
-              <Link href="/Batch_Dept/Discussions">
+              <Link href="/BatchDept/TUITION">
                 <ListItem placeholder={undefined}>
                   <ListItemPrefix placeholder={undefined}>
                     <CurrencyBangladeshiIcon
@@ -413,7 +433,7 @@ export function SidebarWithContentSeparator() {
                   Tution Posts
                 </ListItem>
               </Link>
-              <Link href="/Batch_Dept/Product_Posts">
+              <Link href="/BatchDept/PRODUCT">
                 <ListItem placeholder={undefined}>
                   <ListItemPrefix placeholder={undefined}>
                     <ShoppingBagIcon strokeWidth={2} className="h-4 w-5" />
@@ -421,20 +441,12 @@ export function SidebarWithContentSeparator() {
                   Product Posts
                 </ListItem>
               </Link>
-              <Link href="/Batch_Dept/Tech_talks">
+              <Link href="/BatchDept/TECH">
                 <ListItem placeholder={undefined}>
                   <ListItemPrefix placeholder={undefined}>
                     <ComputerDesktopIcon strokeWidth={2} className="h-4 w-5" />
                   </ListItemPrefix>
                   Tech talks
-                </ListItem>
-              </Link>
-              <Link href="/Batch_Dept/Polls">
-                <ListItem placeholder={undefined}>
-                  <ListItemPrefix placeholder={undefined}>
-                    <ScaleIcon strokeWidth={2} className="h-4 w-5" />
-                  </ListItemPrefix>
-                  Polls
                 </ListItem>
               </Link>
             </List>

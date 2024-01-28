@@ -196,7 +196,7 @@ const WritePost = () => {
           }
         });
 
-          setAlertMsg("Post created successfully");
+          setAlertMsg(prev=>"Post created successfully");
           setAlertOpen(true);
           setTitle("");
           setContent("");
@@ -223,8 +223,8 @@ const WritePost = () => {
         console.log("error");
       }
     });
-    setAlertMsg("Error happened!!");
-    setAlertOpen(true);
+    setAlertMsg(prev=>"Error happened!!");
+    setAlertOpen(prev=>true);
     scrollToTop()
   };
 
@@ -289,7 +289,7 @@ const WritePost = () => {
   const config =
 		{
 			readonly: false,
-      autofocus: true,
+      autofocus: false,
       useSearch: false,
       toolbarSticky: false,
       disablePlugins: "speech-recognize,print,preview,image,drag-and-drop,drag-and-drop-element,dtd,file,image-processor,image-properties,media,mobile,video"
@@ -343,7 +343,7 @@ const WritePost = () => {
                     <Option value="General">General</Option>
                     <Option value="Batch">Batch</Option>
                     <Option value="Dept">Dept</Option>
-                    <Option value="Batch Dept">Batch Dept</Option>
+                    <Option value="BatchDept">Batch Dept</Option>
                   </Select>
                 </div>
                 <div className="col-span-1">
@@ -468,11 +468,19 @@ const WritePost = () => {
               <Typography variant="h6" color="blue-gray" className="-mb-3">
                 Title
               </Typography>
+              {/* <JoditEditor
+                ref={null}
+                value={title}
+                config={config}
+                onBlur={(newContent) => {
+                  setTitle(prev=>newContent);
+                }}
+              /> */}
               <Input
                 required
                 value={title}
                 onChange={(e) => {
-                  setTitle(e.target.value);
+                  setTitle(prev=>e.target.value);
                 }}
                 size="lg"
                 placeholder="Write a title"
@@ -487,12 +495,13 @@ const WritePost = () => {
                 Post content
               </Typography>
               <JoditEditor
-                ref={null}
+                ref={editor}
                 value={content}
                 config={config}
                 onBlur={(newContent) => {
-                  setContent(newContent);
+                  setContent(prev=>newContent);
                 }}
+                onChange={(newContent) => {}}
               />
               <Checkbox
                 label="Poll"
@@ -700,7 +709,7 @@ const WritePost = () => {
                   type="submit"
                   className="rounded-md"
                 >
-                  {isPending?"Posting...":"Post Comment"}
+                  {isPending?"Posting...":"Post the post"}
                 </Button>
               </div>
             </div>

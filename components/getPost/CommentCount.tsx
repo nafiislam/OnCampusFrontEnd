@@ -32,7 +32,7 @@ export default function CommentCount({type,cid=""}: {type: string,cid?:string}) 
   const config =
   {
     readonly: false,
-    autofocus: true,
+    autofocus: false,
     useSearch: false,
     toolbarSticky: false,
     toolbarAdaptive: false,
