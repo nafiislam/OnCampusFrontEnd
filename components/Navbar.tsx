@@ -96,6 +96,19 @@ export function NavbarDark() {
             Search
           </Button>
         </div>
+        <div className="relative flex w-full gap-2 md:w-max ml-8">
+          <Link href={"/writePost"}>
+            <Button
+              size="sm"
+              color="white"
+              className=" right-1 top-1 rounded"
+              placeholder={undefined}
+            >
+              write a post
+            </Button>
+          </Link>
+        </div>
+
         <div className="ml-auto flex gap-8 md:mr-4">
           <NotificationsMenu />
 
