@@ -32,7 +32,9 @@ import Link from "next/link";
 export function SidebarWithContentSeparator() {
   const [open, setOpen] = React.useState(0);
   const { data: session, status } = useSession();
-  
+
+  const [isAdmin, setIsAdmin] = React.useState(false);
+
   useEffect(() => {
     if (
       status != "loading" &&
@@ -41,18 +43,26 @@ export function SidebarWithContentSeparator() {
     ) {
       signOut({ callbackUrl: "/" });
     }
+    console.log(session?.roles);
+    if (session?.roles.includes("admin")) {
+      setIsAdmin(true);
+    }
   }, [session, status]);
 
   if (!session) {
-    return (<>
-    <Card
-      placeholder={""}
-      className="h-[calc(130vh-2rem)] w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/2"
-    ><></></Card>
-    </>);
+    return (
+      <>
+        <Card
+          placeholder={""}
+          className="h-[calc(130vh-2rem)] w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/2"
+        >
+          <></>
+        </Card>
+      </>
+    );
   }
 
-
+  
 
   const handleOpen = (value: React.SetStateAction<number>) => {
     setOpen(open === value ? 0 : value);
@@ -101,7 +111,7 @@ export function SidebarWithContentSeparator() {
           </ListItem>
           <AccordionBody className="py-1 pl-2">
             <List placeholder={""} className="p-0">
-            <Link href="/General/all">
+              <Link href="/General/all">
                 <ListItem placeholder={""}>
                   <ListItemPrefix placeholder={""}>
                     <ChatBubbleBottomCenterTextIcon
@@ -198,7 +208,7 @@ export function SidebarWithContentSeparator() {
           </ListItem>
           <AccordionBody className="py-1 pl-2">
             <List className="p-0" placeholder={undefined}>
-            <Link href="/Batch/all">
+              <Link href="/Batch/all">
                 <ListItem placeholder={undefined}>
                   <ListItemPrefix placeholder={undefined}>
                     <ChatBubbleBottomCenterTextIcon
@@ -295,7 +305,7 @@ export function SidebarWithContentSeparator() {
           </ListItem>
           <AccordionBody className="py-1 pl-2">
             <List className="p-0" placeholder={undefined}>
-            <Link href="/Dept/all">
+              <Link href="/Dept/all">
                 <ListItem placeholder={undefined}>
                   <ListItemPrefix placeholder={undefined}>
                     <ChatBubbleBottomCenterTextIcon
@@ -392,7 +402,7 @@ export function SidebarWithContentSeparator() {
           </ListItem>
           <AccordionBody className="py-1 pl-2">
             <List className="p-0" placeholder={undefined}>
-            <Link href="/BatchDept/all">
+              <Link href="/BatchDept/all">
                 <ListItem placeholder={undefined}>
                   <ListItemPrefix placeholder={undefined}>
                     <ChatBubbleBottomCenterTextIcon
@@ -599,6 +609,68 @@ export function SidebarWithContentSeparator() {
             </List>
           </AccordionBody>
         </Accordion>
+
+       {isAdmin?(<Accordion
+          open={open === 8}
+          icon={
+            <ChevronRightIcon
+              strokeWidth={2.5}
+              className={`mx-auto h-4 w-4 transition-transform ${
+                open === 8 ? "rotate-90" : ""
+              }`}
+            />
+          }
+          placeholder={undefined}
+        >
+          <ListItem
+            className="p-0"
+            selected={open === 8}
+            placeholder={undefined}
+          >
+            <AccordionHeader
+              onClick={() => handleOpen(8)}
+              className="border-b-0 p-3"
+              placeholder={undefined}
+            >
+              <ListItemPrefix placeholder={undefined}>
+                <BookOpenIcon className="h-5 w-5" />
+              </ListItemPrefix>
+              <Typography
+                color="blue-gray"
+                className="mr-auto font-normal"
+                placeholder={undefined}
+              >
+                Admin
+              </Typography>
+            </AccordionHeader>
+          </ListItem>
+          <AccordionBody className="py-1 pl-2">
+            <List className="p-0" placeholder={undefined}>
+              <Link href="/admin/createStudent">
+                <ListItem placeholder={undefined}>
+                  <ListItemPrefix placeholder={undefined}>
+                    <ChatBubbleBottomCenterTextIcon
+                      strokeWidth={2}
+                      className="h-4 w-5"
+                    />
+                  </ListItemPrefix>
+                  Create New Student
+                </ListItem>
+              </Link>
+              <Link href="/admin/createClub">
+                <ListItem placeholder={undefined}>
+                  <ListItemPrefix placeholder={undefined}>
+                    <ChatBubbleBottomCenterTextIcon
+                      strokeWidth={2}
+                      className="h-4 w-5"
+                    />
+                  </ListItemPrefix>
+                  Create New Club
+                </ListItem>
+              </Link>
+            </List>
+          </AccordionBody>
+        </Accordion>):""} 
       </List>
     </Card>
   );
