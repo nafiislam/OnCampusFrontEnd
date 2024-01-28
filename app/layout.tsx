@@ -6,7 +6,6 @@ import { ThemeProvider } from "../components/Mat_tail_export";
 import { SidebarWithContentSeparator } from "../components/sidebar";
 import { NavbarDark } from "../components/Navbar";
 import SessionProviderWrapper from "@/utils/sessionProviderWrapper";
-import Login from "../components/Login";
 
 const inter = Inter({ subsets: ["latin"] });
 
