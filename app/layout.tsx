@@ -6,7 +6,7 @@ import { ThemeProvider } from "../components/Mat_tail_export";
 import { SidebarWithContentSeparator } from "../components/sidebar";
 import { NavbarDark } from "../components/Navbar";
 import SessionProviderWrapper from "@/utils/sessionProviderWrapper";
-
+import { getAccessToken } from '@/utils/sessionTokenAccessor'
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
@@ -14,30 +14,38 @@ export const metadata = {
   description: "Once a Buetian, always a Buetian",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const token = await getAccessToken();
   return (
     <SessionProviderWrapper>
       <html lang="en">
         <ThemeProvider>
           <body className={inter.className}>
-            <div className="m-4">
-              <NavbarDark />
-            </div>
-            <div className="grid grid-cols-6 gap-1">
-              <div className="col-span-1">
-                <SidebarWithContentSeparator />
+            {token ? (
+              <div className="m-4">
+                <NavbarDark />
+                <div className="grid grid-cols-6 gap-1">
+                  <div className="col-span-1">
+                    <SidebarWithContentSeparator />
+                  </div>
+                  <div className="col-span-5">
+                    <EdgeStoreProvider>{children}</EdgeStoreProvider>
+                  </div>
+                </div>
               </div>
-              <div className="col-span-5">
+            ) : (
+              <div>
                 <EdgeStoreProvider>{children}</EdgeStoreProvider>
               </div>
-            </div>
+            )}
           </body>
         </ThemeProvider>
       </html>
     </SessionProviderWrapper>
   );
 }
+

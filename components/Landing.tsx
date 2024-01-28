@@ -7,7 +7,7 @@ import {
   CardHeader,
   Typography,
 } from "@material-tailwind/react";
-
+import { useSession, signIn, signOut } from "next-auth/react";
 export default function Landing() {
   return (
     <div>
@@ -24,7 +24,8 @@ export default function Landing() {
                 A Collaborative platform for multiple modules like forum, cleb,
                 event, notices and so on
               </p>
-              <button className="m-12 mb-40 hover:underline bg-white text-gray-800 font-bold rounded-full py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out">
+              <button className="m-12 mb-40 hover:underline bg-white text-gray-800 font-bold rounded-full py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out"
+              onClick={() => signIn("keycloak")}>
                 Get Started
               </button>
             </div>
