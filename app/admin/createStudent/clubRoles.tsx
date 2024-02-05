@@ -1,6 +1,6 @@
 import React from "react";
 import { PlusCircleIcon, MinusCircleIcon } from "@heroicons/react/24/outline";
-
+import AlertCustomCloseIcon from "@/components/alert";
 import {
     Card,
     CardHeader,
@@ -13,13 +13,59 @@ import {
     Button
 } from "@material-tailwind/react";
 
-
+import { useEffect } from "react";
+import GET from "@/server_actions/GET";
 
 export default function ClubRoleComponent({ state, setState, clubRoles, setClubRoles }:
     { state: number, setState: React.Dispatch<React.SetStateAction<number>>, clubRoles: [], setClubRoles: React.Dispatch<React.SetStateAction<any>> }) {
 
     const [selectedClub, setSelectedClub] = React.useState("");
     const [selectedRole, setSelectedRole] = React.useState("");
+
+    const [availableClubRoles, setAvailableClubRoles] = React.useState([]);
+    const [availableClubs, setAvailableClubs] = React.useState([]);
+    const [message, setMessage] = React.useState("");
+    const [showAlert, setShowAlert] = React.useState(false);
+
+    useEffect(() => {
+        const fetchData = async (path: string) => {
+            try {
+                // Your asynchronous code here
+                const result = await GET(path);
+                if (result === null) {
+                    throw new Error("Error fetching data");
+                }
+                return {
+                    data: result,
+                    success: true
+                };
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                setMessage("Error fetching data: " + error);
+                setShowAlert(true);
+                return {
+                    data: [],
+                    success: false
+                };
+            }
+        };
+
+        fetchData('user/admin/getClubRoles').then(res => {
+            if (!res.success) {
+                return;
+            }
+
+            setAvailableClubRoles(res.data);
+        });
+
+        fetchData('user/admin/getClubs').then(res => {
+            if (!res.success) {
+                return;
+            }
+
+            setAvailableClubs(res.data);
+        })
+    }, []);
 
     const addNewClubRole = () => {
         console.log(selectedClub, selectedRole);
@@ -126,20 +172,20 @@ export default function ClubRoleComponent({ state, setState, clubRoles, setClubR
                         <tr key={"addNewClubRole"}>
                             <td className="p-4 border-b border-blue-gray-50">
                                 <div className="flex flex-col">
-                                    <Select variant="outlined" color="teal" label="Select Club" onChange={(e) => setSelectedClub(e)} value={selectedClub}>
-                                        <Option value="Buet Gaming Club">Buet Gaming Club</Option>
-                                        <Option value="Buet Chess Club">Buet Chess Club</Option>
+                                    <Select variant="outlined" color="teal" label="Select Club" onChange={(e) => setSelectedClub(e)} >
+                                        {availableClubs.map((club, index) => {
+                                            return (<Option key={index} value={club.name}>{club.name}</Option>)
+                                        })}
 
                                     </Select>
                                 </div>
                             </td>
                             <td className="p-4 border-b border-blue-gray-50">
                                 <div className="flex flex-col">
-                                    <Select variant="outlined" color="teal" label="Select Role" onChange={(e) => setSelectedRole(e)} value={selectedRole}>
-                                        <Option value="President">President</Option>
-                                        <Option value="Vice President">Vice President</Option>
-                                        <Option value="General Secretary">General Secretary</Option>
-                                        <Option value="Member">Member</Option>
+                                    <Select variant="outlined" color="teal" label="Select Role" onChange={(e) => setSelectedRole(e)} >
+                                        {availableClubRoles.map((role, index) => {
+                                            return <Option key={index} value={role}>{role.replace(/_/g, ' ')}</Option>
+                                        })}
                                     </Select>
                                 </div>
                             </td>
@@ -158,6 +204,8 @@ export default function ClubRoleComponent({ state, setState, clubRoles, setClubR
                     <Button color="black" onClick={createNewStudent}>Create</Button>
                 </div>
             </CardBody>
+            {showAlert && <AlertCustomCloseIcon message={message} setMessage={setMessage} setShowAlert={setShowAlert} />}
+
         </Card >
     );
 

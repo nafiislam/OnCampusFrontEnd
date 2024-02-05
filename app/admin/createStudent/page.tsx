@@ -10,7 +10,7 @@ import AlertCustomCloseIcon from "@/components/alert";
 export default function CreateStudentPage() {
   const [state, setState] = useState(1);
   const [clubRoles, setClubRoles] = useState([]); // [clubName, role]
-  const [studentInfo, setStudentInfo] = useState({ name: "", id: "", department: "", batch: "", session: "" });
+  const [studentInfo, setStudentInfo] = useState({ name: "", email: "", department: "", batch: "", session: "" });
 
   const [showAlert, setShowAlert] = useState(false);
   const [message, setMessage] = useState("");
@@ -31,7 +31,7 @@ export default function CreateStudentPage() {
         } finally {
           setState(1);
           setClubRoles([]);
-          setStudentInfo({ name: "", id: "", department: "", batch: "", session: "" });
+          setStudentInfo({ name: "", email: "", department: "", batch: "", session: "" });
         }
       }
       ff();

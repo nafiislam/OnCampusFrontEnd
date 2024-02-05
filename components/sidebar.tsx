@@ -62,7 +62,7 @@ export function SidebarWithContentSeparator() {
     );
   }
 
-  
+
 
   const handleOpen = (value: React.SetStateAction<number>) => {
     setOpen(open === value ? 0 : value);
@@ -85,9 +85,8 @@ export function SidebarWithContentSeparator() {
           icon={
             <ChevronRightIcon
               strokeWidth={2.5}
-              className={`mx-auto h-4 w-4 transition-transform ${
-                open === 1 ? "rotate-90" : ""
-              }`}
+              className={`mx-auto h-4 w-4 transition-transform ${open === 1 ? "rotate-90" : ""
+                }`}
             />
           }
         >
@@ -177,9 +176,8 @@ export function SidebarWithContentSeparator() {
           icon={
             <ChevronRightIcon
               strokeWidth={2.5}
-              className={`mx-auto h-4 w-4 transition-transform ${
-                open === 2 ? "rotate-90" : ""
-              }`}
+              className={`mx-auto h-4 w-4 transition-transform ${open === 2 ? "rotate-90" : ""
+                }`}
             />
           }
           placeholder={undefined}
@@ -274,9 +272,8 @@ export function SidebarWithContentSeparator() {
           icon={
             <ChevronRightIcon
               strokeWidth={2.5}
-              className={`mx-auto h-4 w-4 transition-transform ${
-                open === 3 ? "rotate-90" : ""
-              }`}
+              className={`mx-auto h-4 w-4 transition-transform ${open === 3 ? "rotate-90" : ""
+                }`}
             />
           }
           placeholder={undefined}
@@ -371,9 +368,8 @@ export function SidebarWithContentSeparator() {
           icon={
             <ChevronRightIcon
               strokeWidth={2.5}
-              className={`mx-auto h-4 w-4 transition-transform ${
-                open === 4 ? "rotate-90" : ""
-              }`}
+              className={`mx-auto h-4 w-4 transition-transform ${open === 4 ? "rotate-90" : ""
+                }`}
             />
           }
           placeholder={undefined}
@@ -468,9 +464,8 @@ export function SidebarWithContentSeparator() {
           icon={
             <ChevronRightIcon
               strokeWidth={2.5}
-              className={`mx-auto h-4 w-4 transition-transform ${
-                open === 5 ? "rotate-90" : ""
-              }`}
+              className={`mx-auto h-4 w-4 transition-transform ${open === 5 ? "rotate-90" : ""
+                }`}
             />
           }
           placeholder={undefined}
@@ -517,9 +512,8 @@ export function SidebarWithContentSeparator() {
           icon={
             <ChevronRightIcon
               strokeWidth={2.5}
-              className={`mx-auto h-4 w-4 transition-transform ${
-                open === 6 ? "rotate-90" : ""
-              }`}
+              className={`mx-auto h-4 w-4 transition-transform ${open === 6 ? "rotate-90" : ""
+                }`}
             />
           }
           placeholder={undefined}
@@ -566,9 +560,8 @@ export function SidebarWithContentSeparator() {
           icon={
             <ChevronRightIcon
               strokeWidth={2.5}
-              className={`mx-auto h-4 w-4 transition-transform ${
-                open === 7 ? "rotate-90" : ""
-              }`}
+              className={`mx-auto h-4 w-4 transition-transform ${open === 7 ? "rotate-90" : ""
+                }`}
             />
           }
           placeholder={undefined}
@@ -610,14 +603,13 @@ export function SidebarWithContentSeparator() {
           </AccordionBody>
         </Accordion>
 
-       {isAdmin?(<Accordion
+        {isAdmin ? (<Accordion
           open={open === 8}
           icon={
             <ChevronRightIcon
               strokeWidth={2.5}
-              className={`mx-auto h-4 w-4 transition-transform ${
-                open === 8 ? "rotate-90" : ""
-              }`}
+              className={`mx-auto h-4 w-4 transition-transform ${open === 8 ? "rotate-90" : ""
+                }`}
             />
           }
           placeholder={undefined}
@@ -668,9 +660,20 @@ export function SidebarWithContentSeparator() {
                   Create New Club
                 </ListItem>
               </Link>
+              <Link href="/admin/createBatch">
+                <ListItem placeholder={undefined}>
+                  <ListItemPrefix placeholder={undefined}>
+                    <ChatBubbleBottomCenterTextIcon
+                      strokeWidth={2}
+                      className="h-4 w-5"
+                    />
+                  </ListItemPrefix>
+                  Create New Batch
+                </ListItem>
+              </Link>
             </List>
           </AccordionBody>
-        </Accordion>):""} 
+        </Accordion>) : ""}
       </List>
     </Card>
   );
