@@ -14,7 +14,7 @@ export default function BreadcrumbsDefault({
             <a href="/" className="opacity-60">
               Posts
             </a>
-            <a href={"/"+type+"/All"} className="opacity-60">
+            <a href={"/"} className="opacity-60">
               {type}
             </a>
             {tags.map((tag,index) => (

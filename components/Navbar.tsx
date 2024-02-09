@@ -18,8 +18,9 @@ import Link from "next/link";
 import React from "react";
 import { useEffect } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
+import GET from "@/server_actions/GET";
 
-export function NavbarDark() {
+export function NavbarDark({user}: {user: any}) {
   const { data: session, status } = useSession();
   useEffect(() => {
     if (
@@ -29,8 +30,9 @@ export function NavbarDark() {
     ) {
       signOut({ callbackUrl: "/" });
     }
-  }, [session, status]);
 
+  }, [session, status]);
+  
   if (!session) {
     return (
       <Navbar
@@ -59,6 +61,7 @@ export function NavbarDark() {
       </Navbar>
     );
   }
+
   return (
     <Navbar
       variant="gradient"
@@ -112,7 +115,7 @@ export function NavbarDark() {
         <div className="ml-auto flex gap-8 md:mr-4">
           <NotificationsMenu />
 
-          <ProfileMenu />
+          <ProfileMenu user={user}/>
         </div>
       </div>
     </Navbar>

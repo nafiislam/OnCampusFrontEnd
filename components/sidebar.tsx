@@ -160,14 +160,6 @@ export function SidebarWithContentSeparator() {
                   Product Posts
                 </ListItem>
               </Link>
-              <Link href="/General/TECH">
-                <ListItem placeholder={undefined}>
-                  <ListItemPrefix placeholder={undefined}>
-                    <ComputerDesktopIcon strokeWidth={2} className="h-4 w-5" />
-                  </ListItemPrefix>
-                  Tech talks
-                </ListItem>
-              </Link>
             </List>
           </AccordionBody>
         </Accordion>
@@ -255,14 +247,6 @@ export function SidebarWithContentSeparator() {
                     <ShoppingBagIcon strokeWidth={2} className="h-4 w-5" />
                   </ListItemPrefix>
                   Product Posts
-                </ListItem>
-              </Link>
-              <Link href="/Batch/TECH">
-                <ListItem placeholder={undefined}>
-                  <ListItemPrefix placeholder={undefined}>
-                    <ComputerDesktopIcon strokeWidth={2} className="h-4 w-5" />
-                  </ListItemPrefix>
-                  Tech talks
                 </ListItem>
               </Link>
             </List>
@@ -354,14 +338,6 @@ export function SidebarWithContentSeparator() {
                   Product Posts
                 </ListItem>
               </Link>
-              <Link href="/Dept/TECH">
-                <ListItem placeholder={undefined}>
-                  <ListItemPrefix placeholder={undefined}>
-                    <ComputerDesktopIcon strokeWidth={2} className="h-4 w-5" />
-                  </ListItemPrefix>
-                  Tech talks
-                </ListItem>
-              </Link>
             </List>
           </AccordionBody>
         </Accordion>
@@ -449,14 +425,6 @@ export function SidebarWithContentSeparator() {
                     <ShoppingBagIcon strokeWidth={2} className="h-4 w-5" />
                   </ListItemPrefix>
                   Product Posts
-                </ListItem>
-              </Link>
-              <Link href="/BatchDept/TECH">
-                <ListItem placeholder={undefined}>
-                  <ListItemPrefix placeholder={undefined}>
-                    <ComputerDesktopIcon strokeWidth={2} className="h-4 w-5" />
-                  </ListItemPrefix>
-                  Tech talks
                 </ListItem>
               </Link>
             </List>

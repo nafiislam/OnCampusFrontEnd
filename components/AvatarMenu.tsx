@@ -11,7 +11,7 @@ import keycloakSessionLogOut from "../client_actions/logout";
 import { useEffect } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
 
-export function ProfileMenu() {
+export function ProfileMenu({user}: {user: any}) {
   return (
     <Menu>
       <MenuHandler>
@@ -22,7 +22,7 @@ export function ProfileMenu() {
             variant="circular"
             alt="tania andrew"
             className="cursor-pointer"
-            src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80"
+            src={user?.profilePicture!=null?user.profilePicture:"https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80"}
             placeholder={undefined}
           />
 
@@ -32,7 +32,7 @@ export function ProfileMenu() {
             color="white"
             className="font-normal"
           >
-            Nahin Khan
+            {user?.name}
           </Typography>
         </div>
       </MenuHandler>
@@ -114,3 +114,21 @@ export function ProfileMenu() {
     </Menu>
   );
 }
+
+// export async function getServerSideProps(context) {
+//   let userData = 'dgdg';
+
+//   try {
+//     // Fetch user data using the GET function
+//     // userData = await GET("user/getUser");
+//   } catch (error) {
+//     console.error("Error fetching user data:", error);
+//   }
+
+//   // Pass the fetched data as props to the component
+//   return {
+//     props: {
+//       userData,
+//     },
+//   };
+// }

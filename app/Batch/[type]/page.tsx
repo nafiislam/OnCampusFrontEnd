@@ -12,9 +12,10 @@ const Batch = async ({ params }: { params: { type: string } }) => {
     const { posts, user } = await POST("post/getPosts/Batch/", {
         type: params.type,
     });
+
     return (
         <>
-          <AllPosts posts={posts} user={user} />
+          <AllPosts posts={posts} user={user} type={params.type}/>
         </>
     );
 }

@@ -16,7 +16,7 @@ const Dept = async ({ params }: { params: { type: string } }) => {
     //   console.log(user);
       return (
         <>
-          <AllPosts posts={posts} user={user} />
+          <AllPosts posts={posts} user={user} type={params.type}/>
         </>
       );
 }

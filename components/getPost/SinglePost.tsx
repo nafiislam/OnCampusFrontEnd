@@ -14,6 +14,9 @@ import Saveicon from "./save";
 import PollList from "./poll";
 import { comment } from "postcss";
 import { useState, useContext, createContext } from "react";
+import BloodPost from "./BloodPost";
+import TuitionPost from "./TuitionPost";
+import ProductInfo from "./ProductInfo";
 
 function processNestedComments(comments: any[]) {
   let groupedComments: any = {};
@@ -41,7 +44,7 @@ export default function PostBody({ post }: { post: any }) {
   post.createdAt = new Date(post.createdAt).toLocaleString();
   const anonymous = {
     profilePicture:
-      "https://files.edgestore.dev/fqqz8b7kjd68ccue/myPublicFiles/_public/94320c6c-0c88-422b-887e-0d2786e15622.png",
+    "https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80",
     name: "Anonymous",
     id: "546254226564",
     email: "Anonymous@buet.ac.bd",
@@ -67,6 +70,10 @@ export default function PostBody({ post }: { post: any }) {
           </span>
         </div>
 
+        {post.bloodInfo?<BloodPost blood={post.bloodInfo}/>: ""}
+        {post.tuitionInfo?<TuitionPost tuition={post.tuitionInfo}/>: ""}
+        {post.productInfo?<ProductInfo product={post.productInfo}/>: ""}
+
         <PosText title={post.title} content={post.content} />
         <FileList files={post.attachments} fileNames={post.attachmentNames} />
 
@@ -77,6 +84,8 @@ export default function PostBody({ post }: { post: any }) {
         />
 
         {post.isPoll ? <PollList options={post.options} /> : ""}
+
+        
 
         <div className="flex flex-row gap-4 justify-end my-8">
           <AvatarStack users={post.viewedBy}/>

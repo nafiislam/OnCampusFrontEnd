@@ -14,7 +14,7 @@ const Batch_Dept = async ({ params }: { params: { type: string } }) => {
     });
     return (
         <>
-          <AllPosts posts={posts} user={user} />
+          <AllPosts posts={posts} user={user} type={params.type}/>
         </>
     );
 }
