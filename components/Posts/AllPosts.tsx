@@ -9,7 +9,7 @@ export default function AllPosts() {
       <div className="flex flex-col gap-4 w-11/12">
         <AvatarImageText />
         <div className="flex flex-row gap-2">
-          <div className="text-red-700 ml-16 text-sm">
+          <div className="text-red-700 hover:text-blue-700 ml-16 text-sm flex flex-row gap-2">
             <a href="#">Blood</a>, <a href="#">General</a>
           </div>
           <DateTime />

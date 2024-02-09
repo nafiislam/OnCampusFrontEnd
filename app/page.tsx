@@ -1,15 +1,15 @@
-import AllPosts from "@/components/AllPosts";
-import Button1 from "../components/Button1";
-import PostBody from "@/components/SinglePost";
-import React from "react";
+import MultiSelectUltra from "@/components/Posts/MultiselectUltra";
+import ScheduLar from "@/components/Posts/schedular";
 
 export default function Home() {
- return(
-  <div>
-    {/* <PostBody /> */}
-    <AllPosts />
-  </div>
- )
+  return (
+    <div className="flex flex-col gap-y-12">
+      {/* <PostBody /> */}
+      {/* <AllPosts />/ */}
+      {/* <Landing /> */}
+      <MultiSelectUltra />
+      <ScheduLar />
+      {/* <ScrollSpy /> */}
+    </div>
+  );
 }
-
-

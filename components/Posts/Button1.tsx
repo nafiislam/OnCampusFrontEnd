@@ -1,4 +1,4 @@
-import { Button } from "@/components/Mat_tail_export";
+import { Button } from "@/components/Posts/Mat_tail_export";
 
 export default function Button1() {
   return (

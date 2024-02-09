@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import React from "react";
-import { ThemeProvider } from "../components/Mat_tail_export";
-import { NavbarDark } from "../components/Navbar";
-import { SidebarWithContentSeparator } from "../components/sidebar";
+import { ThemeProvider } from "../components/Posts/Mat_tail_export";
+import { NavbarDark } from "../components/Posts/Navbar";
+import { SidebarWithContentSeparator } from "../components/Posts/sidebar";
 import "./globals.css";
+import Footer from "../components/Footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -31,6 +32,7 @@ export default function RootLayout({
             </div>
             <div className="mt-8 flex-grow overflow-y-scroll">{children}</div>
           </div>
+          <Footer />
         </body>
       </ThemeProvider>
     </html>

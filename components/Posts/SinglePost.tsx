@@ -1,18 +1,17 @@
 "use client";
 
-import BreadcrumbsDefault from "@/components/BreadCrumbs";
+import BreadcrumbsDefault from "@/components/Posts/BreadCrumbs";
 import AvatarImageText from "./AvatarImageText";
 import AvatarStack from "./AvatarStack";
 import CommentCount from "./CommentCount";
 import DateTime from "./DateTime";
 import ImageGallery from "./Gallery";
-import PosText from "./Posttext";
 import { FileList } from "./PostAttachments";
+import PosText from "./Posttext";
 import Reaction from "./Reaction";
 import CommentBody from "./SingleComment";
-import Saveicon from "./save";
-import PollLis from "./poll";
 import PollList from "./poll";
+import Saveicon from "./save";
 
 export default function PostBody() {
   return (
@@ -48,13 +47,13 @@ export default function PostBody() {
       <hr className="my-2 border-blue-gray-900" />
 
       <div className="flex flex-col gap-8 w-full">
-        <CommentBody  />
+        <CommentBody />
         <CommentBody />
         <CommentBody />
         <div className="flex flex-row gap-10 group relative">
           <div className="before:absolute before:content-[''] before:w-[0.05rem] before:bg-blue-gray-100 before:left-0 before:top-0 before:bottom-0 before:h-full group-hover:h-auto"></div>
           <div>
-            <CommentBody/>
+            <CommentBody />
             <CommentBody />
             <div className="flex flex-row gap-10 group relative">
               <div className="before:absolute before:content-[''] before:w-[0.05rem] before:bg-blue-gray-100 before:left-0 before:top-0 before:bottom-0 before:h-full group-hover:h-auto"></div>
@@ -64,9 +63,9 @@ export default function PostBody() {
               </div>
             </div>
             <CommentBody />
-          </div> 
-        </div> 
-         <CommentBody />
+          </div>
+        </div>
+        <CommentBody />
       </div>
     </div>
   );

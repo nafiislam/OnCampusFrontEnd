@@ -33,7 +33,7 @@ function DownLoadIcon() {
 
 export function FileList() {
   return (
-    <Card className="w-full my-8 border-2" placeholder={undefined}>
+    // <Card className="w-full my-8 border-2" placeholder={undefined}>
       <List placeholder={undefined}>
         <Link href={"http://www.google.com"}>
           <ListItem
@@ -90,6 +90,6 @@ export function FileList() {
           </ListItem>
         </Link>
       </List>
-    </Card>
+    // </Card>
   );
 }
