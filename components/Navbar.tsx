@@ -79,7 +79,7 @@ export function NavbarDark({user}: {user: any}) {
             className="m-0 p-0 rounded-full"
           />
         </Link>
-        <div className="relative flex w-full gap-2 md:w-max ml-8">
+        {/* <div className="relative flex w-full gap-2 md:w-max ml-8">
           <Input
             type="search"
             color="white"
@@ -98,7 +98,7 @@ export function NavbarDark({user}: {user: any}) {
           >
             Search
           </Button>
-        </div>
+        </div> */}
         <div className="relative flex w-full gap-2 md:w-max ml-8">
           <Link href={"/writePost"}>
             <Button

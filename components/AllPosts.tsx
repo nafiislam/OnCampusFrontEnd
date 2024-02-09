@@ -9,9 +9,15 @@ import {
   Option,
   Input,
 } from "@material-tailwind/react";
+
+import { LockClosedIcon } from "@heroicons/react/24/outline";
+
 import { ReactSearchAutocomplete } from "react-search-autocomplete";
 import { useEffect, useState } from "react";
 import { set } from "zod";
+import BloodPost from "./getPost/BloodPost";
+import TuitionPost from "./getPost/TuitionPost";
+import ProductInfo from "./getPost/ProductInfo";
 export default function AllPosts({
   posts,
   user,
@@ -39,6 +45,7 @@ export default function AllPosts({
   const [gender, setGender] = useState("");
 
   const [title, setTitle] = useState("");
+  const [status, setStatus] = useState("");
 
   const filteredHospitals: string[] = [];
   const filteredLocation: string[] = [];
@@ -66,7 +73,8 @@ export default function AllPosts({
     setAllPosts((prev) =>
       posts.filter(
         (post) =>
-          post.title ===(title === "" ? post.title : title) &&
+          post.title === (title === "" ? post.title : title) &&
+          post.open === (status === "" ? post.open : (status=="Open"?true:false)) &&
           post.bloodInfo.bloodGroup ===
             (bloodGroup === "" ? post.bloodInfo.bloodGroup : bloodGroup) &&
           post.bloodInfo.hospital ===
@@ -82,7 +90,8 @@ export default function AllPosts({
     setAllPosts((prev) =>
       posts.filter(
         (post) =>
-          post.title ===(title === "" ? post.title : title) &&
+          post.title === (title === "" ? post.title : title) &&
+          post.open === (status === "" ? post.open : (status=="Open"?true:false)) &&
           post.bloodInfo.bloodGroup ===
             (bloodGroup === "" ? post.bloodInfo.bloodGroup : bloodGroup) &&
           post.bloodInfo.hospital ===
@@ -99,16 +108,17 @@ export default function AllPosts({
     setAllPosts((prev) =>
       posts.filter(
         (post) =>
-          post.title ===
-            (newTitle === "" ? post.title : newTitle) &&
-            (
-              (post.tags[0]=="BLOOD" && (post.bloodInfo.bloodGroup ===
-                (bloodGroup === "" ? post.bloodInfo.bloodGroup : bloodGroup) &&
-              post.bloodInfo.hospital ===
-                (hospital === "" ? post.bloodInfo.hospital : hospital) &&
-              new Date(post.bloodInfo.time).getTime() >=
-                new Date(time === "" ? post.bloodInfo.time : time).getTime()))||
-              (post.tags[0]=="TUITION" && (post.tuitionInfo.genderPreference ===
+          post.title === (newTitle === "" ? post.title : newTitle) &&
+          post.open === (status === "" ? post.open : (status=="Open"?true:false)) &&
+          ((post.tags[0] == "BLOOD" &&
+            post.bloodInfo.bloodGroup ===
+              (bloodGroup === "" ? post.bloodInfo.bloodGroup : bloodGroup) &&
+            post.bloodInfo.hospital ===
+              (hospital === "" ? post.bloodInfo.hospital : hospital) &&
+            new Date(post.bloodInfo.time).getTime() >=
+              new Date(time === "" ? post.bloodInfo.time : time).getTime()) ||
+            (post.tags[0] == "TUITION" &&
+              post.tuitionInfo.genderPreference ===
                 (genderPreference === ""
                   ? post.tuitionInfo.genderPreference
                   : genderPreference) &&
@@ -123,14 +133,13 @@ export default function AllPosts({
               post.tuitionInfo.gender ===
                 (gender === "" ? post.tuitionInfo.gender : gender) &&
               post.tuitionInfo.salary >= Math.round(lowSalary) * 500 &&
-              post.tuitionInfo.salary <= Math.round(highSalary) * 500)) ||
-              (post.tags[0]=="PRODUCT" && (post.productInfo.price >=
-                Math.round(lowPrice) * 1000 &&
+              post.tuitionInfo.salary <= Math.round(highSalary) * 500) ||
+            (post.tags[0] == "PRODUCT" &&
+              post.productInfo.price >= Math.round(lowPrice) * 1000 &&
               post.productInfo.price <= Math.round(highPrice) * 1000 &&
               post.productInfo.type ===
-                (ptype === "" ? post.productInfo.type : ptype))) ||
-              (post.tags[0]=="DISCUSSION")
-            )
+                (ptype === "" ? post.productInfo.type : ptype)) ||
+            post.tags[0] == "DISCUSSION")
       )
     );
   };
@@ -140,37 +149,38 @@ export default function AllPosts({
     setAllPosts((prev) =>
       posts.filter(
         (post) =>
-          post.title ===(value === "" ? post.title : value) &&
-          (
-            (post.tags[0]=="BLOOD" && (post.bloodInfo.bloodGroup ===
+          post.title === (value === "" ? post.title : value) &&
+          post.open === (status === "" ? post.open : (status=="Open"?true:false)) &&
+          ((post.tags[0] == "BLOOD" &&
+            post.bloodInfo.bloodGroup ===
               (bloodGroup === "" ? post.bloodInfo.bloodGroup : bloodGroup) &&
             post.bloodInfo.hospital ===
               (hospital === "" ? post.bloodInfo.hospital : hospital) &&
             new Date(post.bloodInfo.time).getTime() >=
-              new Date(time === "" ? post.bloodInfo.time : time).getTime()))||
-            (post.tags[0]=="TUITION" && (post.tuitionInfo.genderPreference ===
-              (genderPreference === ""
-                ? post.tuitionInfo.genderPreference
-                : genderPreference) &&
-            post.tuitionInfo.location ===
-              (location === "" ? post.tuitionInfo.location : location) &&
-            post.tuitionInfo.class ===
-              (classs === "" ? post.tuitionInfo.class : classs) &&
-            post.tuitionInfo.subject ===
-              (subject === "" ? post.tuitionInfo.subject : subject) &&
-            post.tuitionInfo.medium ===
-              (medium === "" ? post.tuitionInfo.medium : medium) &&
-            post.tuitionInfo.gender ===
-              (gender === "" ? post.tuitionInfo.gender : gender) &&
-            post.tuitionInfo.salary >= Math.round(lowSalary) * 500 &&
-            post.tuitionInfo.salary <= Math.round(highSalary) * 500)) ||
-            (post.tags[0]=="PRODUCT" && (post.productInfo.price >=
-              Math.round(lowPrice) * 1000 &&
-            post.productInfo.price <= Math.round(highPrice) * 1000 &&
-            post.productInfo.type ===
-              (ptype === "" ? post.productInfo.type : ptype))) ||
-            (post.tags[0]=="DISCUSSION")
-          )
+              new Date(time === "" ? post.bloodInfo.time : time).getTime()) ||
+            (post.tags[0] == "TUITION" &&
+              post.tuitionInfo.genderPreference ===
+                (genderPreference === ""
+                  ? post.tuitionInfo.genderPreference
+                  : genderPreference) &&
+              post.tuitionInfo.location ===
+                (location === "" ? post.tuitionInfo.location : location) &&
+              post.tuitionInfo.class ===
+                (classs === "" ? post.tuitionInfo.class : classs) &&
+              post.tuitionInfo.subject ===
+                (subject === "" ? post.tuitionInfo.subject : subject) &&
+              post.tuitionInfo.medium ===
+                (medium === "" ? post.tuitionInfo.medium : medium) &&
+              post.tuitionInfo.gender ===
+                (gender === "" ? post.tuitionInfo.gender : gender) &&
+              post.tuitionInfo.salary >= Math.round(lowSalary) * 500 &&
+              post.tuitionInfo.salary <= Math.round(highSalary) * 500) ||
+            (post.tags[0] == "PRODUCT" &&
+              post.productInfo.price >= Math.round(lowPrice) * 1000 &&
+              post.productInfo.price <= Math.round(highPrice) * 1000 &&
+              post.productInfo.type ===
+                (ptype === "" ? post.productInfo.type : ptype)) ||
+            post.tags[0] == "DISCUSSION")
       )
     );
   };
@@ -181,7 +191,8 @@ export default function AllPosts({
     setAllPosts((prev) =>
       posts.filter(
         (post) =>
-          post.title ===(title === "" ? post.title : title) &&
+          post.title === (title === "" ? post.title : title) &&
+          post.open === (status === "" ? post.open : (status=="Open"?true:false)) &&
           post.tuitionInfo.genderPreference ===
             (genderPreference === ""
               ? post.tuitionInfo.genderPreference
@@ -207,7 +218,8 @@ export default function AllPosts({
     setAllPosts((prev) =>
       posts.filter(
         (post) =>
-          post.title ===(title === "" ? post.title : title) &&
+          post.title === (title === "" ? post.title : title) &&
+          post.open === (status === "" ? post.open : (status=="Open"?true:false)) &&
           post.tuitionInfo.genderPreference ===
             (genderPreference === ""
               ? post.tuitionInfo.genderPreference
@@ -234,7 +246,8 @@ export default function AllPosts({
     setAllPosts((prev) =>
       posts.filter(
         (post) =>
-          post.title ===(title === "" ? post.title : title) &&
+          post.title === (title === "" ? post.title : title) &&
+          post.open === (status === "" ? post.open : (status=="Open"?true:false)) &&
           post.tuitionInfo.genderPreference ===
             (genderPreference === ""
               ? post.tuitionInfo.genderPreference
@@ -260,7 +273,8 @@ export default function AllPosts({
     setAllPosts((prev) =>
       posts.filter(
         (post) =>
-          post.title ===(title === "" ? post.title : title) &&
+          post.title === (title === "" ? post.title : title) &&
+          post.open === (status === "" ? post.open : (status=="Open"?true:false)) &&
           post.tuitionInfo.genderPreference ===
             (genderPreference === ""
               ? post.tuitionInfo.genderPreference
@@ -287,7 +301,8 @@ export default function AllPosts({
     setAllPosts((prev) =>
       posts.filter(
         (post) =>
-          post.title ===(title === "" ? post.title : title) &&
+          post.title === (title === "" ? post.title : title) &&
+          post.open === (status === "" ? post.open : (status=="Open"?true:false)) &&
           post.tuitionInfo.genderPreference ===
             (genderPreference === ""
               ? post.tuitionInfo.genderPreference
@@ -313,7 +328,8 @@ export default function AllPosts({
     setAllPosts((prev) =>
       posts.filter(
         (post) =>
-          post.title ===(title === "" ? post.title : title) &&
+          post.title === (title === "" ? post.title : title) &&
+          post.open === (status === "" ? post.open : (status=="Open"?true:false)) &&
           post.tuitionInfo.genderPreference ===
             (genderPreference === ""
               ? post.tuitionInfo.genderPreference
@@ -365,6 +381,57 @@ export default function AllPosts({
             autoFocus
           />
         </div>
+        <div className="flex flex-col w-1/2 my-3">
+          <Select
+            variant="static"
+            label="Select status:"
+            value={status}
+            onChange={(e) => {
+              const newStatus = e ?? "";
+              setStatus(newStatus);
+              setAllPosts((prev) =>
+                posts.filter(
+                  (post) =>
+                    post.title === (title === "" ? post.title : title) &&
+                    post.open === (newStatus === "" ? post.open : (newStatus=="Open"?true:false)) &&
+                    ((post.tags[0] == "BLOOD" &&
+                      post.bloodInfo.bloodGroup ===
+                        (bloodGroup === "" ? post.bloodInfo.bloodGroup : bloodGroup) &&
+                      post.bloodInfo.hospital ===
+                        (hospital === "" ? post.bloodInfo.hospital : hospital) &&
+                      new Date(post.bloodInfo.time).getTime() >=
+                        new Date(time === "" ? post.bloodInfo.time : time).getTime()) ||
+                      (post.tags[0] == "TUITION" &&
+                        post.tuitionInfo.genderPreference ===
+                          (genderPreference === ""
+                            ? post.tuitionInfo.genderPreference
+                            : genderPreference) &&
+                        post.tuitionInfo.location ===
+                          (location === "" ? post.tuitionInfo.location : location) &&
+                        post.tuitionInfo.class ===
+                          (classs === "" ? post.tuitionInfo.class : classs) &&
+                        post.tuitionInfo.subject ===
+                          (subject === "" ? post.tuitionInfo.subject : subject) &&
+                        post.tuitionInfo.medium ===
+                          (medium === "" ? post.tuitionInfo.medium : medium) &&
+                        post.tuitionInfo.gender ===
+                          (gender === "" ? post.tuitionInfo.gender : gender) &&
+                        post.tuitionInfo.salary >= Math.round(lowSalary) * 500 &&
+                        post.tuitionInfo.salary <= Math.round(highSalary) * 500) ||
+                      (post.tags[0] == "PRODUCT" &&
+                        post.productInfo.price >= Math.round(lowPrice) * 1000 &&
+                        post.productInfo.price <= Math.round(highPrice) * 1000 &&
+                        post.productInfo.type ===
+                          (ptype === "" ? post.productInfo.type : ptype)) ||
+                      post.tags[0] == "DISCUSSION")
+                )
+              );
+            }}
+          >
+            <Option value="Open">Open</Option>
+            <Option value="Close">Close</Option>
+          </Select>
+        </div>
       </div>
       {type === "PRODUCT" && (
         <>
@@ -382,7 +449,8 @@ export default function AllPosts({
                   setAllPosts(
                     posts.filter(
                       (post) =>
-                        post.title ===(title === "" ? post.title : title) &&
+                        post.title === (title === "" ? post.title : title) &&
+                        post.open === (status === "" ? post.open : (status=="Open"?true:false)) &&
                         post.productInfo.price >=
                           Math.round(newLowPrice) * 1000 &&
                         post.productInfo.price <=
@@ -407,7 +475,8 @@ export default function AllPosts({
                   setAllPosts(
                     posts.filter(
                       (post) =>
-                        post.title ===(title === "" ? post.title : title) &&
+                        post.title === (title === "" ? post.title : title) &&
+                        post.open === (status === "" ? post.open : (status=="Open"?true:false)) &&
                         post.productInfo.price >= Math.round(lowPrice) * 1000 &&
                         post.productInfo.price <=
                           Math.round(newHighPrice) * 1000 &&
@@ -429,7 +498,8 @@ export default function AllPosts({
                   setAllPosts(
                     posts.filter(
                       (post) =>
-                        post.title ===(title === "" ? post.title : title) &&
+                        post.title === (title === "" ? post.title : title) &&
+                        post.open === (status === "" ? post.open : (status=="Open"?true:false)) &&
                         post.productInfo.price >= Math.round(lowPrice) * 1000 &&
                         post.productInfo.price <=
                           Math.round(highPrice) * 1000 &&
@@ -460,7 +530,8 @@ export default function AllPosts({
                   setAllPosts(
                     posts.filter(
                       (post) =>
-                        post.title ===(title === "" ? post.title : title) &&
+                        post.title === (title === "" ? post.title : title) &&
+                        post.open === (status === "" ? post.open : (status=="Open"?true:false)) &&
                         post.bloodInfo.bloodGroup ===
                           (newBloodGroup === ""
                             ? post.bloodInfo.bloodGroup
@@ -500,7 +571,7 @@ export default function AllPosts({
                 onSelect={handleOnSelect}
                 onSearch={(value, results) => {
                   //results = results.filter((result) => result.name.toLowerCase().includes(value.toLowerCase()));
-                  console.log(results);
+                  // console.log(results);
                   handleOnSearch(value);
                 }}
                 maxResults={5}
@@ -521,7 +592,8 @@ export default function AllPosts({
                   setAllPosts(
                     posts.filter(
                       (post) =>
-                        post.title ===(title === "" ? post.title : title) &&
+                        post.title === (title === "" ? post.title : title) &&
+                        post.open === (status === "" ? post.open : (status=="Open"?true:false)) &&
                         post.bloodInfo.bloodGroup ===
                           (bloodGroup === ""
                             ? post.bloodInfo.bloodGroup
@@ -561,7 +633,8 @@ export default function AllPosts({
                   setAllPosts(
                     posts.filter(
                       (post) =>
-                        post.title ===(title === "" ? post.title : title) &&
+                        post.title === (title === "" ? post.title : title) &&
+                        post.open === (status === "" ? post.open : (status=="Open"?true:false)) &&
                         post.tuitionInfo.genderPreference ===
                           newGenderPreference &&
                         post.tuitionInfo.location ===
@@ -656,7 +729,8 @@ export default function AllPosts({
                   setAllPosts(
                     posts.filter(
                       (post) =>
-                        post.title ===(title === "" ? post.title : title) &&
+                        post.title === (title === "" ? post.title : title) &&
+                        post.open === (status === "" ? post.open : (status=="Open"?true:false)) &&
                         post.tuitionInfo.genderPreference ===
                           (genderPreference === ""
                             ? post.tuitionInfo.genderPreference
@@ -699,7 +773,8 @@ export default function AllPosts({
                   setAllPosts(
                     posts.filter(
                       (post) =>
-                        post.title ===(title === "" ? post.title : title) &&
+                        post.title === (title === "" ? post.title : title) &&
+                        post.open === (status === "" ? post.open : (status=="Open"?true:false)) &&
                         post.tuitionInfo.genderPreference ===
                           (genderPreference === ""
                             ? post.tuitionInfo.genderPreference
@@ -744,7 +819,8 @@ export default function AllPosts({
                   setAllPosts(
                     posts.filter(
                       (post) =>
-                        post.title ===(title === "" ? post.title : title) &&
+                        post.title === (title === "" ? post.title : title) &&
+                        post.open === (status === "" ? post.open : (status=="Open"?true:false)) &&
                         post.tuitionInfo.genderPreference ===
                           (genderPreference === ""
                             ? post.tuitionInfo.genderPreference
@@ -784,7 +860,8 @@ export default function AllPosts({
                   setAllPosts(
                     posts.filter(
                       (post) =>
-                        post.title ===(title === "" ? post.title : title) &&
+                        post.title === (title === "" ? post.title : title) &&
+                        post.open === (status === "" ? post.open : (status=="Open"?true:false)) &&
                         post.tuitionInfo.genderPreference ===
                           (genderPreference === ""
                             ? post.tuitionInfo.genderPreference
@@ -833,7 +910,12 @@ export default function AllPosts({
               ))}
             </div>
             <DateTime date={new Date(post.createdAt).toLocaleString()} />
+            {post.open ? "" : <LockClosedIcon className="w-7 h-7" />}
           </div>
+
+          {post.bloodInfo ? <BloodPost blood={post.bloodInfo} /> : ""}
+          {post.tuitionInfo ? <TuitionPost tuition={post.tuitionInfo} /> : ""}
+          {post.productInfo ? <ProductInfo product={post.productInfo} /> : ""}
 
           <PosText title={post.title} content={post.content} />
 

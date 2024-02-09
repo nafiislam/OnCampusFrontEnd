@@ -9,7 +9,6 @@ export default function Auth({ children }) {
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    console.log(session);
     if (
       status != "loading" &&
       session &&
@@ -17,7 +16,6 @@ export default function Auth({ children }) {
     ) {
       signOut({ callbackUrl: "/" });
     }
-    console.log(session?.roles);
     if (session?.roles.includes("admin")) {
       setIsAdmin(true);
     }

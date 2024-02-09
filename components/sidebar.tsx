@@ -43,7 +43,6 @@ export function SidebarWithContentSeparator() {
     ) {
       signOut({ callbackUrl: "/" });
     }
-    console.log(session?.roles);
     if (session?.roles.includes("admin")) {
       setIsAdmin(true);
     }

@@ -21,7 +21,7 @@ import { CProvider } from "./poll";
 import POST from "@/server_actions/POST";
 export default function PollOptions({opt, index,options}: {opt: any, index: number,options: any[]}) {
   const [open, setOpen] = React.useState(false);
-  const {user} = React.useContext(ContextProvider)
+  const {user,status} = React.useContext(ContextProvider)
   const [option, setOption] = React.useState(opt);
   const { changeOptionStates} = useContext(CProvider)
   var checker = false
@@ -38,6 +38,9 @@ export default function PollOptions({opt, index,options}: {opt: any, index: numb
   const [selected, setSelected] = React.useState(checker);
 
   const handleSelected = async() => {
+    if(!status){ 
+      return
+    }
     if(selected){
       setSelected(prev=>!prev);
       var t = [...options]
