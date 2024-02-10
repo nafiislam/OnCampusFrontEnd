@@ -39,6 +39,7 @@ export default function Profile({ params }: { params: { email: string } }) {
     const [imgUrls, setImgUrls] = useState<customImg[]>();
 
     const [isPending, startTransition] = useTransition()
+    const [submitting, setSubmitting] = useState(false);
 
     const config =
     {
@@ -138,6 +139,8 @@ export default function Profile({ params }: { params: { email: string } }) {
     async function UpdateProfile(e) {
         e.preventDefault();
         console.log(user);
+        if(!submitting) return;
+        setSubmitting(false);
 
         let { aboutMe, address, bloodGroup, dateOfBirth, emergencyContact, phoneNumber, section, role } = user;
 
@@ -453,7 +456,9 @@ export default function Profile({ params }: { params: { email: string } }) {
 
 
                 <div className="flex w-full gap-4 mt-10 pl-44 pr-44 justify-end" >
-                    <Button type="submit" color="purple" className="ml-auto" >Update</Button>
+                    <Button type="submit" color="purple" className="ml-auto" onClick={()=>{
+                        setSubmitting(prev=>true);
+                    }} >Update</Button>
                 </div>
             </form>
 
