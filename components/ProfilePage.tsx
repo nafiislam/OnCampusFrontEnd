@@ -1,6 +1,6 @@
 "use client";
 import {
-    Avatar, Alert
+    Avatar, Alert, Button
 } from "@material-tailwind/react";
 
 
@@ -11,6 +11,7 @@ import Parser from "html-react-parser";
 import ClubRoles from "./ClubRoles";
 
 import AllPosts from "./AllPosts";
+import Link from "next/link";
 
 interface customImg {
     url: string;
@@ -18,7 +19,7 @@ interface customImg {
     name: string;
 }
 
-export default function MyProfilePage({ user }: { user: any }) {
+export default function MyProfilePage({ user, admin }: { user: any, admin: boolean }) {
 
     const [selectedButton, setSelectedButton] = useState("About Me");
 
@@ -80,6 +81,14 @@ export default function MyProfilePage({ user }: { user: any }) {
 
                         {/* Add more information as needed */}
                     </div>
+                    {admin && (
+                        <div className="flex justify-end mt-auto">
+                            <Link href={"/admin/profile/edit/" + user.email}>
+                                <Button color="purple" className="mr-5 mb-5">Edit User's Access & Roles</Button>
+                            </Link>
+                        </div>
+                    )}
+
 
                 </div>
             </div>

@@ -671,6 +671,17 @@ export function SidebarWithContentSeparator() {
                   Create New Batch
                 </ListItem>
               </Link>
+              <Link href="/admin/users">
+                <ListItem placeholder={undefined}>
+                  <ListItemPrefix placeholder={undefined}>
+                    <ChatBubbleBottomCenterTextIcon
+                      strokeWidth={2}
+                      className="h-4 w-5"
+                    />
+                  </ListItemPrefix>
+                  All Users
+                </ListItem>
+              </Link>
             </List>
           </AccordionBody>
         </Accordion>) : ""}

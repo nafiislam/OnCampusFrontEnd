@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 
 import ProfilePage from "@/components/ProfilePage";
 import MyProfilePage from "@/components/MyProfilePage";
-import ProfilePageAdmin from "@/components/ProfilePageAdmin";
 
 export default function Profile({ params }: { params: { email: string } }) {
     const { data: session, status } = useSession();
@@ -77,14 +76,11 @@ export default function Profile({ params }: { params: { email: string } }) {
 
     if (!isAdmin) {
         return (
-            < ProfilePage user={user} />
+            < ProfilePage user={user} admin={false} />
         );
     } else {
-
         return (
-            <ProfilePageAdmin user={user} />
-        )
-
-
+            < ProfilePage user={user} admin={true} />
+        );
     }
 }
