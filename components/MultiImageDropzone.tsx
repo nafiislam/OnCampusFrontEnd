@@ -142,7 +142,7 @@ const MultiImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
     }, [fileRejections, dropzoneOptions]);
 
     return (
-      <div>
+      <>
         <div className="grid grid-cols-[repeat(1,1fr)] gap-2 sm:grid-cols-[repeat(2,1fr)] lg:grid-cols-[repeat(3,1fr)] xl:grid-cols-[repeat(4,1fr)]">
           {/* Images */}
           {value?.map(({ file, progress }, index) => (
@@ -205,7 +205,7 @@ const MultiImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
         <div className="mt-1 text-xs text-red-500">
           {customError ?? errorMessage}
         </div>
-      </div>
+      </>
     );
   },
 );
@@ -246,9 +246,8 @@ function CircleProgress({ progress }: { progress: number }) {
         className="absolute top-0 left-0 -rotate-90 transform"
         width="100%"
         height="100%"
-        viewBox={`0 0 ${(radius + strokeWidth) * 2} ${
-          (radius + strokeWidth) * 2
-        }`}
+        viewBox={`0 0 ${(radius + strokeWidth) * 2} ${(radius + strokeWidth) * 2
+          }`}
         xmlns="http://www.w3.org/2000/svg"
       >
         <circle
