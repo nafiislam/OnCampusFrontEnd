@@ -43,6 +43,11 @@ export default function AllPosts({ posts, user }: { posts: any[]; user: any }) {
           <hr className="border-1 border-gray-400" />
         </div>
       ))}
+      {posts.length === 0 && (
+        <div className="flex items-center">
+          <h1 className="text-xl">No Posts Found</h1>
+        </div>
+      )}
     </div>
   );
 }
