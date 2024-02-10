@@ -6,8 +6,12 @@ import {
   MenuItem,
   MenuList,
   Typography,
+  Badge,
 } from "@material-tailwind/react";
-import React from "react";
+import React, { useState } from "react";
+import GET from "@/server_actions/GET";
+import { useRouter } from "next/navigation";
+import POST from "@/server_actions/POST";
 
 function ClockIcon() {
   return (
@@ -26,71 +30,97 @@ function ClockIcon() {
   );
 }
 
-export function NotificationsMenu() {
+export function NotificationsMenu({ notifications } : { notifications: any }) {
+  var notiCount = null;
+  if (notifications) {
+    notiCount = notifications.length;
+  }
+  const [notifyCount, setNotifyCount] = useState(notiCount);
+  const router = useRouter();
+  const handleSeen = async(id) => {
+    setNotifyCount(prev=>prev-1)
+    setAllNotis(notifications.filter(n=>(
+      n.id!=id
+    )))
+    const res = await POST('post/getNotification/makeSeen/',{nid:id})
+    if(res){
+      console.log(res)
+    }
+  };
+  const [allNotis, setAllNotis] = useState(notifications)
   return (
-    <Menu>
-      <MenuHandler>
-        <IconButton variant="text"  placeholder={undefined}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            className="w-6 h-6"
-          >
-            <path color="white" d="M5.85 3.5a.75.75 0 0 0-1.117-1 9.719 9.719 0 0 0-2.348 4.876.75.75 0 0 0 1.479.248A8.219 8.219 0 0 1 5.85 3.5ZM19.267 2.5a.75.75 0 1 0-1.118 1 8.22 8.22 0 0 1 1.987 4.124.75.75 0 0 0 1.48-.248A9.72 9.72 0 0 0 19.266 2.5Z" />
-            <path
-            color="white"
-              d="M12 2.25A6.75 6.75 0 0 0 5.25 9v.75a8.217 8.217 0 0 1-2.119 5.52.75.75 0 0 0 .298 1.206c1.544.57 3.16.99 4.831 1.243a3.75 3.75 0 1 0 7.48 0 24.583 24.583 0 0 0 4.83-1.244.75.75 0 0 0 .298-1.205 8.217 8.217 0 0 1-2.118-5.52V9A6.75 6.75 0 0 0 12 2.25ZM9.75 18c0-.034 0-.067.002-.1a25.05 25.05 0 0 0 4.496 0l.002.1a2.25 2.25 0 1 1-4.5 0Z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </IconButton>
-      </MenuHandler>
-      <MenuList className="flex flex-col gap-2"  placeholder={undefined}>
-        <MenuItem className="flex items-center gap-4 py-2 pl-2 pr-8"  placeholder={undefined}>
-          <Avatar
-                      variant="circular"
-                      alt="tania andrew"
-                      src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80" placeholder={undefined}          />
-          <div className="flex flex-col gap-1">
-            <Typography variant="small" color="gray" className="font-semibold"  placeholder={undefined}>
-              Tania send you a message
-            </Typography>
-            <Typography className="flex items-center gap-1 text-sm font-medium text-blue-gray-500"  placeholder={undefined}>
-              <ClockIcon />
-              13 minutes ago
-            </Typography>
-          </div>
-        </MenuItem>
-        <MenuItem className="flex items-center gap-4 py-2 pl-2 pr-8"  placeholder={undefined}>
-          <Avatar
-                      variant="circular"
-                      alt="natali craig"
-                      src="https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1061&q=80" placeholder={undefined}          />
-          <div className="flex flex-col gap-1">
-            <Typography variant="small" color="gray" className="font-semibold"  placeholder={undefined}>
-              Natali replied to your email.
-            </Typography>
-            <Typography className="flex items-center gap-1 text-sm font-medium text-blue-gray-500"  placeholder={undefined}>
-              <ClockIcon />1 hour ago
-            </Typography>
-          </div>
-        </MenuItem>
-        <MenuItem className="flex items-center gap-4 py-2 pl-2 pr-8"  placeholder={undefined}>
-          <Avatar
-                      variant="circular"
-                      alt="paypal"
-                      src="https://dwglogo.com/wp-content/uploads/2016/08/PayPal_Logo_Icon.png" placeholder={undefined}          />
-          <div className="flex flex-col gap-1">
-            <Typography variant="small" color="gray" className="font-semibold"  placeholder={undefined}>
-              You&apos;ve received a payment.
-            </Typography>
-            <Typography className="flex items-center gap-1 text-sm font-medium text-blue-gray-500"  placeholder={undefined}>
-              <ClockIcon />5 hours ago
-            </Typography>
-          </div>
-        </MenuItem>
-      </MenuList>
-    </Menu>
+    <>
+      <Menu>
+        <MenuHandler>
+          <button>
+            <Badge content={notifyCount}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="w-6 h-6"
+              >
+                <path
+                  color="white"
+                  d="M5.85 3.5a.75.75 0 0 0-1.117-1 9.719 9.719 0 0 0-2.348 4.876.75.75 0 0 0 1.479.248A8.219 8.219 0 0 1 5.85 3.5ZM19.267 2.5a.75.75 0 1 0-1.118 1 8.22 8.22 0 0 1 1.987 4.124.75.75 0 0 0 1.48-.248A9.72 9.72 0 0 0 19.266 2.5Z"
+                />
+                <path
+                  color="white"
+                  d="M12 2.25A6.75 6.75 0 0 0 5.25 9v.75a8.217 8.217 0 0 1-2.119 5.52.75.75 0 0 0 .298 1.206c1.544.57 3.16.99 4.831 1.243a3.75 3.75 0 1 0 7.48 0 24.583 24.583 0 0 0 4.83-1.244.75.75 0 0 0 .298-1.205 8.217 8.217 0 0 1-2.118-5.52V9A6.75 6.75 0 0 0 12 2.25ZM9.75 18c0-.034 0-.067.002-.1a25.05 25.05 0 0 0 4.496 0l.002.1a2.25 2.25 0 1 1-4.5 0Z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </Badge>
+          </button>
+        </MenuHandler>
+        <MenuList className="flex flex-col gap-2" placeholder={undefined}>
+          {allNotis?allNotis.map((n, i) => (
+            <MenuItem
+              key={i}
+              className="flex items-center gap-4 py-2 pl-2 pr-8"
+              placeholder={undefined}
+              onClick={() => {
+                handleSeen(n.id);
+                if(n.type=="POST"){
+                  router.push(`/getPost/${n.postID}`);
+                }
+              }}
+            >
+              <Avatar
+                variant="circular"
+                alt="tania andrew"
+                src={n.author.profilePicture?n.author.profilePicture:"https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80"}
+                placeholder={undefined}
+              />
+              <div className="flex flex-col gap-1">
+                <Typography
+                  variant="small"
+                  color="gray"
+                  className="font-semibold"
+                  placeholder={undefined}
+                >
+                  {n.content}
+                </Typography>
+                <Typography
+                  variant="small"
+                  color="gray"
+                  className="font-sans"
+                  placeholder={undefined}
+                >
+                  By {n.author.name}
+                </Typography>
+                <Typography
+                  className="flex items-center gap-1 text-sm font-medium text-blue-gray-500"
+                  placeholder={undefined}
+                >
+                  <ClockIcon />
+                  {new Date(n.createdAt).toLocaleString()}
+                </Typography>
+              </div>
+            </MenuItem>
+          )):""}
+        </MenuList>
+      </Menu>
+    </>
   );
 }

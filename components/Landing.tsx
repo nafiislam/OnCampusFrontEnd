@@ -17,7 +17,7 @@ export default function Landing() {
           <div className="absolute inset-0 bg-black bg-opacity-50 z-10"></div>
           <div className="relative z-20">
             <div className="flex flex-col w-full md:w-2/5 justify-center items-start text-left">
-              <h1 className="m-12 mt-20 text-5xl font-bold leading-tight text-white">
+              <h1 className="m-12 mt-20 text-4xl font-bold leading-tight text-white">
                 ON C A M P U S !
               </h1>
               <p className="leading-normal text-white text-2xl m-12">

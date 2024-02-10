@@ -355,7 +355,7 @@ export default function AllPosts({
 
   const anonymous = {
     profilePicture:
-      "https://files.edgestore.dev/fqqz8b7kjd68ccue/myPublicFiles/_public/94320c6c-0c88-422b-887e-0d2786e15622.png",
+    "https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80",
     name: "Anonymous",
     id: "546254226564",
     email: "Anonymous@buet.ac.bd",
@@ -913,9 +913,9 @@ export default function AllPosts({
             {post.open ? "" : <LockClosedIcon className="w-7 h-7" />}
           </div>
 
-          {post.bloodInfo ? <BloodPost blood={post.bloodInfo} /> : ""}
-          {post.tuitionInfo ? <TuitionPost tuition={post.tuitionInfo} /> : ""}
-          {post.productInfo ? <ProductInfo product={post.productInfo} /> : ""}
+          {post.bloodInfo ?<div className="scale-70"> <BloodPost blood={post.bloodInfo} /> </div>: ""}
+          {post.tuitionInfo ?<div className="scale-70"> <TuitionPost tuition={post.tuitionInfo} /> </div>: ""}
+          {post.productInfo ?<div className="scale-70"> <ProductInfo product={post.productInfo} /> </div>: ""}
 
           <PosText title={post.title} content={post.content} />
 

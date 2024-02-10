@@ -9,14 +9,18 @@ const Batch_Dept = async ({ params }: { params: { type: string } }) => {
     if(!session){
         return <><div>Not authorized</div></>;
     }
-    const { posts, user } = await POST("post/getPosts/BatchDept/", {
+    const res = await POST("post/getPosts/BatchDept/", {
         type: params.type,
     });
-    return (
-        <>
-          <AllPosts posts={posts} user={user} type={params.type}/>
-        </>
-    );
+    if(res){
+        const { posts, user } = res;
+        return (
+            <>
+              {res?<AllPosts posts={posts} user={user} type={params.type}/>:""}
+            </>
+        );
+    }
+    
 }
 
 export default Batch_Dept
