@@ -99,7 +99,6 @@ export function ProfileMenu({user}: {user: any}) {
               fill="#90A4AE"
             />
           </svg>
-
           <Typography
             variant="small"
             className="font-medium"
@@ -108,7 +107,6 @@ export function ProfileMenu({user}: {user: any}) {
             My notifications
           </Typography>
         </MenuItem>
-
         <hr className="my-2 border-blue-gray-50" />
         <MenuItem
           className="flex items-center gap-2 "
