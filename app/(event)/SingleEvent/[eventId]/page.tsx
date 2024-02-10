@@ -1,10 +1,10 @@
 import React from 'react'
-import ScrollSpy from '@/components/Posts/ScrollSpy'
+import SingleEvent from '@/components/Events/SingleEvent/SingleEvent'
 
 export default function Home() {
   return (
     <div>
-      <ScrollSpy />
+      <SingleEvent />
     </div>
   )
 }

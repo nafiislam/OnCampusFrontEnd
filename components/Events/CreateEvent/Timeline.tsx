@@ -1,6 +1,7 @@
 import {
   Button,
   IconButton,
+  Input,
   Textarea,
   Typography,
 } from "@material-tailwind/react";
@@ -43,12 +44,20 @@ function TimeLine() {
       <div className="p-4">
         {inputs.map((input) => (
           <div className="" key={input}>
+            <div className="w-11/12">
+              <Input
+                className="bg-white"
+                label="Timeline Title"
+                placeholder="TimeLine Title"
+                crossOrigin={""}
+              ></Input>
+            </div>
             <div className="mt-2 flex flex-row gap-2">
               <div className="w-1/2">
                 <Textarea
                   rows={4}
                   className="bg-white"
-                  label="Timeline Title ( with/without short description )"
+                  label="Timeline short description"
                 />
               </div>
               <div className="flex flex-col gap-1 items-center">
