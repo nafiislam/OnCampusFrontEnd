@@ -9,16 +9,17 @@ const Dept = async ({ params }: { params: { type: string } }) => {
     if(!session){
         return <><div>Not authorized</div></>;
     }
-    const { posts, user } = await POST("post/getPosts/Dept/", {
+    const res = await POST("post/getPosts/Dept/", {
         type: params.type,
-      });
-    //   console.log(posts);
-    //   console.log(user);
+    });
+    if(res){
+      const { posts, user } = res;
       return (
-        <>
-          <AllPosts posts={posts} user={user} />
-        </>
+          <>
+            {res?<AllPosts posts={posts} user={user} type={params.type}/>:""}
+          </>
       );
+  }
 }
 
 export default Dept

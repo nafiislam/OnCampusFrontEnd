@@ -9,14 +9,18 @@ const Batch = async ({ params }: { params: { type: string } }) => {
     if(!session){
         return <><div>Not authorized</div></>;
     }
-    const { posts, user } = await POST("post/getPosts/Batch/", {
+    const res = await POST("post/getPosts/Batch/", {
         type: params.type,
     });
-    return (
-        <>
-          <AllPosts posts={posts} user={user} />
-        </>
-    );
+    if(res){
+        const { posts, user } = res;
+        return (
+            <>
+              {res?<AllPosts posts={posts} user={user} type={params.type}/>:""}
+            </>
+        );
+    }
+    
 }
 
 export default Batch

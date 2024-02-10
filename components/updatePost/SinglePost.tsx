@@ -33,10 +33,40 @@ import { MultiFileDropzone } from "../../components/MultiFileDropzone";
 import { useEdgeStore } from "@/lib/edgestore";
 import { useRouter } from "next/navigation";
 import { set } from "zod";
-import BloodPost from "@/components/writePost/BloodPost";
-import TuitionPost from "@/components/writePost/Tuition";
-import ProductPost from "@/components/writePost/ProductPost";
+import BloodPost from "@/components/updatePost/BloodPost";
+import TuitionPost from "@/components/updatePost/Tuition";
+import ProductPost from "@/components/updatePost/ProductPost";
+import {
+  CheckCircleIcon,
+  FileIcon,
+  LucideFileWarning,
+  Trash2Icon,
+  UploadCloudIcon,
+} from "lucide-react";
 
+import { useDropzone, type DropzoneOptions } from "react-dropzone";
+import { twMerge } from "tailwind-merge";
+import { X } from "lucide-react";
+import POST from "@/server_actions/POST";
+
+const variants = {
+  base: "relative rounded-md p-4 w-96 max-w-[calc(100vw-1rem)] flex justify-center items-center flex-col cursor-pointer border border-dashed border-gray-400 dark:border-gray-300 transition-colors duration-200 ease-in-out",
+  active: "border-2",
+  disabled:
+    "bg-gray-200 border-gray-300 cursor-default pointer-events-none bg-opacity-30 dark:bg-gray-700 dark:border-gray-600",
+  accept: "border border-blue-500 bg-blue-500 bg-opacity-10",
+  reject: "border border-red-700 bg-red-700 bg-opacity-10",
+};
+const imgVariants = {
+  base: "relative rounded-md aspect-square flex justify-center items-center flex-col cursor-pointer min-h-[150px] min-w-[200px] border border-dashed border-gray-400 dark:border-gray-300 transition-colors duration-200 ease-in-out",
+  image:
+    "border-0 p-0 w-full h-full relative shadow-md bg-slate-200 dark:bg-slate-900 rounded-md",
+  active: "border-2",
+  disabled:
+    "bg-gray-200 border-gray-300 cursor-default pointer-events-none bg-opacity-30 dark:bg-gray-700",
+  accept: "border border-blue-500 bg-blue-500 bg-opacity-10",
+  reject: "border border-red-700 bg-red-700 bg-opacity-10",
+};
 interface customImg {
   url: string;
   key: string;
@@ -70,11 +100,11 @@ type BloodInfo = {
   time: string;
 };
 type ProductInfo = {
-  type:string;
-  name:string;
-  price:number;
-  contact:string
-}
+  type: string;
+  name: string;
+  price: number;
+  contact: string;
+};
 const isBrowser = () => typeof window !== "undefined"; //The approach recommended by Next.js
 
 function scrollToTop() {
@@ -87,7 +117,7 @@ export const ContextProvider = createContext({
   changeMoreData: (moreData: {}) => {},
 });
 
-const WritePost = () => {
+const UpdatePost = ({ post }: { post: any }) => {
   const changeMoreData = (moreData: any) => {
     setMoreData((prev) => moreData);
   };
@@ -119,13 +149,6 @@ const WritePost = () => {
       return;
     }
 
-    if (postType === "") {
-      setAlertMsg("Post type is required");
-      setAlertOpen(true);
-      scrollToTop();
-      return;
-    }
-
     if (Object.keys(moreData).length === 0 && radio !== "DISCUSSION") {
       setAlertMsg("MoreData is required");
       setAlertOpen(true);
@@ -140,24 +163,45 @@ const WritePost = () => {
       return;
     }
 
-    if(radio==="BLOOD"){
-      if(moreData.bloodGroup===undefined || moreData.units===undefined || moreData.hospital===undefined || moreData.time===undefined || moreData.contact===undefined){
+    if (radio === "BLOOD") {
+      if (
+        moreData.bloodGroup === undefined ||
+        moreData.units === undefined ||
+        moreData.hospital === undefined ||
+        moreData.time === undefined ||
+        moreData.contact === undefined
+      ) {
         setAlertMsg("Blood group, units, hospital and time are required");
         setAlertOpen(true);
         scrollToTop();
         return;
       }
-    }
-    else if(radio==="TUITION"){
-      if(moreData.genderPreference===undefined || moreData.location===undefined || moreData.class===undefined || moreData.member===undefined || moreData.subject===undefined || moreData.time===undefined || moreData.medium===undefined || moreData.salary===undefined || moreData.contact===undefined || moreData.studentInstitute===undefined||moreData.gender===undefined){
+    } else if (radio === "TUITION") {
+      if (
+        moreData.genderPreference === undefined ||
+        moreData.location === undefined ||
+        moreData.class === undefined ||
+        moreData.member === undefined ||
+        moreData.subject === undefined ||
+        moreData.time === undefined ||
+        moreData.medium === undefined ||
+        moreData.salary === undefined ||
+        moreData.contact === undefined ||
+        moreData.studentInstitute === undefined ||
+        moreData.gender === undefined
+      ) {
         setAlertMsg("All fields are required for Tuition");
         setAlertOpen(true);
         scrollToTop();
         return;
       }
-    }
-    else if(radio==="PRODUCT"){
-      if(moreData.type===undefined || moreData.name===undefined || moreData.price===undefined || moreData.contact===undefined){
+    } else if (radio === "PRODUCT") {
+      if (
+        moreData.type === undefined ||
+        moreData.name === undefined ||
+        moreData.price === undefined ||
+        moreData.contact === undefined
+      ) {
         setAlertMsg("All fields are required for Product");
         setAlertOpen(true);
         scrollToTop();
@@ -165,32 +209,14 @@ const WritePost = () => {
       }
     }
 
-    if (pollCheck) {
-      if (options.length < 2) {
-        setAlertMsg("At least two options are required");
-        setAlertOpen(true);
-        scrollToTop();
-        return;
-      }
-    }
-
-    if (reminderCheck) {
-      if (reminder === "") {
-        setAlertMsg("Reminder date and time is required");
-        setAlertOpen(true);
-        scrollToTop();
-        return;
-      }
-    }
-
-    if (imgStates?.length > 6) {
+    if (imgStates?.length+images.length > 6) {
       setAlertMsg("Maximum 6 images are allowed");
       setAlertOpen(true);
       scrollToTop();
       return;
     }
 
-    if (fileStates?.length > 6) {
+    if (fileStates?.length+attachments.length > 6) {
       setAlertMsg("Maximum 6 files are allowed");
       setAlertOpen(true);
       scrollToTop();
@@ -236,24 +262,42 @@ const WritePost = () => {
         }
       );
     });
+
+    const prevImg:customFile[] = []
+
+    images?.map((img,i)=>{
+      prevImg.push({
+        url:img,
+        name: imagNames[i],
+        key:""
+      })
+    })
+
+    const prevFile:customFile[] = []
+    attachments.map((file,i)=>{
+      prevFile.push({
+        url:file,
+        name:attachmentNames[i],
+        key:""
+      })
+    })
+
+    imgList = prevImg.concat(imgList)
+    list = prevFile.concat(list)
+
+    const pid = post.id
+    
     const data = {
       title,
       content,
-      postType,
-      isComment,
-      isNotify,
-      isAnonymous,
-      reminderCheck,
-      reminder,
-      radio,
       moreData,
-      pollCheck,
-      options,
       imgList,
       list,
+      radio,
+      pid
     };
     startTransition(async () => {
-      const res = await writePost(data);
+      const res = await POST('post/updatePost', data);
       if (res) {
         console.log(res);
         imgStates?.map(async (imgState) => {
@@ -276,26 +320,8 @@ const WritePost = () => {
           }
         });
 
-        setAlertMsg((prev) => "Post created successfully");
+        setAlertMsg((prev) => "Post updated successfully");
         setAlertOpen(true);
-        setTitle("");
-        setContent("");
-        setPostType("");
-        setIsComment(false);
-        setIsNotify(false);
-        setIsAnonymous(false);
-        setReminderCheck(false);
-        setReminder("");
-        setRadio("DISCUSSION");
-        setMoreData({});
-        setPollCheck(false);
-        setOptions([""]);
-        setImgStates([]);
-        setImgUrls([]);
-        setFileStates([]);
-        seturls([]);
-        scrollToTop();
-        return;
       } else {
         console.log("error");
       }
@@ -309,25 +335,36 @@ const WritePost = () => {
 
   const [open, setOpen] = React.useState(0);
   const { data: session, status } = useSession();
-  const [reminderCheck, setReminderCheck] = React.useState(false);
 
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState(post.content);
 
-  const [title, setTitle] = useState("");
-  const [postType, setPostType] = useState("General");
-  const [isComment, setIsComment] = useState(false);
-  const [isNotify, setIsNotify] = useState(false);
-  const [isAnonymous, setIsAnonymous] = useState(false);
-  const [reminder, setReminder] = useState("");
-  const [radio, setRadio] = useState("DISCUSSION");
-  const [moreData, setMoreData] = useState<TuitionInfo|BloodInfo|ProductInfo|{}>({});
-  const [pollCheck, setPollCheck] = useState(false);
-  const [options, setOptions] = useState([""]);
+  const [title, setTitle] = useState(post.title);
+
+  const radio = post.tags[0];
+  var data = {};
+  if (radio === "BLOOD") {
+    data = post.bloodInfo;
+  } else if (radio === "TUITION") {
+    data = post.tuitionInfo;
+  } else if (radio === "PRODUCT") {
+    data = post.productInfo;
+  }
+
+  const [moreData, setMoreData] = useState<
+    TuitionInfo | BloodInfo | ProductInfo | {}
+  >(data);
   const [submit, setSubmit] = useState(false);
 
   const [imgStates, setImgStates] = useState<FileState[]>([]);
   const { edgestore } = useEdgeStore();
   const [imgUrls, setImgUrls] = useState<customImg[]>();
+
+  const [images, setImages] = useState(post.images);
+  const [imagNames, setImageNames] = useState(post.imageNames);
+  const [attachmentNames, setAttachmentNames] = useState(post.attachmentNames);
+  const [attachments, setAttachments] = useState(post.attachments);
+
+  console.log(attachmentNames)
 
   function updateImgProgress(key: string, progress: FileState["progress"]) {
     setImgStates((imgStates) => {
@@ -406,60 +443,6 @@ const WritePost = () => {
               className="mt-8 mb-2 max-w-screen-xl sm:w-200"
             >
               <div className="mb-1 flex flex-col gap-6">
-                <div className="grid grid-cols-2 gap-1">
-                  <div className="col-span-1">
-                    <Select
-                      value={postType}
-                      onChange={(e) => {
-                        setPostType(e ?? "");
-                      }}
-                      variant="static"
-                      label="Select Division:"
-                    >
-                      <Option value="General">General</Option>
-                      <Option value="Batch">Batch</Option>
-                      <Option value="Dept">Dept</Option>
-                      <Option value="BatchDept">Batch Dept</Option>
-                    </Select>
-                  </div>
-                </div>
-
-                <div className="flex gap-10">
-                  <Radio
-                    name="type"
-                    label="Discussion"
-                    onChange={() => {
-                      setRadio((prev) => "DISCUSSION");
-                      setMoreData((prev) => {});
-                    }}
-                    defaultChecked
-                  />
-                  <Radio
-                    name="type"
-                    label="Blood"
-                    onChange={() => {
-                      setRadio((prev) => "BLOOD");
-                      setMoreData((prev) => {});
-                    }}
-                  />
-                  <Radio
-                    name="type"
-                    label="Tuition"
-                    onChange={() => {
-                      setRadio((prev) => "TUITION");
-                      setMoreData((prev) => {});
-                    }}
-                  />
-                  <Radio
-                    name="type"
-                    label="Product"
-                    onChange={() => {
-                      setRadio((prev) => "PRODUCT");
-                      setMoreData((prev) => {});
-                    }}
-                  />
-                </div>
-
                 <Typography variant="h6" color="blue-gray" className="-mb-3">
                   Title
                 </Typography>
@@ -477,11 +460,25 @@ const WritePost = () => {
                   }}
                 />
               </div>
-              {radio !== "DISCUSSION" && (<>
-              {radio === "BLOOD"?<BloodPost/>:""}
-              {radio === "TUITION"?<TuitionPost/>:""}
-              {radio === "PRODUCT"?<ProductPost/>:""}
-              </>)}
+              {radio !== "DISCUSSION" && (
+                <>
+                  {radio === "BLOOD" ? (
+                    <BloodPost bloodInfo={post.bloodInfo} />
+                  ) : (
+                    ""
+                  )}
+                  {radio === "TUITION" ? (
+                    <TuitionPost tutionInfo={post.tuitionInfo} />
+                  ) : (
+                    ""
+                  )}
+                  {radio === "PRODUCT" ? (
+                    <ProductPost productInfo={post.productInfo} />
+                  ) : (
+                    ""
+                  )}
+                </>
+              )}
 
               <div className="mb-1 flex flex-col gap-6">
                 <Typography variant="h6" color="blue-gray" className="-mb-3">
@@ -496,110 +493,39 @@ const WritePost = () => {
                   }}
                   onChange={(newContent) => {}}
                 />
-                <Checkbox
-                  label="Poll"
-                  onClick={() => {
-                    setPollCheck((prev) => !prev);
-                  }}
-                  checked={pollCheck}
-                  onChange={() => {}} //to avoid warning
-                />
-                {pollCheck && (
-                  <>
-                    {options.map((option, index) => (
-                      <div key={index} className="flex gap-2">
-                        <Input
-                          required
-                          key={index}
-                          size="lg"
-                          placeholder=""
-                          className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
-                          labelProps={{
-                            className: "before:content-none after:content-none",
-                          }}
-                          value={options[index]}
-                          onChange={(e) => {
-                            setOptions((prev) => {
-                              const updatedOptions = [...prev]; // Create a copy of the options array
-                              updatedOptions[index] = e.target.value; // Update the value at the specified index
-                              return updatedOptions;
-                            });
-                          }}
-                        />
-                        <IconButton
-                          key={index + 1}
-                          color="red"
-                          onClick={() => {
-                            setOptions((prev) =>
-                              prev.filter((_, i) => i !== index)
+                <div className="grid grid-cols-[repeat(1,1fr)] gap-2 sm:grid-cols-[repeat(2,1fr)] lg:grid-cols-[repeat(3,1fr)] xl:grid-cols-[repeat(4,1fr)]">
+                  {images?.map((img, index) => (
+                    <div
+                      key={index}
+                      className={imgVariants.image + " aspect-square h-full"}
+                    >
+                      <img
+                        className="h-full w-full rounded-md object-cover"
+                        src={img}
+                        alt={imagNames[index]}
+                      />
+                      {/* Remove Image Icon */}
+                      {
+                        <div
+                          className="group absolute right-0 top-0 -translate-y-1/4 translate-x-1/4 transform"
+                          onClick={(e) => {
+                            setImages((prev) => prev.filter((e) => e != img));
+                            setImageNames((prev) =>
+                              prev.filter((e) => e != imagNames[index])
                             );
                           }}
                         >
-                          <Replace key={index + 2} size={24} />
-                        </IconButton>
-                      </div>
-                    ))}
-                    <Button
-                      size="sm"
-                      color="blue"
-                      variant="text"
-                      className="rounded-md"
-                      onClick={() => {
-                        setOptions((prev) => [...prev, ""]);
-                      }}
-                    >
-                      Add option
-                    </Button>
-                  </>
-                )}
-                <Checkbox
-                  label={`Reminder Date and time ${
-                    reminderCheck ? "on" : "off"
-                  }`}
-                  onClick={() => {
-                    setReminderCheck((prev) => !prev);
-                  }}
-                  onChange={() => {}} //to avoid warning
-                  checked={reminderCheck}
-                />
-                <Input
-                  required={reminderCheck}
-                  value={reminder}
-                  onChange={(e) => {
-                    setReminder(e.target.value);
-                  }}
-                  disabled={!reminderCheck}
-                  size="lg"
-                  placeholder="Select a date for reminder"
-                  className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
-                  labelProps={{
-                    className: "before:content-none after:content-none",
-                  }}
-                  type="datetime-local"
-                />
-                <div>
-                  <Checkbox
-                    onClick={() => setIsComment((prev) => !prev)}
-                    label="Comment Section"
-                    checked={isComment}
-                    onChange={() => {}} //to avoid warning
-                  />
-                </div>
-                <div>
-                  <Checkbox
-                    onClick={() => setIsNotify((prev) => !prev)}
-                    label="Notify All (initially when posting)"
-                    checked={isNotify}
-                    onChange={() => {}} //to avoid warning
-                  />
-                </div>
-                <div>
-                  <Checkbox
-                    onClick={() => setIsAnonymous((prev) => !prev)}
-                    label="Post Anonymously"
-                    checked={isAnonymous}
-                    onChange={() => {}} //to avoid warning
-                  />
+                          <div className="flex h-5 w-5 cursor-pointer items-center justify-center rounded-md border border-solid border-gray-500 bg-white transition-all duration-300 hover:h-6 hover:w-6 dark:border-gray-400 dark:bg-black">
+                            <X
+                              className="text-gray-500 dark:text-gray-400"
+                              width={16}
+                              height={16}
+                            />
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  ))}
                 </div>
 
                 <MultiImageDropzone
@@ -649,6 +575,45 @@ const WritePost = () => {
                   }}
                 />
 
+                {/* Selected Files */}
+                {attachments?.map((fileUrl, i) => (
+                  <div
+                    key={i}
+                    className="flex h-16 w-96 max-w-[100vw] flex-col justify-center rounded border border-gray-300 px-4 py-2"
+                  >
+                    <div className="flex items-center gap-2 text-gray-500 dark:text-white">
+                      <FileIcon size="30" className="shrink-0" />
+                      <div className="min-w-0 text-sm">
+                        <div className="overflow-hidden overflow-ellipsis whitespace-nowrap">
+                          {post.attachmentNames[i]}
+                        </div>
+                      </div>
+                      <div className="grow" />
+                      <div className="flex w-12 justify-end text-xs">
+                        {/* Remove Image Icon */}
+                        <div
+                          className="group right-0 top-1 -translate-y-1/4 translate-x-1/4 transform"
+                          onClick={(e) => {
+                            setAttachments((prev) =>
+                              prev.filter((e) => e != fileUrl)
+                            );
+                            setAttachmentNames((prev) =>
+                              prev.filter((e) => e != attachmentNames[i])
+                            );
+                          }}
+                        >
+                          <div className="flex h-5 w-5 cursor-pointer items-center justify-center rounded-md border border-solid border-gray-500 bg-white transition-all duration-300 hover:h-6 hover:w-6 dark:border-gray-400 dark:bg-black">
+                            <X
+                              className="text-gray-500 dark:text-gray-400"
+                              width={16}
+                              height={16}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
                 <MultiFileDropzone
                   value={fileStates}
                   onChange={(files) => {
@@ -697,15 +662,15 @@ const WritePost = () => {
                 />
 
                 <div className="flex gap-2">
-                  <Button
+                  {/* <Button
                     size="sm"
                     color="red"
                     variant="text"
                     className="rounded-md"
-                    onClick={() => router.push("/../")}
+                    onClick={() => router.back()}
                   >
                     Cancel
-                  </Button>
+                  </Button> */}
                   <Button
                     size="sm"
                     onClick={() => setSubmit(true)}
@@ -724,4 +689,4 @@ const WritePost = () => {
   );
 };
 
-export default WritePost;
+export default UpdatePost;

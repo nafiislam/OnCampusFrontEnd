@@ -15,12 +15,15 @@ import { NavbarProps } from "@material-tailwind/react";
 
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import { useEffect } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
+import GET from "@/server_actions/GET";
 
-export function NavbarDark() {
+export function NavbarDark({user, notifications}: {user: any, notifications:any}) {
   const { data: session, status } = useSession();
+  const [allNotis,setAllNotis] = useState(notifications);
+  
   useEffect(() => {
     if (
       status != "loading" &&
@@ -29,8 +32,9 @@ export function NavbarDark() {
     ) {
       signOut({ callbackUrl: "/" });
     }
-  }, [session, status]);
 
+  }, [session, status]);
+  
   if (!session) {
     return (
       <Navbar
@@ -59,6 +63,7 @@ export function NavbarDark() {
       </Navbar>
     );
   }
+
   return (
     <Navbar
       variant="gradient"
@@ -77,26 +82,6 @@ export function NavbarDark() {
           />
         </Link>
         <div className="relative flex w-full gap-2 md:w-max ml-8">
-          <Input
-            type="search"
-            color="white"
-            label="Type here..."
-            className="pr-20"
-            containerProps={{
-              className: "min-w-[288px]",
-            }}
-            crossOrigin={undefined}
-          />
-          <Button
-            size="sm"
-            color="white"
-            className="!absolute right-1 top-1 rounded"
-            placeholder={undefined}
-          >
-            Search
-          </Button>
-        </div>
-        <div className="relative flex w-full gap-2 md:w-max ml-8">
           <Link href={"/writePost"}>
             <Button
               size="sm"
@@ -110,9 +95,9 @@ export function NavbarDark() {
         </div>
 
         <div className="ml-auto flex gap-8 md:mr-4">
-          <NotificationsMenu />
+          <NotificationsMenu notifications={notifications?notifications:null}/>
 
-          <ProfileMenu />
+          <ProfileMenu user={user}/>
         </div>
       </div>
     </Navbar>

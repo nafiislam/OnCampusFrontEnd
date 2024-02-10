@@ -16,6 +16,7 @@ const GetPost = async({ params }: { params: { id: string } }) => {
             <div>Post not found</div>
         )
     }
+
   return (
     <SinglePosts post={post}/>
   )

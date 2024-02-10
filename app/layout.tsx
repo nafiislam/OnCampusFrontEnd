@@ -4,9 +4,11 @@ import "./globals.css";
 import { EdgeStoreProvider } from "@/lib/edgestore";
 import { ThemeProvider } from "../components/Mat_tail_export";
 import { SidebarWithContentSeparator } from "../components/sidebar";
-import { NavbarDark } from "../components/Navbar";
+
 import SessionProviderWrapper from "@/utils/sessionProviderWrapper";
 import { getAccessToken } from '@/utils/sessionTokenAccessor'
+import NavbarWrapper from "@/components/NavbarWrapper";
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
@@ -27,7 +29,7 @@ export default async function RootLayout({
           <body className={inter.className}>
             {token ? (
               <div className="m-4">
-                <NavbarDark />
+                <NavbarWrapper />
                 <div className="grid grid-cols-6 gap-1">
                   <div className="col-span-1">
                     <SidebarWithContentSeparator />

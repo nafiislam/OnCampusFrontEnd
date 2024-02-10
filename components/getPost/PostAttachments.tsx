@@ -19,7 +19,7 @@ export function FileList({
 
   const { download } = useDownloader();
   return (
-    <Card className="w-full my-8 border-2" placeholder={undefined}>
+    
       <List placeholder={undefined}>
         {files.map((file, index) => (
           <a key={index} href={files[index]} target="_blank">
@@ -63,6 +63,6 @@ export function FileList({
         </a>
         ))}
       </List>
-    </Card>
+
   );
 }
