@@ -21,6 +21,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "components/Posts/Multiselect.jsx", "components/Posts/MultiselectUltra.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "components/Posts/Multiselect.jsx", "components/Posts/MultiselectUltra.jsx", "components/Events/SingleEvent/SingleEvent.tsx"],
   "exclude": ["node_modules"]
 }

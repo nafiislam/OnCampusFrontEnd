@@ -15,8 +15,14 @@ import AvatarImageText from "../../Posts/AvatarImageText";
 import AvatarStack from "../../Posts/AvatarStack";
 import { DummyColor, svgIcons } from "./DummyIconColor";
 
+interface SectionOffset {
+  id: string;
+  offset: number;
+  height: number;
+}
+
 const SingleEvent = () => {
-  const [activeSection, setActiveSection] = useState(null);
+  const [activeSection, setActiveSection] = useState<string | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -24,8 +30,8 @@ const SingleEvent = () => {
         document.querySelectorAll("[data-section]")
       ).map((section) => ({
         id: section.id,
-        offset: section.offsetTop,
-        height: section.offsetHeight,
+        offset: (section as HTMLElement).offsetTop,
+        height: (section as HTMLElement).offsetHeight,
       }));
 
       const scrollPosition = window.scrollY + window.innerHeight / 2;
@@ -70,7 +76,7 @@ const SingleEvent = () => {
                 alt="image"
               /> */}
               <div className="w-4/5">
-                <Typography variant="h3" className="text-center">
+                <Typography variant="h3" className="text-center" placeholder={undefined} >
                   Title
                 </Typography>
               </div>
@@ -86,7 +92,7 @@ const SingleEvent = () => {
                   <path d="M10 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM6 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0ZM1.49 15.326a.78.78 0 0 1-.358-.442 3 3 0 0 1 4.308-3.516 6.484 6.484 0 0 0-1.905 3.959c-.023.222-.014.442.025.654a4.97 4.97 0 0 1-2.07-.655ZM16.44 15.98a4.97 4.97 0 0 0 2.07-.654.78.78 0 0 0 .357-.442 3 3 0 0 0-4.308-3.517 6.484 6.484 0 0 1 1.907 3.96 2.32 2.32 0 0 1-.026.654ZM18 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0ZM5.304 16.19a.844.844 0 0 1-.277-.71 5 5 0 0 1 9.947 0 .843.843 0 0 1-.277.71A6.975 6.975 0 0 1 10 18a6.974 6.974 0 0 1-4.696-1.81Z" />
                 </svg>
 
-                <Typography variant="small">Organizer</Typography>
+                <Typography variant="small" placeholder={undefined} >Organizer</Typography>
               </div>
               <div className="flex flex-row gap-2 text-blue-500">
                 <svg
@@ -102,7 +108,7 @@ const SingleEvent = () => {
                   />
                 </svg>
 
-                <Typography variant="small">Sponsors</Typography>
+                <Typography variant="small" placeholder={undefined} >Sponsors</Typography>
               </div>
               <div className="flex flex-row gap-2 text-blue-500">
                 <svg
@@ -118,7 +124,7 @@ const SingleEvent = () => {
                   />
                 </svg>
 
-                <Typography variant="small">Location</Typography>
+                <Typography variant="small" placeholder={undefined} >Location</Typography>
               </div>
               <div className="flex flex-row gap-2 text-blue-500">
                 <svg
@@ -136,7 +142,7 @@ const SingleEvent = () => {
                   />
                 </svg>
 
-                <Typography variant="small">Online Meeting Link</Typography>
+                <Typography variant="small" placeholder={undefined} >Online Meeting Link</Typography>
               </div>
               <div className="flex flex-row gap-2 text-red-400">
                 <svg
@@ -152,7 +158,7 @@ const SingleEvent = () => {
                   />
                 </svg>
 
-                <Typography variant="small">start time - end time</Typography>
+                <Typography variant="small" placeholder={undefined} >start time - end time</Typography>
               </div>
 
               <div className="flex flex-row gap-2">
@@ -169,7 +175,7 @@ const SingleEvent = () => {
                   />
                 </svg>
 
-                <Typography variant="small">
+                <Typography variant="small" placeholder={undefined} >
                   Posted By :{" "}
                   <Tooltip content={<AvatarImageText />}>
                     <span className="text-blue-600">Nahin Khan </span>
@@ -181,7 +187,7 @@ const SingleEvent = () => {
               <hr className="border-gray-700 my-2" />
 
               <div className="flex items-center gap-4">
-                <Button variant="text" className="flex items-center gap-3">
+                <Button variant="text" className="flex items-center gap-3" placeholder={undefined} >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -198,7 +204,7 @@ const SingleEvent = () => {
                   </svg>
                   Participating
                 </Button>
-                <Button variant="text" className="flex items-center gap-3">
+                <Button variant="text" className="flex items-center gap-3" placeholder={undefined} >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -217,7 +223,7 @@ const SingleEvent = () => {
                 </Button>
 
                 <div className="ml-auto flex flex-row gap-2">
-                  <Typography className="mt-1 text-green-600" variant="small">
+                  <Typography className="mt-1 text-green-600" variant="small" placeholder={undefined} >
                     participating - 300
                   </Typography>
                   <AvatarStack />
@@ -228,21 +234,21 @@ const SingleEvent = () => {
             </div>
           </div>
           <div id="section2" data-section className="">
-            <Typography variant="h3">Event Details</Typography>
-            <Typography variant="small">event description</Typography>
+            <Typography variant="h3" placeholder={undefined} >Event Details</Typography>
+            <Typography variant="small" placeholder={undefined} >event description</Typography>
 
             <hr className="border-gray-700 my-8" />
           </div>
           <div id="section3" data-section className="">
-            <Typography variant="h3">Registration Details</Typography>
+            <Typography variant="h3" placeholder={undefined} >Registration Details</Typography>
 
-            <Typography variant="small">regestration details</Typography>
+            <Typography variant="small" placeholder={undefined} >regestration details</Typography>
             <hr className="border-gray-700 my-8" />
           </div>
 
           <div id="section4" data-section className="">
             <div className="">
-              <Typography className="my-4 p-8" variant="h3">
+              <Typography className="my-4 p-8" variant="h3" placeholder={undefined} >
                 Timeline
               </Typography>
               <Timeline className="p-4 w-1/2 ml-12">
@@ -252,24 +258,22 @@ const SingleEvent = () => {
                     <TimelineIcon
                       className="p-3"
                       variant="ghost"
-                      color={
-                        DummyColor[
+                      color={DummyColor[
                           Math.floor(Math.random() * DummyColor.length)
-                        ]
-                      }
+                        ]}
+                      
                     >
                       <RandomSvgIcon />
                     </TimelineIcon>
                     <div className="flex flex-col gap-1">
-                      <Typography variant="h6" color="blue-gray">
+                      <Typography variant="h6" color="blue-gray" placeholder={undefined} >
                         Prize Giving Ceremony
                       </Typography>
                       <div className="flex flex-row gap-2">
                         <Typography
                           variant="small"
                           color="gray"
-                          className="font-normal"
-                        >
+                          className="font-normal" placeholder={undefined}                         >
                           20 DEC 2:20 AM
                         </Typography>
                         <svg
@@ -294,8 +298,7 @@ const SingleEvent = () => {
                         <Typography
                           variant="small"
                           color="gray"
-                          className="font-normal"
-                        >
+                          className="font-normal" placeholder={undefined}                         >
                           IAC, BUET
                         </Typography>
                       </div>
@@ -303,8 +306,9 @@ const SingleEvent = () => {
                   </TimelineHeader>
                   <TimelineBody className="pb-8">
                     <Typography
+                    placeholder={""}
                       variant="small"
-                      color="gary"
+                      color="gray"
                       className="font-normal mt-4 text-gray-600"
                     >
                       The key to more success is to have a lot of pillows. Put
@@ -329,15 +333,14 @@ const SingleEvent = () => {
                       <RandomSvgIcon />
                     </TimelineIcon>
                     <div className="flex flex-col gap-1">
-                      <Typography variant="h6" color="blue-gray">
+                      <Typography variant="h6" color="blue-gray" placeholder={undefined} >
                         Prize Giving Ceremony
                       </Typography>
                       <div className="flex flex-row gap-2">
                         <Typography
                           variant="small"
                           color="gray"
-                          className="font-normal"
-                        >
+                          className="font-normal" placeholder={undefined}                         >
                           20 DEC 2:20 AM
                         </Typography>
                         <svg
@@ -362,8 +365,7 @@ const SingleEvent = () => {
                         <Typography
                           variant="small"
                           color="gray"
-                          className="font-normal"
-                        >
+                          className="font-normal" placeholder={undefined}                         >
                           IAC, BUET
                         </Typography>
                       </div>
@@ -377,23 +379,23 @@ const SingleEvent = () => {
           </div>
 
           <div id="section5" data-section className="">
-            <Typography variant="h3">Prize Pool</Typography>
+            <Typography variant="h3" placeholder={undefined} >Prize Pool</Typography>
 
-            <Typography variant="small">prize pool details</Typography>
+            <Typography variant="small" placeholder={undefined} >prize pool details</Typography>
             <hr className="border-gray-700 my-8" />
           </div>
 
           <div id="section6" data-section className="">
-            <Typography variant="h3">Resources</Typography>
+            <Typography variant="h3" placeholder={undefined} >Resources</Typography>
 
-            <Typography variant="small">Resources</Typography>
+            <Typography variant="small" placeholder={undefined} >Resources</Typography>
             <hr className="border-gray-700 my-8" />
           </div>
 
           <div id="section7" data-section className="">
-            <Typography variant="h3">Rules</Typography>
+            <Typography variant="h3" placeholder={undefined} >Rules</Typography>
 
-            <Typography variant="small">rules</Typography>
+            <Typography variant="small" placeholder={undefined} >rules</Typography>
             <hr className="border-gray-700 my-8" />
           </div>
         </div>

@@ -1,4 +1,6 @@
-const DummyColor: string[] = [
+import { color } from "@material-tailwind/react/types/components/alert";
+
+const DummyColor: color[] = [
   "blue-gray",
   "gray",
   "brown",
