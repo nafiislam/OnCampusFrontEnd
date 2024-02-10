@@ -38,6 +38,14 @@ const eventTypes = [
   {
     id: 10,
     name: "Tour",
+  },
+  {
+    id:11,
+    name: "Normal Online Event",
+  },
+  {
+    id:12,
+    name: "Normal Offline Event",
   }
 ];
 

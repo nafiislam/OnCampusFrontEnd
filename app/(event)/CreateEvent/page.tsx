@@ -71,6 +71,10 @@ function CreateEvent() {
                   <Entertainment />
                 ) : selectedOption === "Rag-Concert" ? (
                   <Cultural timeTime="time" />
+                ) : selectedOption === "Normal Online Event" ? (
+                  <Cultural timeTime="time" />
+                ) : selectedOption === "Normal Online Event" ? (
+                  <Cultural timeTime="time" />
                 ) : (
                   <h1>Nothing</h1>
                 )}
