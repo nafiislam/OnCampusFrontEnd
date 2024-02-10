@@ -17,6 +17,7 @@ import { useEffect } from "react";
 import { ContextProvider } from "./SinglePost";
 import POST from "@/server_actions/POST";
 import GET from "@/server_actions/GET";
+import { useRouter } from "next/navigation";
 
 export function DialogueBox({
   author,
@@ -49,6 +50,8 @@ export function DialogueBox({
   const [isInt, setIsInt] = useState(check);
   const [isOpened, setIsOpened] = useState(status);
   const [isCommentStatus, setIsCommentStatus] = useState(commentStatus);
+
+  const router = useRouter()
 
   const handleInt = async () => {
     const res = await POST("post/int/", { id: pid, type: "int" });
@@ -132,7 +135,11 @@ export function DialogueBox({
             >
               {isCommentStatus ? "Disallow comment" : "Allow comment"}
             </MenuItem>
-            {isOpened ? <MenuItem>Edit post</MenuItem> : ""}
+            {isOpened ? <MenuItem
+            onClick={()=>{
+              router.push(`/updatePost/${pid}`)
+            }}
+            >Edit post</MenuItem> : ""}
           </>
         ) : (
           ""
