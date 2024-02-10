@@ -9,12 +9,11 @@ import {
 } from "@material-tailwind/react";
 import React from "react";
 
-export default function SelectLocation() {
+export default function SelectOfflineLocation() {
   const [value, setValue] = React.useState("");
   return (
     <div className="relative flex w-full max-w-[24rem] bg-white">
       <div className="flex flex-row gap-4">
-        
         <Menu placement="bottom-start">
           <MenuHandler>
             <Button

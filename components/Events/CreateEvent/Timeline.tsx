@@ -5,13 +5,14 @@ import {
   Typography,
 } from "@material-tailwind/react";
 import type { DatePickerProps } from "antd";
-import { DatePicker, TimePicker } from "antd";
+import { DatePicker } from "antd";
 import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
-import React, { useState } from "react";
+import { useState } from "react";
+import LocationSelector from "./LocationSelector";
 
- function TimeLine({ timeline }: { timeline: string }) {
+function TimeLine() {
   const [inputCount, setInputCount] = useState<number>(0);
   const [inputs, setInputs] = useState<string[]>([]);
 
@@ -35,7 +36,7 @@ import React, { useState } from "react";
   };
 
   return (
-    <div className="bg-gray-200 w-5/6 border-0 rounded-xl">
+    <div className="bg-blue-gray-200 w-5/6 border-0 rounded-xl">
       <Typography variant="h5" className="px-4 pt-4" placeholder={""}>
         Add Timeline of Events
       </Typography>
@@ -51,41 +52,23 @@ import React, { useState } from "react";
                 />
               </div>
               <div className="flex flex-col gap-1 items-center">
-                {timeline === "Day" ? (
-                  <DatePicker
-                    onChange={onChange}
-                    showTime
-                    needConfirm={false}
-                    placeholder="YYYY-MM-DD HH:mm:ss*"
-                  />
-                ) : (
-                  <TimePicker
-                    onChange={onChange2}
-                    changeOnScroll
-                    needConfirm={false}
-                    placeholder="HH:mm:ss*"
-                  />
-                )}
+                <DatePicker
+                  onChange={onChange}
+                  showTime
+                  needConfirm={false}
+                  placeholder="YYYY-MM-DD HH:mm:ss*"
+                />
 
                 <Typography variant="small" className="italic" placeholder={""}>
                   to
                 </Typography>
 
-                {timeline === "Day" ? (
-                  <DatePicker
-                    onChange={onChange}
-                    showTime
-                    needConfirm={false}
-                    placeholder="YYYY-MM-DD HH:mm:ss*"
-                  />
-                ) : (
-                  <TimePicker
-                    onChange={onChange2}
-                    changeOnScroll
-                    needConfirm={false}
-                    placeholder="HH:mm:ss*"
-                  />
-                )}
+                <DatePicker
+                  onChange={onChange}
+                  showTime
+                  needConfirm={false}
+                  placeholder="YYYY-MM-DD HH:mm:ss*"
+                />
               </div>
 
               <IconButton
@@ -104,7 +87,8 @@ import React, { useState } from "react";
                 </svg>
               </IconButton>
             </div>
-            <hr className="my-4 border-blue-gray-200 " />
+            <LocationSelector />
+            <hr className="my-4 border-white " />
           </div>
         ))}
         <Button
@@ -126,6 +110,6 @@ import React, { useState } from "react";
       </div>
     </div>
   );
-};
+}
 
 export default TimeLine;
