@@ -1,6 +1,4 @@
 "use client";
-import AvatarImageText from "./AvatarImageText";
-import AvatarStack from "./AvatarStack";
 import {
   Button,
   Timeline,
@@ -13,7 +11,9 @@ import {
   Typography,
 } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
-import { DummyColor, svgIcons } from "./DummyIconColor";
+import AvatarImageText from "./AvatarImageText";
+import AvatarStack from "./AvatarStack";
+import { svgIcons } from "./DummyIconColor";
 
 interface SectionOffset {
   id: string;
@@ -21,7 +21,7 @@ interface SectionOffset {
   height: number;
 }
 
-const SingleEvent = () => {
+const SingleEvent = ({ event }: { event: any }) => {
   const [activeSection, setActiveSection] = useState<string | null>(null);
 
   useEffect(() => {
@@ -81,7 +81,7 @@ const SingleEvent = () => {
                   className="text-center"
                   placeholder={undefined}
                 >
-                  Title
+                  {event.title}
                 </Typography>
               </div>
             </div>
@@ -97,7 +97,7 @@ const SingleEvent = () => {
                 </svg>
 
                 <Typography variant="small" placeholder={undefined}>
-                  Organizer
+                  {event.organizers}
                 </Typography>
               </div>
               <div className="flex flex-row gap-2 text-blue-500">
@@ -115,47 +115,53 @@ const SingleEvent = () => {
                 </svg>
 
                 <Typography variant="small" placeholder={undefined}>
-                  Sponsors
+                  {event.Sponsors}
                 </Typography>
               </div>
-              <div className="flex flex-row gap-2 text-blue-500">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                  className="w-5 h-5"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="m9.69 18.933.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 0 0 .281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 1 0 3 9c0 3.492 1.698 5.988 3.355 7.584a13.731 13.731 0 0 0 2.273 1.765 11.842 11.842 0 0 0 .976.544l.062.029.018.008.006.003ZM10 11.25a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Z"
-                    clipRule="evenodd"
-                  />
-                </svg>
+              {event.location && (
+                <div className="flex flex-row gap-2 text-blue-500">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    className="w-5 h-5"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="m9.69 18.933.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 0 0 .281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 1 0 3 9c0 3.492 1.698 5.988 3.355 7.584a13.731 13.731 0 0 0 2.273 1.765 11.842 11.842 0 0 0 .976.544l.062.029.018.008.006.003ZM10 11.25a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
 
-                <Typography variant="small" placeholder={undefined}>
-                  Location
-                </Typography>
-              </div>
-              <div className="flex flex-row gap-2 text-blue-500">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-6 h-6"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m6-12V15a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 15V5.25m18 0A2.25 2.25 0 0 0 18.75 3H5.25A2.25 2.25 0 0 0 3 5.25m18 0V12a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 12V5.25"
-                  />
-                </svg>
+                  <Typography variant="small" placeholder={undefined}>
+                    {event.location}
+                  </Typography>
+                </div>
+              )}
 
-                <Typography variant="small" placeholder={undefined}>
-                  Online Meeting Link
-                </Typography>
-              </div>
+              {event.onlineLink && (
+                <div className="flex flex-row gap-2 text-blue-500">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-6 h-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m6-12V15a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 15V5.25m18 0A2.25 2.25 0 0 0 18.75 3H5.25A2.25 2.25 0 0 0 3 5.25m18 0V12a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 12V5.25"
+                    />
+                  </svg>
+
+                  <Typography variant="small" placeholder={undefined}>
+                    {event.onlineLink}
+                  </Typography>
+                </div>
+              )}
+
               <div className="flex flex-row gap-2 text-red-400">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -190,11 +196,11 @@ const SingleEvent = () => {
                 </svg>
 
                 <Typography variant="small" placeholder={undefined}>
-                  Posted By :{" "}
+                  Posted By :{event.user.name}
                   <Tooltip content={<AvatarImageText />}>
                     <span className="text-blue-600">Nahin Khan </span>
                   </Tooltip>
-                  AT Monday 8 February, 11:59 PM
+                  {event.createdAt}
                 </Typography>
               </div>
 
@@ -264,207 +270,170 @@ const SingleEvent = () => {
               Event Details
             </Typography>
             <Typography variant="small" placeholder={undefined}>
-              event description
+              {event.description}
             </Typography>
 
             <hr className="border-gray-700 my-8" />
           </div>
-          <div id="section3" data-section className="">
-            <Typography variant="h3" placeholder={undefined}>
-              Registration Details
-            </Typography>
-
-            <Typography variant="small" placeholder={undefined}>
-              regestration details
-            </Typography>
-            <hr className="border-gray-700 my-8" />
-          </div>
-
-          <div id="section4" data-section className="">
-            <div className="">
-              <Typography
-                className="my-4 p-8"
-                variant="h3"
-                placeholder={undefined}
-              >
-                Timeline
+          {event.registration && (
+            <div id="section3" data-section className="">
+              <Typography variant="h3" placeholder={undefined}>
+                Registration Details
               </Typography>
-              <Timeline className="p-4 w-1/2 ml-12">
-                <TimelineItem className="">
-                  <TimelineConnector className="!w-[78px]" />
-                  <TimelineHeader className="relative rounded-xl border border-blue-gray-50 bg-gray-100 py-3 pl-4 pr-8 shadow-lg shadow-blue-gray-200">
-                    <TimelineIcon
-                      className="p-3"
-                      variant="ghost"
-                      color={
-                        DummyColor[
-                          Math.floor(Math.random() * DummyColor.length)
-                        ]
-                      }
-                    >
-                      <RandomSvgIcon />
-                    </TimelineIcon>
-                    <div className="flex flex-col gap-1">
-                      <Typography
-                        variant="h6"
-                        color="blue-gray"
-                        placeholder={undefined}
-                      >
-                        Prize Giving Ceremony
-                      </Typography>
-                      <div className="flex flex-row gap-2">
-                        <Typography
-                          variant="small"
-                          color="gray"
-                          className="font-normal"
-                          placeholder={undefined}
-                        >
-                          20 DEC 2:20 AM
-                        </Typography>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          strokeWidth={1.5}
-                          stroke="currentColor"
-                          className="w-4 h-4 ml-8"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-                          />
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"
-                          />
-                        </svg>
-                        <Typography
-                          variant="small"
-                          color="gray"
-                          className="font-normal"
-                          placeholder={undefined}
-                        >
-                          IAC, BUET
-                        </Typography>
-                      </div>
-                    </div>
-                  </TimelineHeader>
-                  <TimelineBody className="pb-8">
-                    <Typography
-                      placeholder={""}
-                      variant="small"
-                      color="gray"
-                      className="font-normal mt-4 text-gray-600"
-                    >
-                      The key to more success is to have a lot of pillows. Put
-                      it this way, it took me twenty five years to get these
-                      plants, twenty five years of blood sweat and tears, and
-                      I&apos;m never giving up, I&apos;m just getting started.
-                      I&apos;m up to something. Fan luv.
-                    </Typography>
-                  </TimelineBody>
-                </TimelineItem>
-                <TimelineItem className="h-28">
-                  <TimelineHeader className="relative rounded-xl border border-blue-gray-50 bg-gray-100 py-3 pl-4 pr-8 shadow-lg shadow-blue-gray-200">
-                    <TimelineIcon
-                      className="p-3"
-                      variant="ghost"
-                      color={
-                        DummyColor[
-                          Math.floor(Math.random() * DummyColor.length)
-                        ]
-                      }
-                    >
-                      <RandomSvgIcon />
-                    </TimelineIcon>
-                    <div className="flex flex-col gap-1">
-                      <Typography
-                        variant="h6"
-                        color="blue-gray"
-                        placeholder={undefined}
-                      >
-                        Prize Giving Ceremony
-                      </Typography>
-                      <div className="flex flex-row gap-2">
-                        <Typography
-                          variant="small"
-                          color="gray"
-                          className="font-normal"
-                          placeholder={undefined}
-                        >
-                          20 DEC 2:20 AM
-                        </Typography>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          strokeWidth={1.5}
-                          stroke="currentColor"
-                          className="w-4 h-4 ml-8"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-                          />
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"
-                          />
-                        </svg>
-                        <Typography
-                          variant="small"
-                          color="gray"
-                          className="font-normal"
-                          placeholder={undefined}
-                        >
-                          IAC, BUET
-                        </Typography>
-                      </div>
-                    </div>
-                  </TimelineHeader>
-                </TimelineItem>
-              </Timeline>
+
+              <Typography variant="small" placeholder={undefined}>
+                regestration details
+              </Typography>
+              <hr className="border-gray-700 my-8" />
             </div>
+          )}
+          {event.timeline && (
+            <div id="section4" data-section className="">
+              <div className="">
+                <Typography
+                  className="my-4 p-8"
+                  variant="h3"
+                  placeholder={undefined}
+                >
+                  Timeline
+                </Typography>
+                {event.timeline.map((timeline: any, index: number) => {
+                  return (
+                    <div key={index} className="">
+                      <Timeline className="p-4 w-1/2 ml-12">
+                        <TimelineItem className="">
+                          {index == event.timeline.length - 1 ? null : (<TimelineConnector className="" />)}
+                          <TimelineHeader className="relative rounded-xl border border-blue-gray-50 bg-gray-100 py-3 pl-4 pr-8 shadow-lg shadow-blue-gray-200">
+                            <TimelineIcon
+                              className="p-3"
+                              variant="ghost"
+                              color="red"
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                className="w-6 h-6"
+                              >
+                                <path d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                              </svg>
+                            </TimelineIcon>
+                            <div className="flex flex-col gap-1">
+                              <Typography
+                                variant="h6"
+                                color="blue-gray"
+                                placeholder={undefined}
+                              >
+                                {timeline.name}
+                              </Typography>
+                              <div className="flex flex-row gap-2">
+                                <Typography
+                                  variant="small"
+                                  color="gray"
+                                  className="font-normal"
+                                  placeholder={undefined}
+                                >
+                                  {timeline.startDate} {timeline.finishDate && (`to ${timeline.finishDate}`)}
+                                </Typography>
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  strokeWidth={1.5}
+                                  stroke="currentColor"
+                                  className="w-4 h-4 ml-8"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                                  />
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"
+                                  />
+                                </svg>
+                                <Typography
+                                  variant="small"
+                                  color="gray"
+                                  className="font-normal"
+                                  placeholder={undefined}
+                                >
+                                  {timeline.location}
+                                </Typography>
+                              </div>
+                            </div>
+                          </TimelineHeader>
+                          <TimelineBody className="pb-8">
+                            <Typography
+                              placeholder={""}
+                              variant="small"
+                              color="gray"
+                              className="font-normal mt-4 text-gray-600"
+                            >
+                              {timeline.description}
+                            </Typography>
+                          </TimelineBody>
+                        </TimelineItem>
+                      </Timeline>
+                    </div>
+                  );
+                })}
+              </div>
 
-            <hr className="border-gray-700 my-8" />
-          </div>
+              <hr className="border-gray-700 my-8" />
+            </div>
+          )}
 
-          <div id="section5" data-section className="">
-            <Typography variant="h3" placeholder={undefined}>
-              Prize Pool
-            </Typography>
+          {event.prizes && (
+            <div id="section5" data-section className="">
+              <Typography variant="h3" placeholder={undefined}>
+                Prize Pool
+              </Typography>
 
-            <Typography variant="small" placeholder={undefined}>
-              prize pool details
-            </Typography>
-            <hr className="border-gray-700 my-8" />
-          </div>
+              <Typography variant="small" placeholder={undefined}>
+                prize pool details
+              </Typography>
+              <hr className="border-gray-700 my-8" />
+            </div>
+          )}
 
-          <div id="section6" data-section className="">
-            <Typography variant="h3" placeholder={undefined}>
-              Resources
-            </Typography>
+          {event.resources && (
+            <div id="section6" data-section className="">
+              <Typography variant="h3" placeholder={undefined}>
+                Resources
+              </Typography>
 
-            <Typography variant="small" placeholder={undefined}>
-              Resources
-            </Typography>
-            <hr className="border-gray-700 my-8" />
-          </div>
+              {event.resources.map((resource: any, index: number) => {
+                return (
+                  <div key={index} className="">
+                    <Typography variant="small" placeholder={undefined}>
+                      {resource.description}
+                    </Typography>
+                    <a href={resource.link} className="text-blue-500">
+                      {resource.link}
+                    </a>
+                  </div>
+                );
+              })}
+              <hr className="border-gray-700 my-8" />
+            </div>
+          )}
 
-          <div id="section7" data-section className="">
-            <Typography variant="h3" placeholder={undefined}>
-              Rules
-            </Typography>
+          {event.rules && (
+            <div id="section7" data-section className="">
+              <Typography variant="h3" placeholder={undefined}>
+                Rules
+              </Typography>
 
-            <Typography variant="small" placeholder={undefined}>
-              rules
-            </Typography>
-            <hr className="border-gray-700 my-8" />
-          </div>
+              <Typography variant="small" placeholder={undefined}>
+                rules
+              </Typography>
+              <hr className="border-gray-700 my-8" />
+            </div>
+          )}
         </div>
 
         <div className="w-1/4 text-gray-400">
@@ -484,41 +453,51 @@ const SingleEvent = () => {
               >
                 <a href="#section2">Details</a>
               </li>
-              <li
-                className={`py-2 px-4 ${
-                  activeSection === "section3" ? "text-black" : ""
-                }`}
-              >
-                <a href="#section3">Registration</a>
-              </li>
-              <li
-                className={`py-2 px-4 ${
-                  activeSection === "section4" ? "text-black" : ""
-                }`}
-              >
-                <a href="#section4">Timeline</a>
-              </li>
-              <li
-                className={`py-2 px-4 ${
-                  activeSection === "section5" ? "text-black" : ""
-                }`}
-              >
-                <a href="#section5">prizePools</a>
-              </li>
-              <li
-                className={`py-2 px-4 ${
-                  activeSection === "section6" ? "text-black" : ""
-                }`}
-              >
-                <a href="#section6">Resources</a>
-              </li>
-              <li
-                className={`py-2 px-4 ${
-                  activeSection === "section6" ? "text-black" : ""
-                }`}
-              >
-                <a href="#section7">Rules</a>
-              </li>
+              {event.registration && (
+                <li
+                  className={`py-2 px-4 ${
+                    activeSection === "section3" ? "text-black" : ""
+                  }`}
+                >
+                  <a href="#section3">Registration</a>
+                </li>
+              )}
+              {event.timeline && (
+                <li
+                  className={`py-2 px-4 ${
+                    activeSection === "section4" ? "text-black" : ""
+                  }`}
+                >
+                  <a href="#section4">Timeline</a>
+                </li>
+              )}
+              {event.prizes && (
+                <li
+                  className={`py-2 px-4 ${
+                    activeSection === "section5" ? "text-black" : ""
+                  }`}
+                >
+                  <a href="#section5">prizePools</a>
+                </li>
+              )}
+              {event.resources && (
+                <li
+                  className={`py-2 px-4 ${
+                    activeSection === "section6" ? "text-black" : ""
+                  }`}
+                >
+                  <a href="#section6">Resources</a>
+                </li>
+              )}
+              {event.rules && (
+                <li
+                  className={`py-2 px-4 ${
+                    activeSection === "section6" ? "text-black" : ""
+                  }`}
+                >
+                  <a href="#section7">Rules</a>
+                </li>
+              )}
             </ul>
           </nav>
         </div>
