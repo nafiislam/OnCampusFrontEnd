@@ -9,22 +9,43 @@ import type { DatePickerProps } from "antd";
 import type { Dayjs } from "dayjs";
 import React, { useState } from "react";
 
-const Resources: React.FC = () => {
+
+
+interface Resources {
+  description: string;
+  link: string;
+}
+
+
+interface ResourcesProps {
+  index: number;
+  resources: Resources;
+  onResourcesChange: (index: number, resources: Resources) => void;
+  onResourcesRemove: (index: number) => void;
+}
+
+
+const Resources: React.FC<ResourcesProps> = ({index, resources, onResourcesChange, onResourcesRemove}) => {
   const [inputCount, setInputCount] = useState<number>(0);
   const [inputs, setInputs] = useState<string[]>([]);
 
   const handleAddInput = () => {
     setInputCount(inputCount + 1);
     setInputs([...inputs, `input-${inputCount}`]);
+    onResourcesChange(index, resources);
   };
 
   const handleRemoveInput = (input: string) => {
     setInputs(inputs.filter((item) => item !== input));
+    onResourcesRemove(index);
   };
 
-  const onChange: DatePickerProps<Dayjs[]>["onChange"] = (date, dateString) => {
-    console.log(date, dateString);
-  };
+
+
+  const[description, setDescription] = useState<string>(resources.description);
+  const[link, setLink] = useState<string>(resources.link);
+
+
 
   return (
     <div className=" bg-blue-gray-300 w-5/6 border-0 rounded-xl">
@@ -40,6 +61,7 @@ const Resources: React.FC = () => {
                   rows={4}
                   className="bg-white"
                   label="Resources description"
+                  onChange={(e) => {setDescription(e.target.value)}}
                 />
 
                 <Input
@@ -47,6 +69,7 @@ const Resources: React.FC = () => {
                   label="Resource Link"
                   placeholder="ADD URL"
                   className="bg-white text-blue-400 underline"
+                  onChange={(e) => {setLink(e.target.value)}}
                 />
               </div>
 
