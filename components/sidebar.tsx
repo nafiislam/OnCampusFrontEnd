@@ -1,28 +1,33 @@
 "use client";
+import React from "react";
 import {
-  BeakerIcon,
-  BookOpenIcon,
-  CalendarDaysIcon,
-  ChatBubbleBottomCenterTextIcon,
-  ChevronRightIcon,
-  CurrencyBangladeshiIcon,
-  ShoppingBagIcon,
-  Square3Stack3DIcon,
-  UserGroupIcon,
-} from "@heroicons/react/24/outline";
-import {
-  Accordion,
-  AccordionBody,
-  AccordionHeader,
   Card,
+  Typography,
   List,
   ListItem,
   ListItemPrefix,
-  Typography,
+  ListItemSuffix,
+  Chip,
+  Accordion,
+  AccordionHeader,
+  AccordionBody,
 } from "@material-tailwind/react";
-import { signOut, useSession } from "next-auth/react";
+import {
+  Square3Stack3DIcon,
+  BookOpenIcon,
+  UserGroupIcon,
+  CalendarDaysIcon,
+  ChevronRightIcon,
+  ChatBubbleBottomCenterTextIcon,
+  BeakerIcon,
+  ShoppingBagIcon,
+  ComputerDesktopIcon,
+  CurrencyBangladeshiIcon,
+  ScaleIcon,
+} from "@heroicons/react/24/outline";
+import { useEffect } from "react";
+import { useSession, signIn, signOut } from "next-auth/react";
 import Link from "next/link";
-import React, { useEffect } from "react";
 
 export function SidebarWithContentSeparator() {
   const [open, setOpen] = React.useState(0);
@@ -56,6 +61,8 @@ export function SidebarWithContentSeparator() {
     );
   }
 
+
+
   const handleOpen = (value: React.SetStateAction<number>) => {
     setOpen(open === value ? 0 : value);
   };
@@ -63,7 +70,7 @@ export function SidebarWithContentSeparator() {
   return (
     <Card
       placeholder={""}
-      className="h-[calc(100vh-5rem)] w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/2"
+      className="h-[calc(130vh-2rem)] w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/2"
     >
       <div className="mb-2 p-4">
         {/* <Typography variant="h5" color="blue-gray">
@@ -77,9 +84,8 @@ export function SidebarWithContentSeparator() {
           icon={
             <ChevronRightIcon
               strokeWidth={2.5}
-              className={`mx-auto h-4 w-4 transition-transform ${
-                open === 1 ? "rotate-90" : ""
-              }`}
+              className={`mx-auto h-4 w-4 transition-transform ${open === 1 ? "rotate-90" : ""
+                }`}
             />
           }
         >
@@ -161,9 +167,8 @@ export function SidebarWithContentSeparator() {
           icon={
             <ChevronRightIcon
               strokeWidth={2.5}
-              className={`mx-auto h-4 w-4 transition-transform ${
-                open === 2 ? "rotate-90" : ""
-              }`}
+              className={`mx-auto h-4 w-4 transition-transform ${open === 2 ? "rotate-90" : ""
+                }`}
             />
           }
           placeholder={undefined}
@@ -250,9 +255,8 @@ export function SidebarWithContentSeparator() {
           icon={
             <ChevronRightIcon
               strokeWidth={2.5}
-              className={`mx-auto h-4 w-4 transition-transform ${
-                open === 3 ? "rotate-90" : ""
-              }`}
+              className={`mx-auto h-4 w-4 transition-transform ${open === 3 ? "rotate-90" : ""
+                }`}
             />
           }
           placeholder={undefined}
@@ -339,9 +343,8 @@ export function SidebarWithContentSeparator() {
           icon={
             <ChevronRightIcon
               strokeWidth={2.5}
-              className={`mx-auto h-4 w-4 transition-transform ${
-                open === 4 ? "rotate-90" : ""
-              }`}
+              className={`mx-auto h-4 w-4 transition-transform ${open === 4 ? "rotate-90" : ""
+                }`}
             />
           }
           placeholder={undefined}
@@ -428,9 +431,8 @@ export function SidebarWithContentSeparator() {
           icon={
             <ChevronRightIcon
               strokeWidth={2.5}
-              className={`mx-auto h-4 w-4 transition-transform ${
-                open === 5 ? "rotate-90" : ""
-              }`}
+              className={`mx-auto h-4 w-4 transition-transform ${open === 5 ? "rotate-90" : ""
+                }`}
             />
           }
           placeholder={undefined}
@@ -477,9 +479,8 @@ export function SidebarWithContentSeparator() {
           icon={
             <ChevronRightIcon
               strokeWidth={2.5}
-              className={`mx-auto h-4 w-4 transition-transform ${
-                open === 6 ? "rotate-90" : ""
-              }`}
+              className={`mx-auto h-4 w-4 transition-transform ${open === 6 ? "rotate-90" : ""
+                }`}
             />
           }
           placeholder={undefined}
@@ -526,9 +527,8 @@ export function SidebarWithContentSeparator() {
           icon={
             <ChevronRightIcon
               strokeWidth={2.5}
-              className={`mx-auto h-4 w-4 transition-transform ${
-                open === 7 ? "rotate-90" : ""
-              }`}
+              className={`mx-auto h-4 w-4 transition-transform ${open === 7 ? "rotate-90" : ""
+                }`}
             />
           }
           placeholder={undefined}
@@ -570,71 +570,88 @@ export function SidebarWithContentSeparator() {
           </AccordionBody>
         </Accordion>
 
-        {isAdmin ? (
-          <Accordion
-            open={open === 8}
-            icon={
-              <ChevronRightIcon
-                strokeWidth={2.5}
-                className={`mx-auto h-4 w-4 transition-transform ${
-                  open === 8 ? "rotate-90" : ""
+        {isAdmin ? (<Accordion
+          open={open === 8}
+          icon={
+            <ChevronRightIcon
+              strokeWidth={2.5}
+              className={`mx-auto h-4 w-4 transition-transform ${open === 8 ? "rotate-90" : ""
                 }`}
-              />
-            }
+            />
+          }
+          placeholder={undefined}
+        >
+          <ListItem
+            className="p-0"
+            selected={open === 8}
             placeholder={undefined}
           >
-            <ListItem
-              className="p-0"
-              selected={open === 8}
+            <AccordionHeader
+              onClick={() => handleOpen(8)}
+              className="border-b-0 p-3"
               placeholder={undefined}
             >
-              <AccordionHeader
-                onClick={() => handleOpen(8)}
-                className="border-b-0 p-3"
+              <ListItemPrefix placeholder={undefined}>
+                <BookOpenIcon className="h-5 w-5" />
+              </ListItemPrefix>
+              <Typography
+                color="blue-gray"
+                className="mr-auto font-normal"
                 placeholder={undefined}
               >
-                <ListItemPrefix placeholder={undefined}>
-                  <BookOpenIcon className="h-5 w-5" />
-                </ListItemPrefix>
-                <Typography
-                  color="blue-gray"
-                  className="mr-auto font-normal"
-                  placeholder={undefined}
-                >
-                  Admin
-                </Typography>
-              </AccordionHeader>
-            </ListItem>
-            <AccordionBody className="py-1 pl-2">
-              <List className="p-0" placeholder={undefined}>
-                <Link href="/admin/createStudent">
-                  <ListItem placeholder={undefined}>
-                    <ListItemPrefix placeholder={undefined}>
-                      <ChatBubbleBottomCenterTextIcon
-                        strokeWidth={2}
-                        className="h-4 w-5"
-                      />
-                    </ListItemPrefix>
-                    Create New Student
-                  </ListItem>
-                </Link>
-                <Link href="/admin/createClub">
-                  <ListItem placeholder={undefined}>
-                    <ListItemPrefix placeholder={undefined}>
-                      <ChatBubbleBottomCenterTextIcon
-                        strokeWidth={2}
-                        className="h-4 w-5"
-                      />
-                    </ListItemPrefix>
-                    Create New Club
-                  </ListItem>
-                </Link>
-              </List>
-            </AccordionBody>
-          </Accordion>
-        ) : (
-          ""
-        )}
+                Admin
+              </Typography>
+            </AccordionHeader>
+          </ListItem>
+          <AccordionBody className="py-1 pl-2">
+            <List className="p-0" placeholder={undefined}>
+              <Link href="/admin/createStudent">
+                <ListItem placeholder={undefined}>
+                  <ListItemPrefix placeholder={undefined}>
+                    <ChatBubbleBottomCenterTextIcon
+                      strokeWidth={2}
+                      className="h-4 w-5"
+                    />
+                  </ListItemPrefix>
+                  Create New Student
+                </ListItem>
+              </Link>
+              <Link href="/admin/createClub">
+                <ListItem placeholder={undefined}>
+                  <ListItemPrefix placeholder={undefined}>
+                    <ChatBubbleBottomCenterTextIcon
+                      strokeWidth={2}
+                      className="h-4 w-5"
+                    />
+                  </ListItemPrefix>
+                  Create New Club
+                </ListItem>
+              </Link>
+              <Link href="/admin/createBatch">
+                <ListItem placeholder={undefined}>
+                  <ListItemPrefix placeholder={undefined}>
+                    <ChatBubbleBottomCenterTextIcon
+                      strokeWidth={2}
+                      className="h-4 w-5"
+                    />
+                  </ListItemPrefix>
+                  Create New Batch
+                </ListItem>
+              </Link>
+              <Link href="/admin/users">
+                <ListItem placeholder={undefined}>
+                  <ListItemPrefix placeholder={undefined}>
+                    <ChatBubbleBottomCenterTextIcon
+                      strokeWidth={2}
+                      className="h-4 w-5"
+                    />
+                  </ListItemPrefix>
+                  All Users
+                </ListItem>
+              </Link>
+            </List>
+          </AccordionBody>
+        </Accordion>) : ""}
       </List>
     </Card>
   );

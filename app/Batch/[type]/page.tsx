@@ -20,7 +20,9 @@ const Batch = async ({ params }: { params: { type: string } }) => {
             </>
         );
     }
-    
+    else{
+        return <div>Post not found</div>;
+    }
 }
 
 export default Batch
