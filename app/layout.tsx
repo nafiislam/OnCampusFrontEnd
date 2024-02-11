@@ -1,13 +1,13 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
+import Footer from "@/components/Footer";
 import { EdgeStoreProvider } from "@/lib/edgestore";
+import { Inter } from "next/font/google";
 import { ThemeProvider } from "../components/Mat_tail_export";
 import { SidebarWithContentSeparator } from "../components/sidebar";
+import "./globals.css";
 
-import SessionProviderWrapper from "@/utils/sessionProviderWrapper";
-import { getAccessToken } from '@/utils/sessionTokenAccessor'
 import NavbarWrapper from "@/components/NavbarWrapper";
+import SessionProviderWrapper from "@/utils/sessionProviderWrapper";
+import { getAccessToken } from "@/utils/sessionTokenAccessor";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -28,16 +28,19 @@ export default async function RootLayout({
         <ThemeProvider>
           <body className={inter.className}>
             {token ? (
-              <div className="m-4">
-                <NavbarWrapper />
-                <div className="grid grid-cols-6 gap-1">
-                  <div className="col-span-1">
+              <div className="">
+                <div className="m-4 sticky top-1 z-10">
+                  <NavbarWrapper />
+                </div>
+                <div className="flex flex-row gap-10">
+                  <div className="sticky top-20 h-full">
                     <SidebarWithContentSeparator />
                   </div>
-                  <div className="col-span-5">
+                  <div className="mt-8 flex-grow overflow-y-scroll">
                     <EdgeStoreProvider>{children}</EdgeStoreProvider>
                   </div>
                 </div>
+                <Footer />
               </div>
             ) : (
               <div>
@@ -50,4 +53,3 @@ export default async function RootLayout({
     </SessionProviderWrapper>
   );
 }
-
