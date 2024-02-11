@@ -1,9 +1,7 @@
 "use client";
 
-import { Input, Switch, Typography } from "@material-tailwind/react";
+import { Button, Input, Switch, Typography } from "@material-tailwind/react";
 import { DatePicker } from "antd";
-
-import Timeline from "./Timeline";
 
 import type { DatePickerProps } from "antd";
 import type { Dayjs } from "dayjs";
@@ -11,6 +9,7 @@ import dynamic from "next/dynamic";
 import { useState } from "react";
 import LocationSelector from "./LocationSelector";
 import Resources from "./Resources";
+import Timeline from "./Timeline";
 
 const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
 
@@ -58,35 +57,134 @@ const configRules = {
   height: 100,
 };
 
-const onChange: DatePickerProps<Dayjs[]>["onChange"] = (date, dateString) => {
-  console.log(date, dateString);
-};
+interface TimeLine {
+  name: string;
+  description: string;
+  startDate: string;
+  finishDate: string;
+  meetingType: string;
+  location: string;
+  onlineLink: string;
+}
+
+interface Resource {
+  description: string;
+  link: string;
+}
+
+interface Event {
+  title: string;
+  description: string;
+  startDate: string;
+  finishDate: string;
+  eventType: string;
+  location: string;
+  onlineLink: string;
+  organizers: string;
+  sponsors: string;
+  registration: string;
+  rules: string;
+  prizes: string;
+  eventTag: string;
+  timeline: TimeLine[];
+  resources: Resources[];
+}
 
 export default function SingleEvent({
+  selectedType,
   hasTimeline = false,
   hasResources = false,
   hasRules = false,
   hasRegistration = false,
   hasPrize = false,
 }: {
+  selectedType: string;
   hasTimeline?: boolean;
   hasResources?: boolean;
   hasRules?: boolean;
   hasRegistration?: boolean;
   hasPrize?: boolean;
 }) {
-  const [registration, setRegistration] = useState<boolean>(
+  const [registrationIn, setRegistrationIn] = useState<boolean>(
     hasRegistration || false
   );
-  const [rules, setRules] = useState<boolean>(hasRules || false);
-  const [timeline, setTimeline] = useState<boolean>(hasTimeline || false);
-  const [resources, setResources] = useState<boolean>(hasResources || false);
-  const [prize, setPrize] = useState<boolean>(hasPrize || false);
+  const [rulesIn, setRulesIn] = useState<boolean>(hasRules || false);
+  const [timelineIn, setTimelineIn] = useState<boolean>(hasTimeline || false);
+  const [resourcesIn, setResourcesIn] = useState<boolean>(
+    hasResources || false
+  );
+  const [prizeIn, setPrizeIn] = useState<boolean>(hasPrize || false);
 
-  const [content1, setContent1] = useState("");
-  const [content2, setContent2] = useState("");
-  const [content3, setContent3] = useState("");
-  const [content4, setContent4] = useState("");
+  const [title, setTitle] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [startDate, setStartDate] = useState<string>("");
+  const [finishDate, setFinishDate] = useState<string>("");
+  const [eventType, setEventType] = useState<string>("");
+  const [location, setLocation] = useState<string>("");
+  const [onlineLink, setOnlineLink] = useState<string>("");
+  const [organizers, setOrganizers] = useState<string>("");
+  const [sponsors, setSponsors] = useState<string>("");
+  const [registration, setRegistration] = useState<string>("");
+  const [rules, setRules] = useState<string>("");
+  const [prizes, setPrizes] = useState<string>("");
+  const [eventTag, setEventTag] = useState<string>(selectedType);
+  const [timeline, setTimeline] = useState<TimeLine[]>([]);
+  const [resources, setResources] = useState<Resources[]>([]);
+
+  const startdateChange: DatePickerProps<Dayjs[]>["onChange"] = (
+    date,
+    dateString
+  ) => {
+    console.log(date, dateString);
+    console.log("datedtring" + dateString.toString());
+    console.log("ds1" + dateString[0]);
+    console.log("ds2" + dateString[1]);
+    setStartDate(dateString.toString());
+    console.log("start date" + startDate);
+  };
+
+  const finishDateChange: DatePickerProps<Dayjs[]>["onChange"] = (
+    date,
+    dateString
+  ) => {
+    console.log(date, dateString);
+    console.log("datedtring" + dateString.toString());
+    console.log("ds1" + dateString[0]);
+    console.log("ds2" + dateString[1]);
+    setFinishDate(dateString.toString());
+    console.log("start date" + startDate);
+  };
+
+
+
+  const onResourcesChange = (index: number, resource: Resource) => {
+    
+
+  }
+
+
+
+  const handleSubmit = () => {
+    const mainData: Event = {
+      title: title,
+      description: description,
+      startDate: startDate,
+      finishDate: finishDate,
+      eventType: eventType,
+      location: location,
+      onlineLink: onlineLink,
+      organizers: organizers,
+      sponsors: sponsors,
+      registration: registration,
+      rules: rules,
+      prizes: prizes,
+      eventTag: eventTag,
+      timeline: timeline,
+      resources: resources,
+    };
+    // Log the combined data
+    console.log(mainData);
+  };
 
   return (
     <div>
@@ -95,6 +193,7 @@ export default function SingleEvent({
           className="bg-white"
           label="Name of the Event*"
           crossOrigin={undefined}
+          onChange={(e) => setTitle(e.target.value)}
         />
         <Typography
           variant="small"
@@ -105,9 +204,9 @@ export default function SingleEvent({
         </Typography>
         <div>
           <JoditEditor
-            value={content1}
+            value={description}
             config={config}
-            onBlur={(newContent) => setContent1(newContent)} // preferred to use only this option to update the content for performance reasons
+            onBlur={(newContent) => setDescription(newContent)} // preferred to use only this option to update the content for performance reasons
             onChange={(newContent) => {}}
           />
         </div>
@@ -121,7 +220,7 @@ export default function SingleEvent({
               Start Date*
             </Typography>
             <DatePicker
-              onChange={onChange}
+              onChange={startdateChange}
               showTime
               needConfirm={false}
               placeholder="YYYY-MM-DD HH:mm:ss"
@@ -136,7 +235,7 @@ export default function SingleEvent({
               End Date
             </Typography>
             <DatePicker
-              onChange={onChange}
+              onChange={finishDateChange}
               showTime
               needConfirm={false}
               placeholder="YYYY-MM-DD HH:mm:ss"
@@ -157,6 +256,7 @@ export default function SingleEvent({
             crossOrigin={""}
             label="..."
             placeholder="any of people, batch, batch-dept, club or organization..."
+            onChange={(e) => setOrganizers(e.target.value)}
           />
         </div>
 
@@ -173,6 +273,7 @@ export default function SingleEvent({
             crossOrigin={""}
             label="..."
             placeholder="put comma between multiple"
+            onChange={(e) => setSponsors(e.target.value)}
           />
         </div>
 
@@ -198,9 +299,9 @@ export default function SingleEvent({
         </div>
 
         <Switch
-          defaultChecked={registration}
+          defaultChecked={registrationIn}
           crossOrigin={""}
-          onClick={(e) => setRegistration(!registration)}
+          onClick={(e) => setRegistrationIn(!registrationIn)}
           label={
             <div>
               <Typography
@@ -214,7 +315,7 @@ export default function SingleEvent({
           }
         />
 
-        {registration && (
+        {registrationIn && (
           <div className="flex flex-col gap-4">
             <Typography
               variant="small"
@@ -225,9 +326,9 @@ export default function SingleEvent({
             </Typography>
             <div className="w-5/6">
               <JoditEditor
-                value={content2}
+                value={registration}
                 config={{ ...configReg, toolbarButtonSize: "small" }}
-                onBlur={(newContent) => setContent2(newContent)} // preferred to use only this option to update the content for performance reasons
+                onBlur={(newContent) => setRegistration(newContent)} // preferred to use only this option to update the content for performance reasons
                 onChange={(newContent) => {}}
               />
             </div>
@@ -235,9 +336,9 @@ export default function SingleEvent({
         )}
 
         <Switch
-          defaultChecked={timeline}
+          defaultChecked={timelineIn}
           crossOrigin={""}
-          onClick={(e) => setTimeline(!timeline)}
+          onClick={(e) => setTimelineIn(!timelineIn)}
           label={
             <div>
               <Typography
@@ -251,12 +352,12 @@ export default function SingleEvent({
           }
         />
 
-        {timeline && <Timeline />}
+        {timelineIn && <Timeline />}
 
         <Switch
-          defaultChecked={resources}
+          defaultChecked={resourcesIn}
           crossOrigin={""}
-          onClick={(e) => setResources(!resources)}
+          onClick={(e) => setResourcesIn(!resourcesIn)}
           label={
             <div>
               <Typography
@@ -270,12 +371,12 @@ export default function SingleEvent({
           }
         />
 
-        {resources && <Resources />}
+        {resourcesIn && <Resources />}
 
         <Switch
-          defaultChecked={prize}
+          defaultChecked={prizeIn}
           crossOrigin={""}
-          onClick={(e) => setPrize(!prize)}
+          onClick={(e) => setPrizeIn(!prizeIn)}
           label={
             <div>
               <Typography
@@ -289,7 +390,7 @@ export default function SingleEvent({
           }
         />
 
-        {prize && (
+        {prizeIn && (
           <div className="flex flex-col gap-4">
             <Typography
               variant="small"
@@ -300,9 +401,9 @@ export default function SingleEvent({
             </Typography>
             <div className="w-5/6">
               <JoditEditor
-                value={content3}
+                value={prizes}
                 config={{ ...configReg, toolbarButtonSize: "small" }}
-                onBlur={(newContent) => setContent3(newContent)} // preferred to use only this option to update the content for performance reasons
+                onBlur={(newContent) => setPrizes(newContent)} // preferred to use only this option to update the content for performance reasons
                 onChange={(newContent) => {}}
               />
             </div>
@@ -310,9 +411,9 @@ export default function SingleEvent({
         )}
 
         <Switch
-          defaultChecked={rules}
+          defaultChecked={rulesIn}
           crossOrigin={""}
-          onClick={(e) => setRules(!rules)}
+          onClick={(e) => setRulesIn(!rulesIn)}
           label={
             <div>
               <Typography placeholder={""} color="red" className="font-medium">
@@ -322,7 +423,7 @@ export default function SingleEvent({
           }
         />
 
-        {rules && (
+        {rulesIn && (
           <div className="flex flex-col gap-4">
             <Typography
               variant="small"
@@ -333,14 +434,16 @@ export default function SingleEvent({
             </Typography>
             <div className="w-3/4">
               <JoditEditor
-                value={content4}
+                value={rules}
                 config={{ ...configRules, toolbarButtonSize: "small" }} // change the toolbarButtonSize to one of the valid values
-                onBlur={(newContent) => setContent4(newContent)} // preferred to use only this option to update the content for performance reasons
+                onBlur={(newContent) => setRules(newContent)} // preferred to use only this option to update the content for performance reasons
                 onChange={(newContent) => {}}
               />
             </div>
           </div>
         )}
+
+        <Button onClick={handleSubmit}>Create Event</Button>
       </div>
     </div>
   );

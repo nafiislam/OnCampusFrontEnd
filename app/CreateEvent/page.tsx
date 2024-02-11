@@ -1,4 +1,6 @@
 "use client";
+import SingleEvent from "@/components/Events/CreateEvent/SingleEvent";
+import SingleEv from "@/components/Events/CreateEvent/SingleEv";
 import { eventTypes } from "@/components/Events/DummyTypes";
 import {
   Option,
@@ -6,12 +8,45 @@ import {
   Typography as Typography1,
 } from "@material-tailwind/react";
 import { useState } from "react";
-import SingleEvent from "@/components/Events/CreateEvent/SingleEvent";
+
+interface TimeLine {
+  name: string;
+  description: string;
+  startDate: string;
+  finishDate: string;
+  meetingType: string;
+  location: string;
+  onlineLink: string;
+}
+
+interface Resources {
+  description: string;
+  link: string;
+}
+
+interface Event {
+  title: string;
+  description: string;
+  startDate: string;
+  finishDate: string;
+  eventType: string;
+  location: string;
+  onlineLink: string;
+  organizers: string;
+  sponsors: string;
+  registration: string;
+  rules: string;
+  prizes: string;
+  eventTag: string;
+  timeline: TimeLine[];
+  resources: Resources[];
+}
 
 function CreateEvent() {
+
   const [selectedOption, setSelectedOption] = useState<string | undefined>("");
 
-  const handleChange = (selected: string | undefined) => {
+  const handleEventTypeChange = (selected: string | undefined) => {
     setSelectedOption(selected);
     console.log(selected);
   };
@@ -41,6 +76,7 @@ function CreateEvent() {
     "Normal Online Event": {},
   };
 
+
   return (
     <div className="flex flx-row">
       <div className="w-3/4">
@@ -55,7 +91,7 @@ function CreateEvent() {
               label="Select Type"
               placeholder={undefined}
               value={selectedOption}
-              onChange={handleChange}
+              onChange={handleEventTypeChange}
             >
               {eventTypes.map((type) => (
                 <Option key={type.id} value={type.name}>
@@ -70,8 +106,9 @@ function CreateEvent() {
             <div className="w-5/6">
               <div className="p-4 my-8 border border-gray-300 rounded-md bg-blue-gray-50">
                 {/* Use the key prop to force re-rendering based on selectedOption */}
-                <SingleEvent
+                <SingleEv
                   key={selectedOption}
+                  selectedType={selectedOption}
                   {...eventPropsMap[selectedOption]}
                 />
               </div>

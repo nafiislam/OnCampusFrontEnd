@@ -13,16 +13,40 @@ import customParseFormat from "dayjs/plugin/customParseFormat";
 import { useState } from "react";
 import LocationSelector from "./LocationSelector";
 
+
+
+
+interface TimeLine {
+  name: string;
+  description: string;
+  startDate: string;
+  finishDate: string;
+  meetingType: string;
+  location: string;
+  onlineLink: string;
+}
+
+interface TimeLineProps {
+  index: number;
+  timeLine: TimeLine;
+  onTimeLineChange: (index: number, timeLine: TimeLine) => void;
+  onTimeLineRemove: (index: number) => void;
+}
+
+
+
+
+
 function TimeLine() {
   const [inputCount, setInputCount] = useState<number>(0);
   const [inputs, setInputs] = useState<string[]>([]);
 
-  const handleAddInput = () => {
+  const handleAddInputTimeLine = () => {
     setInputCount(inputCount + 1);
     setInputs([...inputs, `input-${inputCount}`]);
   };
 
-  const handleRemoveInput = (input: string) => {
+  const handleRemoveInputTimeLine = (input: string) => {
     setInputs(inputs.filter((item) => item !== input));
   };
 
@@ -32,9 +56,6 @@ function TimeLine() {
 
   dayjs.extend(customParseFormat);
 
-  const onChange2 = (time: Dayjs, timeString: string | string[]) => {
-    console.log(time, timeString);
-  };
 
   return (
     <div className="bg-blue-gray-200 w-5/6 border-0 rounded-xl">
@@ -83,7 +104,7 @@ function TimeLine() {
               <IconButton
                 placeholder={""}
                 className="ml-2 bg-red-500 text-white px-2 py-1 rounded"
-                onClick={() => handleRemoveInput(input)}
+                onClick={() => handleRemoveInputTimeLine(input)}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -103,7 +124,7 @@ function TimeLine() {
         <Button
           placeholder={""}
           className="bg-blue-500 text-white rounded mt-2 flex items-center gap-3"
-          onClick={handleAddInput}
+          onClick={handleAddInputTimeLine}
         >
           Add More
           <svg
