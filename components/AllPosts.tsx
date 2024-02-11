@@ -27,6 +27,7 @@ export default function AllPosts({
   user: any;
   type: string;
 }) {
+
   const [lowPrice, setLowPrice] = useState(1);
   const [highPrice, setHighPrice] = useState(100);
   const [ptype, setPType] = useState("");
