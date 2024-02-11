@@ -9,7 +9,7 @@ const GetPost = async ({ params }: { params: { id: string } }) => {
   if (!token) {
     return <div>Not authorized</div>;
   }
-  const post = await POST("post/getPost", { id: params.id });
+  const post = await POST("post/getPost/update", { id: params.id });
   if (!post) {
     return <div>Post not found</div>;
   } else {

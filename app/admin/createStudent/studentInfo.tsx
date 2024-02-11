@@ -1,5 +1,7 @@
 import { Input, Select, Option, Button } from "@material-tailwind/react";
 import React from "react";
+import { useEffect } from "react";
+import GET from "@/server_actions/GET";
 
 import AlertCustomCloseIcon from "@/components/alert";
 
@@ -7,6 +9,51 @@ export default function StudentInformationComponent({ state, setState, studentIn
 
     const [message, setMessage] = React.useState("");
     const [showAlert, setShowAlert] = React.useState(false);
+    const [currBatches, setCurrBatches] = React.useState([]);
+    const [currDepartments, setCurrDepartments] = React.useState([]);
+
+    useEffect(() => {
+
+        const fetchData = async (path: string) => {
+            try {
+                // Your asynchronous code here
+                const result = await GET(path);
+                if (result === null) {
+                    throw new Error("Error fetching data");
+                }
+                return {
+                    data: result,
+                    success: true
+                };
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                setMessage("Error fetching data: " + error);
+                setShowAlert(true);
+                return {
+                    data: [],
+                    success: false
+                };
+            }
+        };
+
+        fetchData('user/admin/getBatch').then(res => {
+            if (!res.success) {
+                return;
+            }
+
+            setCurrBatches(res.data);
+        });
+
+        fetchData('user/admin/getDept').then(res => {
+            if (!res.success) {
+                return;
+            }
+
+            setCurrDepartments(res.data)
+        })
+
+
+    }, [])
 
     const validateStidentInfo = (studentInfo) => {
 
@@ -47,27 +94,15 @@ export default function StudentInformationComponent({ state, setState, studentIn
                 <div className="flex w-72 flex-col gap-6">
                     <Input variant="outlined" color="teal" label="Student's Name" placeholder="" type="text" onChange={(e) => setStudentInfo({ ...studentInfo, name: e.target.value })} required />
                     <Select variant="outlined" color="teal" label="Select Department" onChange={(e) => setStudentInfo({ ...studentInfo, department: e })} >
-                        <Option value="cse">Computer Science & Engineering</Option>
-                        <Option value="me">Mechanical Engineering</Option>
-                        <Option value="ce">Civil Engineering</Option>
-                        <Option value="urp">Urban and Regional Planning</Option>
-                        <Option value="bme">Biomedical Engineering</Option>
-                        <Option value="ipe">Industrial and Production Engineering</Option>
-                        <Option value="name">Naval Architecture and Marine Engineering</Option>
-                        <Option value="wre">Water Resource Engineering</Option>
-                        <Option value="mme">Materials and Metallurgical Engineering</Option>
-                        <Option value="che">Chemical Engineering</Option>
-                        <Option value="nce">Nanomaterials and Ceramic Engineering</Option>
-                        <Option value="arch">Architecture</Option>
-                        <Option value="eee">Electrical & Electronics Engineering</Option>
+                        {currDepartments.map((dept, index) => {
+                            return <Option key={index} value={dept}>{dept.replace(/_/g, " ")}</Option>
+                        })}
                     </Select>
 
                     <Select variant="outlined" color="teal" label="Select Batch" onChange={(e) => setStudentInfo({ ...studentInfo, batch: e })}>
-                        <Option value="2022">2022</Option>
-                        <Option value="2021">2021</Option>
-                        <Option value="2020">2020</Option>
-                        <Option value="2019">2019</Option>
-                        <Option value="2018">2018</Option>
+                        {currBatches.map((batch, index) => {
+                            return <Option key={index} value={batch.batchName}>{batch.batchName}</Option>
+                        })}
                     </Select>
 
                     <Select variant="outlined" color="teal" label="Select Session" onChange={(e) => setStudentInfo({ ...studentInfo, session: e })}>
@@ -78,7 +113,7 @@ export default function StudentInformationComponent({ state, setState, studentIn
                         <Option value="2020-2021">2020 - 2021</Option>
                     </Select>
 
-                    <Input variant="outlined" color="teal" label="Student's ID" placeholder="" type="number" onChange={(e) => setStudentInfo({ ...studentInfo, id: e.target.value })} required />
+                    <Input variant="outlined" color="teal" label="Student's Email" placeholder="" type="email" onChange={(e) => setStudentInfo({ ...studentInfo, email: e.target.value })} required />
                     <Input variant="outlined" color="teal" label="Student's merit position" placeholder="" type="number" onChange={(e) => setStudentInfo({ ...studentInfo, meritPosition: parseInt(e.target.value) })} required />
 
                 </div>

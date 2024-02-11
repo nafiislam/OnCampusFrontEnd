@@ -27,6 +27,7 @@ export default function AllPosts({
   user: any;
   type: string;
 }) {
+
   const [lowPrice, setLowPrice] = useState(1);
   const [highPrice, setHighPrice] = useState(100);
   const [ptype, setPType] = useState("");
@@ -926,6 +927,11 @@ export default function AllPosts({
           <hr className="border-1 border-gray-400" />
         </div>
       ))}
+      {posts.length === 0 && (
+        <div className="flex items-center">
+          <h1 className="text-xl">No Posts Found</h1>
+        </div>
+      )}
     </div>
   );
 }

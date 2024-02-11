@@ -432,7 +432,7 @@ const WritePost = () => {
                       setRadio((prev) => "DISCUSSION");
                       setMoreData((prev) => {});
                     }}
-                    defaultChecked
+                    checked={radio=="DISCUSSION"?true:false}
                   />
                   <Radio
                     name="type"
@@ -449,6 +449,7 @@ const WritePost = () => {
                       setRadio((prev) => "TUITION");
                       setMoreData((prev) => {});
                     }}
+                    checked={radio=="TUITION"?true:false}
                   />
                   <Radio
                     name="type"
@@ -457,6 +458,7 @@ const WritePost = () => {
                       setRadio((prev) => "PRODUCT");
                       setMoreData((prev) => {});
                     }}
+                    checked={radio=="PRODUCT"?true:false}
                   />
                 </div>
 
