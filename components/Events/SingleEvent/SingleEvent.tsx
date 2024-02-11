@@ -293,16 +293,16 @@ const SingleEvent = () => {
                 <TimelineItem className="">
                   <TimelineConnector className="!w-[78px]" />
                   <TimelineHeader className="relative rounded-xl border border-blue-gray-50 bg-gray-100 py-3 pl-4 pr-8 shadow-lg shadow-blue-gray-200">
-                    <TimelineIcon
-                      className="p-3"
-                      variant="ghost"
-                      color={
-                        DummyColor[
-                          Math.floor(Math.random() * DummyColor.length)
-                        ]
-                      }
-                    >
-                      <RandomSvgIcon />
+                    <TimelineIcon className="p-3" variant="ghost">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        className="w-6 h-6"
+                      >
+                        <path d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                      </svg>
                     </TimelineIcon>
                     <div className="flex flex-col gap-1">
                       <Typography
@@ -368,16 +368,16 @@ const SingleEvent = () => {
                 </TimelineItem>
                 <TimelineItem className="h-28">
                   <TimelineHeader className="relative rounded-xl border border-blue-gray-50 bg-gray-100 py-3 pl-4 pr-8 shadow-lg shadow-blue-gray-200">
-                    <TimelineIcon
-                      className="p-3"
-                      variant="ghost"
-                      color={
-                        DummyColor[
-                          Math.floor(Math.random() * DummyColor.length)
-                        ]
-                      }
-                    >
-                      <RandomSvgIcon />
+                    <TimelineIcon className="p-3" variant="ghost">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        className="w-6 h-6"
+                      >
+                        <path d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                      </svg>
                     </TimelineIcon>
                     <div className="flex flex-col gap-1">
                       <Typography
