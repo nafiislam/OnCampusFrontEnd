@@ -270,7 +270,7 @@ const SingleEvent = ({ event }: { event: any }) => {
               Event Details
             </Typography>
             <Typography variant="small" placeholder={undefined}>
-              {event.description}
+              <div dangerouslySetInnerHTML={{ __html: event.description }}></div>
             </Typography>
 
             <hr className="border-gray-700 my-8" />
@@ -287,7 +287,7 @@ const SingleEvent = ({ event }: { event: any }) => {
               <hr className="border-gray-700 my-8" />
             </div>
           )}
-          {event.timeline && event.timeline.length>0 && (
+          {event.timeline && event.timeline.length > 0 && (
             <div id="section4" data-section className="">
               <div className="">
                 <Typography
@@ -302,7 +302,9 @@ const SingleEvent = ({ event }: { event: any }) => {
                     <div key={index} className="">
                       <Timeline className="w-1/2 ml-12">
                         <TimelineItem className="">
-                          {index == event.timeline.length - 1 ? null : (<TimelineConnector className="" />)}
+                          {index == event.timeline.length - 1 ? null : (
+                            <TimelineConnector className="" />
+                          )}
                           <TimelineHeader className="relative rounded-xl border border-blue-gray-50 bg-gray-100 py-3 pl-4 pr-8 shadow-lg shadow-blue-gray-200">
                             <TimelineIcon
                               className="p-3"
@@ -334,9 +336,13 @@ const SingleEvent = ({ event }: { event: any }) => {
                                   className="font-normal"
                                   placeholder={undefined}
                                 >
-                                  {timeline.startDate} {timeline.finishDate && (`to ${timeline.finishDate}`)}
+                                  {timeline.startDate}{" "}
+                                  {timeline.finishDate &&
+                                    `to ${timeline.finishDate}`}
                                 </Typography>
-                                <svg
+                                {timeline.location && (
+                                  <div className="">
+                                    <svg
                                   xmlns="http://www.w3.org/2000/svg"
                                   fill="none"
                                   viewBox="0 0 24 24"
@@ -363,6 +369,8 @@ const SingleEvent = ({ event }: { event: any }) => {
                                 >
                                   {timeline.location}
                                 </Typography>
+                                  </div>
+                                )}
                               </div>
                             </div>
                           </TimelineHeader>
@@ -372,9 +380,9 @@ const SingleEvent = ({ event }: { event: any }) => {
                               variant="small"
                               color="gray"
                               className="font-normal mt-4 text-gray-600"
-                              dangerouslySetInnerHTML={{ __html: timeline.description }}
-                            >
                               
+                            >
+                              <div dangerouslySetInnerHTML={{ __html: timeline.description }}></div>
                             </Typography>
                           </TimelineBody>
                         </TimelineItem>
@@ -430,7 +438,7 @@ const SingleEvent = ({ event }: { event: any }) => {
               </Typography>
 
               <Typography variant="small" placeholder={undefined}>
-                {event.rules}
+                <div dangerouslySetInnerHTML={{ __html: event.rules }}></div>
               </Typography>
               <hr className="border-gray-700 my-8" />
             </div>
@@ -463,7 +471,7 @@ const SingleEvent = ({ event }: { event: any }) => {
                   <a href="#section3">Registration</a>
                 </li>
               )}
-              {event.timeline && (
+              {event.timeline && event.timeline.length>0 && (
                 <li
                   className={`py-2 px-4 ${
                     activeSection === "section4" ? "text-black" : ""
@@ -481,7 +489,7 @@ const SingleEvent = ({ event }: { event: any }) => {
                   <a href="#section5">prizePools</a>
                 </li>
               )}
-              {event.resources && (
+              {event.resources && event.resources.length>0 && (
                 <li
                   className={`py-2 px-4 ${
                     activeSection === "section6" ? "text-black" : ""
@@ -493,7 +501,7 @@ const SingleEvent = ({ event }: { event: any }) => {
               {event.rules && (
                 <li
                   className={`py-2 px-4 ${
-                    activeSection === "section6" ? "text-black" : ""
+                    activeSection === "section7" ? "text-black" : ""
                   }`}
                 >
                   <a href="#section7">Rules</a>
