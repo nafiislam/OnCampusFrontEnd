@@ -14,7 +14,16 @@ async function Allevents() {
               {res.events.map((event: any) => (
                 <li key={event.id}>
                   <div className="border my-2 border-orange-400 shadow-xl">
-                    <Link href={`/SingleEvent/${event.id}`}>{event.title}</Link>
+                    <h2>{event.title}</h2>
+                    <div className="flex flex-row gap-2">
+                      <div className="">
+                        {event.startDate} - {event.finishDate}
+                      </div>
+                      <div className="">{event.location}</div>
+                      <div className="">{event.eventType}</div>
+                      <div className="">{event.tag}</div>
+                    </div>
+                    <Link href={`/SingleEvent/${event.id}`} className=" text-blue-700 underline">See More...</Link>
                   </div>
                 </li>
               ))}
