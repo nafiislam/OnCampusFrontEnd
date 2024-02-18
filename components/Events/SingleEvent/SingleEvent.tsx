@@ -177,7 +177,7 @@ const SingleEvent = ({ event }: { event: any }) => {
                 </svg>
 
                 <Typography variant="small" placeholder={undefined}>
-                  start time - end time
+                  {event.startDate} to {event.finishDate}
                 </Typography>
               </div>
 
@@ -196,9 +196,9 @@ const SingleEvent = ({ event }: { event: any }) => {
                 </svg>
 
                 <Typography variant="small" placeholder={undefined}>
-                  Posted By :{event.user.name}
+                  Posted By :
                   <Tooltip content={<AvatarImageText />}>
-                    <span className="text-blue-600">Nahin Khan </span>
+                    <span className="text-blue-600">{event.user.name} </span>
                   </Tooltip>
                   {event.createdAt}
                 </Typography>
@@ -300,7 +300,7 @@ const SingleEvent = ({ event }: { event: any }) => {
                 {event.timeline.map((timeline: any, index: number) => {
                   return (
                     <div key={index} className="">
-                      <Timeline className="p-4 w-1/2 ml-12">
+                      <Timeline className="w-1/2 ml-12">
                         <TimelineItem className="">
                           {index == event.timeline.length - 1 ? null : (<TimelineConnector className="" />)}
                           <TimelineHeader className="relative rounded-xl border border-blue-gray-50 bg-gray-100 py-3 pl-4 pr-8 shadow-lg shadow-blue-gray-200">

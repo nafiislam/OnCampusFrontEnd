@@ -1,36 +1,31 @@
-// "use client";
+import POST from "@/server_actions/POST";
+import Link from "next/link";
 
-// import animationData from "@/public/loading/loading1.json"; // Import your JSON animation file
-// import lottie from "lottie-web";
-// import { useEffect } from "react";
-// import "tailwindcss/tailwind.css";
+async function Allevents() {
+  const res = await POST("event/getEvents", {});
+  if (res) {
+    console.log(res);
+    return (
+      <div>
+        <h1>All Events</h1>
+        <div className="flex flex-row">
+          <div className="w-3/4">
+            <ul>
+              {res.events.map((event: any) => (
+                <li key={event.id}>
+                  <div className="border my-2 border-orange-400 shadow-xl">
+                    <Link href={`/SingleEvent/${event.id}`}>{event.title}</Link>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+    );
+  } else {
+    return <div>Events not found</div>;
+  }
+}
 
-// const Animation = () => {
-//   useEffect(() => {
-//     // Initialize Lottie animation
-//     const anim = lottie.loadAnimation({
-//       container: document.getElementById("animation-container"),
-//       renderer: "svg",
-//       loop: true,
-//       autoplay: true,
-//       animationData: animationData,
-//     });
-
-//     return () => {
-//       anim.destroy(); // Cleanup animation when component unmounts
-//     };
-//   }, []);
-
-//   return <div id="animation-container" className="w-64 h-64 mx-auto"></div>;
-// };
-
-// const App = () => {
-//   return (
-//     <div className="flex flex-col gap-8 justify-center items-center">
-//       <Animation />
-//       <p>Redirecting to Home PAGE</p>
-//     </div>
-//   );
-// };
-
-// export default App;
+export default Allevents;
