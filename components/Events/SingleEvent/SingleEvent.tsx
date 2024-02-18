@@ -287,7 +287,7 @@ const SingleEvent = ({ event }: { event: any }) => {
               <hr className="border-gray-700 my-8" />
             </div>
           )}
-          {event.timeline && (
+          {event.timeline && event.timeline.length>0 && (
             <div id="section4" data-section className="">
               <div className="">
                 <Typography
@@ -400,7 +400,7 @@ const SingleEvent = ({ event }: { event: any }) => {
             </div>
           )}
 
-          {event.resources && (
+          {event.resources && event.resources.length > 0 && (
             <div id="section6" data-section className="">
               <Typography variant="h3" placeholder={undefined}>
                 Resources
@@ -429,7 +429,7 @@ const SingleEvent = ({ event }: { event: any }) => {
               </Typography>
 
               <Typography variant="small" placeholder={undefined}>
-                rules
+                {event.rules}
               </Typography>
               <hr className="border-gray-700 my-8" />
             </div>
