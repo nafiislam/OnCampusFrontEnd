@@ -372,8 +372,9 @@ const SingleEvent = ({ event }: { event: any }) => {
                               variant="small"
                               color="gray"
                               className="font-normal mt-4 text-gray-600"
+                              dangerouslySetInnerHTML={{ __html: timeline.description }}
                             >
-                              {timeline.description}
+                              
                             </Typography>
                           </TimelineBody>
                         </TimelineItem>
