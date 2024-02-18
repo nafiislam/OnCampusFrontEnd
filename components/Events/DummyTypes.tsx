@@ -9,7 +9,7 @@ const eventTypes = [
   },
   {
     id: 3,
-    name: "Competitions",
+    name: "Competition",
   },
   {
     id: 4,
@@ -17,7 +17,7 @@ const eventTypes = [
   },
   {
     id: 5,
-    name: "Shapa-day",
+    name: "Shapa_day",
   },
   {
     id: 6,
@@ -25,11 +25,11 @@ const eventTypes = [
   },
   {
     id: 7,
-    name: "Flashmobs",
+    name: "Flashmob",
   },
   {
     id: 8,
-    name: "Rag-Concert",
+    name: "Rag_Concert",
   },
   {
     id: 9,
@@ -40,13 +40,13 @@ const eventTypes = [
     name: "Tour",
   },
   {
-    id:11,
-    name: "Normal Online Event",
+    id: 11,
+    name: "Normal_Online_Event",
   },
   {
-    id:12,
-    name: "Normal Offline Event",
-  }
+    id: 12,
+    name: "Normal_Offline_Event",
+  },
 ];
 
 export { eventTypes };

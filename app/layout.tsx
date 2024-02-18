@@ -33,7 +33,7 @@ export default async function RootLayout({
                   <NavbarWrapper />
                 </div>
                 <div className="flex flex-row gap-10">
-                  <div className="sticky top-20 h-full">
+                  <div className="top-20 h-full">
                     <SidebarWithContentSeparator />
                   </div>
                   <div className="mt-8 flex-grow overflow-y-scroll">
