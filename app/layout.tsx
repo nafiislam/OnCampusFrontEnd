@@ -29,18 +29,18 @@ export default async function RootLayout({
           <body className={inter.className}>
             {token ? (
               <div className="">
-                <div className="m-4 sticky top-1 z-10">
+                <div className="m-4 sticky top-1 z-10 ">
                   <NavbarWrapper />
                 </div>
                 <div className="flex flex-row gap-10">
-                  <div className="top-20 h-full">
+                  <div className="hidden lg:block fixed z-20 inset-0 top-[5.8125rem] right-auto w-[19rem] overflow-y-auto">
                     <SidebarWithContentSeparator />
                   </div>
-                  <div className="mt-8 flex-grow overflow-y-scroll">
+                  <div className="mt-8 flex-grow overflow-y-scroll pl-72">
                     <EdgeStoreProvider>{children}</EdgeStoreProvider>
+                <Footer />
                   </div>
                 </div>
-                <Footer />
               </div>
             ) : (
               <div>
