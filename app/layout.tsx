@@ -28,7 +28,7 @@ export default async function RootLayout({
         <ThemeProvider>
           <body className={inter.className}>
             {token ? (
-              <div className="">
+              <div className="flex flex-col">
                 <div className="m-4 sticky top-1 z-10 ">
                   <NavbarWrapper />
                 </div>
@@ -36,10 +36,12 @@ export default async function RootLayout({
                   <div className="hidden lg:block fixed z-20 inset-0 top-[5.8125rem] right-auto w-[19rem] overflow-y-auto">
                     <SidebarWithContentSeparator />
                   </div>
-                  <div className="mt-8 flex-grow overflow-y-scroll pl-72">
+                  <div className="mt-8 flex-grow pl-96">
                     <EdgeStoreProvider>{children}</EdgeStoreProvider>
-                <Footer />
                   </div>
+                </div>
+                <div className="pl-72">
+                  <Footer />
                 </div>
               </div>
             ) : (
