@@ -10,7 +10,7 @@ import {
   Tooltip,
   Typography,
 } from "@material-tailwind/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import AvatarImageText from "./AvatarImageText";
 import AvatarStack from "./AvatarStack";
 import { svgIcons } from "./DummyIconColor";
@@ -24,8 +24,24 @@ interface SectionOffset {
 const SingleEvent = ({ event }: { event: any }) => {
   const [activeSection, setActiveSection] = useState<string | null>(null);
 
+  const sectionsRef = useRef<{ [key: string]: HTMLDivElement | null }>({});
+
+  const scrollToSection = (sectionId: string) => {
+    const section = sectionsRef.current[sectionId];
+    if (section) {
+      // section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      let offset =  document.getElementById("section1")?.offsetTop;
+      if(!offset) offset=0
+      window.scrollTo({
+        top: section.offsetTop - offset,
+        behavior: 'smooth',
+      });
+    }
+  };
+
   useEffect(() => {
     const handleScroll = () => {
+      const initialHeight = document.getElementById("section1")?.offsetTop;
       const sectionOffsets = Array.from(
         document.querySelectorAll("[data-section]")
       ).map((section) => ({
@@ -34,10 +50,15 @@ const SingleEvent = ({ event }: { event: any }) => {
         height: (section as HTMLElement).offsetHeight,
       }));
 
-      const scrollPosition = window.scrollY + window.innerHeight / 2;
+      const scrollPosition = window.scrollY;
 
       for (const { id, offset, height } of sectionOffsets) {
-        if (scrollPosition >= offset && scrollPosition < offset + height) {
+        let newoffset;
+        if(initialHeight != null) {
+          newoffset = offset - initialHeight;
+        }
+        else newoffset = offset;
+        if (scrollPosition >= newoffset && scrollPosition < newoffset + height) {
           setActiveSection(id);
           break;
         }
@@ -68,7 +89,7 @@ const SingleEvent = ({ event }: { event: any }) => {
     <div className="">
       <div className="flex flex-row gap-8">
         <div className="w-3/4">
-          <div id="section1" data-section className="bg-white">
+          <div  ref={(el) => (sectionsRef.current["section1"] = el)}  id="section1" data-section className="bg-white">
             <div className="flex flex-col items-center gap-8">
               {/* <img
                 src="/images/event1.jpg"
@@ -265,7 +286,7 @@ const SingleEvent = ({ event }: { event: any }) => {
               <hr className="border-gray-700 my-2" />
             </div>
           </div>
-          <div id="section2" data-section className="">
+          <div ref={(el) => (sectionsRef.current["section2"] = el)}  id="section2" data-section className="">
             <Typography variant="h3" placeholder={undefined}>
               Event Details
             </Typography>
@@ -276,7 +297,7 @@ const SingleEvent = ({ event }: { event: any }) => {
             <hr className="border-gray-700 my-8" />
           </div>
           {event.registration && (
-            <div id="section3" data-section className="">
+            <div  ref={(el) => (sectionsRef.current["section3"] = el)}  id="section3" data-section className="">
               <Typography variant="h3" placeholder={undefined}>
                 Registration Details
               </Typography>
@@ -288,7 +309,7 @@ const SingleEvent = ({ event }: { event: any }) => {
             </div>
           )}
           {event.timeline && event.timeline.length > 0 && (
-            <div id="section4" data-section className="">
+            <div ref={(el) => (sectionsRef.current["section4"] = el)}  id="section4" data-section className="">
               <div className="">
                 <Typography
                   className="my-4 p-8"
@@ -397,7 +418,7 @@ const SingleEvent = ({ event }: { event: any }) => {
           )}
 
           {event.prizes && (
-            <div id="section5" data-section className="">
+            <div ref={(el) => (sectionsRef.current["section5"] = el)}  id="section5" data-section className="">
               <Typography variant="h3" placeholder={undefined}>
                 Prize Pool
               </Typography>
@@ -410,7 +431,7 @@ const SingleEvent = ({ event }: { event: any }) => {
           )}
 
           {event.resources && event.resources.length > 0 && (
-            <div id="section6" data-section className="">
+            <div ref={(el) => (sectionsRef.current["section6"] = el)} id="section6" data-section className="">
               <Typography variant="h3" placeholder={undefined}>
                 Resources
               </Typography>
@@ -432,7 +453,7 @@ const SingleEvent = ({ event }: { event: any }) => {
           )}
 
           {event.rules && (
-            <div id="section7" data-section className="">
+            <div ref={(el) => (sectionsRef.current["section7"] = el)} id="section7" data-section className="">
               <Typography variant="h3" placeholder={undefined}>
                 Rules
               </Typography>
@@ -453,14 +474,14 @@ const SingleEvent = ({ event }: { event: any }) => {
                   activeSection === "section1" ? "text-black" : ""
                 }`}
               >
-                <a href="#section1">general Information</a>
+                <button onClick={() => scrollToSection("section1")}>general Information</button>
               </li>
               <li
                 className={`py-2 px-4 ${
                   activeSection === "section2" ? "text-black" : ""
                 }`}
               >
-                <a href="#section2">Details</a>
+                <button onClick={() => scrollToSection("section2")} >Details</button>
               </li>
               {event.registration && (
                 <li
@@ -468,7 +489,7 @@ const SingleEvent = ({ event }: { event: any }) => {
                     activeSection === "section3" ? "text-black" : ""
                   }`}
                 >
-                  <a href="#section3">Registration</a>
+                  <button onClick={() => scrollToSection("section3")} >Registration</button>
                 </li>
               )}
               {event.timeline && event.timeline.length>0 && (
@@ -477,7 +498,7 @@ const SingleEvent = ({ event }: { event: any }) => {
                     activeSection === "section4" ? "text-black" : ""
                   }`}
                 >
-                  <a href="#section4">Timeline</a>
+                  <button onClick={() => scrollToSection("section4")} >Timeline</button>
                 </li>
               )}
               {event.prizes && (
@@ -486,7 +507,7 @@ const SingleEvent = ({ event }: { event: any }) => {
                     activeSection === "section5" ? "text-black" : ""
                   }`}
                 >
-                  <a href="#section5">prizePools</a>
+                  <button  onClick={() => scrollToSection("section5")} >prizePools</button>
                 </li>
               )}
               {event.resources && event.resources.length>0 && (
@@ -495,7 +516,7 @@ const SingleEvent = ({ event }: { event: any }) => {
                     activeSection === "section6" ? "text-black" : ""
                   }`}
                 >
-                  <a href="#section6">Resources</a>
+                  <button onClick={() => scrollToSection("section6")} >Resources</button>
                 </li>
               )}
               {event.rules && (
@@ -504,7 +525,7 @@ const SingleEvent = ({ event }: { event: any }) => {
                     activeSection === "section7" ? "text-black" : ""
                   }`}
                 >
-                  <a href="#section7">Rules</a>
+                  <button  onClick={() => scrollToSection("section7")} >Rules</button>
                 </li>
               )}
             </ul>

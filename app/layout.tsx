@@ -33,14 +33,14 @@ export default async function RootLayout({
                   <NavbarWrapper />
                 </div>
                 <div className="flex flex-row gap-10">
-                  <div className="hidden lg:block fixed z-20 inset-0 top-[5.8125rem] right-auto w-[19rem] overflow-y-auto">
+                  <div className="hidden lg:block fixed z-20 inset-0 top-[8.125rem] right-auto w-[19rem] overflow-y-auto">
                     <SidebarWithContentSeparator />
                   </div>
                   <div className="mt-8 flex-grow pl-96">
                     <EdgeStoreProvider>{children}</EdgeStoreProvider>
                   </div>
                 </div>
-                <div className="pl-72">
+                <div className="pl-72 pt-[30rem]">
                   <Footer />
                 </div>
               </div>
