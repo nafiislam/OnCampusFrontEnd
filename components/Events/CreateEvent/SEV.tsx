@@ -17,14 +17,11 @@ import {
 import { DatePicker } from "antd";
 
 import type { DatePickerProps } from "antd";
-import type { Dayjs } from "dayjs";
+import { Dayjs } from "dayjs";
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Locations from "../DummyLocations";
 import Resources from "./Resources";
-
-import POST from "@/server_actions/POST";
-import { set } from "zod";
 
 const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
 
@@ -101,9 +98,19 @@ interface TimeLine {
   onlineLink: string;
 }
 
+interface TimeLineState {
+  inputCount1: number;
+  inputs1: string[];
+}
+
 interface Resource {
   description: string;
   link: string;
+}
+
+interface ResourceState {
+  inputCount: number;
+  inputs: string[];
 }
 
 interface Event {
@@ -124,7 +131,12 @@ interface Event {
   resources: Resources[];
 }
 
-export default function SingleEv({
+interface FormData {
+  title: string;
+  // Add more fields as needed
+}
+
+export default function SEV({
   selectedType,
   hasTimeline = false,
   hasResources = false,
@@ -149,22 +161,78 @@ export default function SingleEv({
   );
   const [prizeIn, setPrizeIn] = useState<boolean>(hasPrize || false);
 
-  const [title, setTitle] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
-  const [startDate, setStartDate] = useState<string>("");
-  const [finishDate, setFinishDate] = useState<string>("");
-  const [eventType, setEventType] = useState<string>("");
-  const [location, setLocation] = useState<string>("");
-  const [onlineLink, setOnlineLink] = useState<string>("");
-  const [organizers, setOrganizers] = useState<string>("");
-  const [sponsors, setSponsors] = useState<string>("");
-  const [registration, setRegistration] = useState<string>("");
-  const [rules, setRules] = useState<string>("");
-  const [prizes, setPrizes] = useState<string>("");
-  const [eventTag, setEventTag] = useState<string>(selectedType);
-  const [timeline, setTimeline] = useState<TimeLine[]>([]);
-  const [resources, setResources] = useState<Resources[]>([]);
+  const titleField = useRef<HTMLInputElement>(null);
+  const startDate = useRef<String | null>(null);
+  const finishDate = useRef<String | null>(null);
+  const organizers = useRef<HTMLInputElement>(null);
+  const sponsors = useRef<HTMLInputElement>(null);
+  const locationType = useRef<HTMLInputElement>(null);
+  const locationOffline = useRef<HTMLInputElement>(null);
+  const [offlineLocation, setOfflineLocation] = useState<string>("");
+  const onlineLink = useRef<HTMLInputElement>(null);
 
+  // for timeline
+  const timelineTitle = useRef<HTMLInputElement[]>([]);
+  const timelineDescription = useRef<HTMLDivElement[]>([]);
+  const timelineStartDate = useRef<String[] | null[]>([]);
+  const timelineFinishDate = useRef<String[] | null[]>([]);
+
+  // for resources
+  const resourcesDescription = useRef<HTMLDivElement[]>([]);
+  const resourcesLink = useRef<HTMLInputElement[]>([]);
+
+  const initialTimeLineState: TimeLineState = {
+    inputCount1: 0,
+    inputs1: [],
+  };
+
+  const [TimeLineState, setTimeLineState] =
+    useState<TimeLineState>(initialTimeLineState);
+
+  const handleAddInputTimeLine = () => {
+    setTimeLineState((prevState) => ({
+      inputCount1: prevState.inputCount1 + 1,
+      inputs1: [...prevState.inputs1, `input-${prevState.inputCount1}`],
+    }));
+  };
+
+  const handleRemoveInputTimeLine = (input: number) => {
+    setTimeLineState((prevState) => ({
+      inputs1: prevState.inputs1.filter((item, i) => i !== input),
+      inputCount1: prevState.inputCount1 - 1,
+    }));
+
+    timelineTitle.current.splice(input, 1);
+    timelineDescription.current.splice(input, 1);
+    timelineStartDate.current.splice(input, 1);
+    timelineFinishDate.current.splice(input, 1);
+  };
+
+  const initialResourcesState: ResourceState = {
+    inputCount: 0,
+    inputs: [],
+  };
+
+  const [ResourcesState, setResourcesState] = useState<ResourceState>(
+    initialResourcesState
+  );
+
+  const handleAddInputResources = () => {
+    setResourcesState((prevState) => ({
+      inputCount: prevState.inputCount + 1,
+      inputs: [...prevState.inputs, `input-${prevState.inputCount}`],
+    }));
+  };
+
+  const handleRemoveInputResources = (input: number) => {
+    setResourcesState((prevState) => ({
+      inputs: prevState.inputs.filter((item, i) => i !== input),
+      inputCount: prevState.inputCount - 1,
+    }));
+
+    resourcesDescription.current.splice(input, 1);
+    resourcesLink.current.splice(input, 1);
+  };
 
   const [allinput, setAllinput] = useState<Event>({
     title: "",
@@ -184,168 +252,129 @@ export default function SingleEv({
     resources: [],
   });
 
+  const [locationOption, setLocationOpton] = useState<string | undefined>("");
+  const handleEventTypechange = (selected: string | undefined) => {
+    setLocationOpton(selected);
+    if (selected) setAllinput({ ...allinput, location: selected });
+    console.log(selected);
+  };
+
   const startdateChange: DatePickerProps<Dayjs[]>["onChange"] = (
     date,
     dateString
   ) => {
-    console.log(date, dateString);
-    console.log("datedtring" + dateString.toString());
-    console.log("ds1" + dateString[0]);
-    console.log("ds2" + dateString[1]);
-    setStartDate(dateString.toString());
-    console.log("start date" + startDate);
+    startDate.current = Array.isArray(dateString)
+      ? dateString[0].toString()
+      : dateString;
+    console.log(dateString.toString());
   };
 
-  const finishDateChange: DatePickerProps<Dayjs[]>["onChange"] = (
+  const finishdateChange: DatePickerProps<Dayjs[]>["onChange"] = (
     date,
     dateString
   ) => {
-    console.log(date, dateString);
-    console.log("datedtring" + dateString.toString());
-    console.log("ds1" + dateString[0]);
-    console.log("ds2" + dateString[1]);
-    setFinishDate(dateString.toString());
-    console.log("start date" + startDate);
+    finishDate.current = Array.isArray(dateString)
+      ? dateString[0].toString()
+      : dateString;
+    console.log(dateString.toString());
   };
 
-  const onResourcesChange = (index: number, resource: Resource) => {
-    const newResources = [...resources];
-    newResources[index] = resource;
-    setResources(newResources);
-  };
-
-  const onResourcesRemove = (index: number) => {
-    const newResources = resources.filter((_, i) => i !== index);
-    setResources(newResources);
-  };
-
-  const handleSubmit =async () => {
-    const mainData: Event = {
-      title: title,
-      description: description,
-      startDate: startDate,
-      finishDate: finishDate,
-      eventType: eventType,
-      location: location,
-      onlineLink: onlineLink,
-      organizers: organizers,
-      sponsors: sponsors,
-      registration: registration,
-      rules: rules,
-      prizes: prizes,
-      eventTag: eventTag,
-      timeline: timeline,
-      resources: resources,
-    };
-    // Log the combined data
-    console.log(mainData);
-
-    const response = await POST("event/createEvent", mainData);
-
-    if(response){
-        setStartDate("");
-        setFinishDate("");
-        setTitle("");
-        setDescription("");
-        setEventType("");
-        setLocation("");
-        setOnlineLink("");
-        setOrganizers("");
-        setSponsors("");
-        setRegistration("");
-        setRules("");
-        setPrizes("");
-        setEventTag("");
-        setTimeline([]);
-        setResources([]);
-        console.log("Event created successfully");
-    }
-    else{
-        console.log("Error in creating event");
-    }
-  };
-
-  const [locationOption, setLocationOpton] = useState<string | undefined>("");
-  const handleChange = (selected: string | undefined) => {
-    setLocationOpton(selected);
-    if(selected) setEventType(selected);
-    console.log(selected);
-  };
-
-  const [inputCount, setInputCount] = useState<number>(0);
-  const [inputs, setInputs] = useState<string[]>([]);
-
-  const handleAddInput = () => {
-    setInputCount(inputCount + 1);
-    setInputs([...inputs, `input-${inputCount}`]);
-    setResources([...resources, { description: "", link: "" }]);
-  };
-
-  const handleRemoveInput = (input: number) => {
-    setInputs(inputs.filter((item, i) => i !== input));
-    setResources(resources.filter((item, i) => i !== input));
-  };
-
-  const [inputCount1, setInputCount1] = useState<number>(0);
-  const [inputs1, setInputs1] = useState<string[]>([]);
-
-  const handleAddInputTimeLine = () => {
-    setInputCount1(inputCount1 + 1);
-    setInputs1([...inputs1, `input-${inputCount1}`]);
-    setTimeline([
-      ...timeline,
-      {
-        name: "",
-        description: "",
-        startDate: "",
-        finishDate: "",
-        meetingType: "",
-        location: "",
-        onlineLink: "",
-      },
-    ]);
-  };
-
-  const handleRemoveInputTimeLine = (input: number) => {
-    setInputs1(inputs1.filter((item, i) => i !== input));
-    setTimeline(timeline.filter((item, i) => i !== input));
-  };
-
-  type CustomOnChange = (
-    date: Dayjs | null,
+  type CustomDatePickerOnChange = (
+    date: Dayjs[] | null,
     dateString: string | string[],
-    index: number
+    index: number // Add the index parameter here
   ) => void;
 
-  const onChange1: CustomOnChange = (date, dateString, index) => {
-    console.log(date, dateString, index);
-    const newTimeline = [...timeline];
-    newTimeline[index].startDate = dateString.toString();
-    setTimeline(newTimeline);
-  };
-  const onChange2: CustomOnChange = (date, dateString, index) => {
-    console.log(date, dateString, index);
-    const newTimeline = [...timeline];
-    newTimeline[index].finishDate = dateString.toString();
-    setTimeline(newTimeline);
+  const startdateChangeTimeline: CustomDatePickerOnChange = (
+    date,
+    dateString,
+    index
+  ) => {
+    timelineStartDate.current[index] = Array.isArray(dateString)
+      ? dateString[0].toString()
+      : dateString;
+    console.log(dateString.toString());
   };
 
-  const handleFormSubmit = (e:any) => {
-     //set all the inputs from input fields
-     
-     
-  }
+  const finishdateChangeTimeline: CustomDatePickerOnChange = (
+    date,
+    dateString,
+    index
+  ) => {
+    timelineFinishDate.current[index] = Array.isArray(dateString)
+      ? dateString[0].toString()
+      : dateString;
+    console.log(dateString.toString());
+  };
+
+  const [errors, setErrors] = useState<Partial<FormData>>({});
+
+  const handleFormSubmit = (e: any) => {
+    e.preventDefault();
+
+    // Validation
+    const newErrors: Partial<FormData> = {};
+    if (!titleField.current?.value.trim()) {
+      newErrors.title = "Title is required";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      if (titleField.current) {
+        titleField.current.focus();
+      }
+      return;
+    }
+
+    console.log(allinput.eventTag);
+    console.log(titleField.current?.value);
+    console.log(allinput.description);
+    console.log(startDate.current);
+    console.log(finishDate.current);
+    console.log(organizers.current?.value);
+    console.log(sponsors.current?.value);
+    console.log(locationType.current?.value);
+    console.log(locationOption);
+    console.log(locationOffline.current?.value);
+    console.log(onlineLink.current?.value);
+
+    console.log(TimeLineState.inputCount1);
+    for (let i = 0; i < TimeLineState.inputCount1; i++) {
+      console.log(timelineTitle.current[i].value); // timelineTitle.current[i].childNodes[0].value also works, but dont know why typescript mf throws error
+      console.log(
+        (timelineDescription.current[i].childNodes[0] as HTMLInputElement).value
+      );
+      console.log(timelineStartDate.current[i]);
+      console.log(timelineFinishDate.current[i]);
+    }
+
+    for (let i = 0; i < ResourcesState.inputCount; i++) {
+      console.log(
+        (resourcesDescription.current[i].childNodes[0] as HTMLInputElement)
+          .value
+      ); // resourcesDescription.current[i].childNodes[0].value also works, but dont know why typescript mf throws error
+      console.log(resourcesLink.current[i].value);
+    }
+
+    console.log(allinput.registration);
+    console.log(allinput.rules);
+    console.log(allinput.prizes);
+  };
 
   return (
     <div>
-      <form action={handleFormSubmit} className="flex flex-col gap-6">
-        <Input
-          className="bg-white"
-          label="Name of the Event*"
-          crossOrigin={undefined}
-          name="title"
-          onChange={(e) => setTitle(e.target.value)}
-        />
+      <form className="flex flex-col gap-6">
+        <div className="">
+          <Input
+            className="bg-white"
+            label="Name of the Event*"
+            crossOrigin={undefined}
+            name="title"
+            inputRef={titleField}
+            error={!!errors.title}
+          />
+          {errors.title && <p className="text-red-500 italic">{errors.title}</p>}
+        </div>
         <Typography
           variant="small"
           className="text-blue-gray-500"
@@ -355,10 +384,11 @@ export default function SingleEv({
         </Typography>
         <div>
           <JoditEditor
-            value={description}
+            value={allinput.description}
             config={config}
-            onBlur={(newContent) => setDescription(newContent)} // preferred to use only this option to update the content for performance reasons
-            onChange={(newContent) => {}}
+            onBlur={(newContent) =>
+              setAllinput({ ...allinput, description: newContent })
+            } // preferred to use only this option to update the content for performance reasons
           />
         </div>
         <div className="flex flex-row gap-8 w-auto">
@@ -371,10 +401,11 @@ export default function SingleEv({
               Start Date*
             </Typography>
             <DatePicker
-              onChange={startdateChange}
+              name="startDate"
               showTime
               needConfirm={false}
               placeholder="YYYY-MM-DD HH:mm:ss"
+              onChange={startdateChange}
             />
           </div>
           <div className="flex flex-col gap-1 mx-auto   ">
@@ -386,10 +417,11 @@ export default function SingleEv({
               End Date
             </Typography>
             <DatePicker
-              onChange={finishDateChange}
+              name="finishDate"
               showTime
               needConfirm={false}
               placeholder="YYYY-MM-DD HH:mm:ss"
+              onChange={finishdateChange}
             />
           </div>
         </div>
@@ -407,7 +439,8 @@ export default function SingleEv({
             crossOrigin={""}
             label="..."
             placeholder="any of people, batch, batch-dept, club or organization..."
-            onChange={(e) => setOrganizers(e.target.value)}
+            name="Organizers"
+            inputRef={organizers}
           />
         </div>
 
@@ -424,7 +457,8 @@ export default function SingleEv({
             crossOrigin={""}
             label="..."
             placeholder="put comma between multiple"
-            onChange={(e) => setSponsors(e.target.value)}
+            name="Sponsors"
+            inputRef={sponsors}
           />
         </div>
 
@@ -453,8 +487,8 @@ export default function SingleEv({
                 label="Select Location Type"
                 className="bg-white"
                 placeholder={undefined}
-                value={locationOption}
-                onChange={handleChange}
+                value={allinput.location}
+                onChange={handleEventTypechange}
               >
                 {locationTypes.map((type) => (
                   <Option key={type.id} value={type.name}>
@@ -481,7 +515,8 @@ export default function SingleEv({
                         label="Meeting Link*"
                         placeholder="to be announced..."
                         className="bg-white"
-                        onChange={(e) => setOnlineLink(e.target.value)}
+                        name="onlineLink"
+                        ref={onlineLink}
                       />
                     </div>
                   ) : locationOption === "Offline" ? (
@@ -530,9 +565,12 @@ export default function SingleEv({
                                     key={name}
                                     value={name}
                                     className="flex items-center gap-2"
-                                    onClick={() => {
-                                      setLocation(name);
-                                      console.log(name);
+                                    onClick={(e) => {
+                                      if (locationOffline.current) {
+                                        locationOffline.current.value = name;
+                                      }
+                                      setOfflineLocation(name);
+                                      locationOffline.current?.focus();
                                     }}
                                   >
                                     {name}
@@ -543,14 +581,12 @@ export default function SingleEv({
                           </Menu>
                         </div>
                         <Input
-                          value={location}
+                          defaultValue={offlineLocation}
                           crossOrigin={""}
-                          onChange={(e) => {
-                            setLocation(e.target.value);
-                            console.log(e.target.value);
-                          }}
+                          name="location"
                           label="Location*"
                           className="rounded-l-none"
+                          inputRef={locationOffline}
                         />
                       </div>
                     </div>
@@ -569,7 +605,8 @@ export default function SingleEv({
                           label="Meeting Link*"
                           placeholder="to be announced..."
                           className="bg-white"
-                          onChange={(e) => setOnlineLink(e.target.value)}
+                          name="onlineLink"
+                          inputRef={onlineLink}
                         />
                       </div>
                       <div className="flex flex-col gap-1 mx-auto">
@@ -617,9 +654,13 @@ export default function SingleEv({
                                       key={name}
                                       value={name}
                                       className="flex items-center gap-2"
-                                      onClick={() => {
-                                        setLocation(name);
-                                        console.log(name);
+                                      name="location"
+                                      onClick={(e) => {
+                                        if (locationOffline.current) {
+                                          locationOffline.current.value = name;
+                                        }
+                                        setOfflineLocation(name);
+                                        locationOffline.current?.focus();
                                       }}
                                     >
                                       {name}
@@ -630,14 +671,12 @@ export default function SingleEv({
                             </Menu>
                           </div>
                           <Input
-                            value={location}
+                            defaultValue={offlineLocation}
                             crossOrigin={""}
-                            onChange={(e) => {
-                              setLocation(e.target.value);
-                              console.log(e.target.value);
-                            }}
+                            name="location"
                             label="Location*"
                             className="rounded-l-none"
+                            inputRef={locationOffline}
                           />
                         </div>
                       </div>
@@ -681,10 +720,12 @@ export default function SingleEv({
             </Typography>
             <div className="w-5/6">
               <JoditEditor
-                value={registration}
+                value={allinput.registration}
                 config={{ ...configReg, toolbarButtonSize: "small" }}
-                onBlur={(newContent) => setRegistration(newContent)} // preferred to use only this option to update the content for performance reasons
                 onChange={(newContent) => {}}
+                onBlur={(newContent) =>
+                  setAllinput({ ...allinput, registration: newContent })
+                }
               />
             </div>
           </div>
@@ -713,7 +754,7 @@ export default function SingleEv({
               Add Timeline of Events
             </Typography>
             <div className="p-4">
-              {inputs1.map((t, input) => (
+              {TimeLineState.inputs1.map((t, input) => (
                 <div className="" key={input}>
                   <div className="w-11/12">
                     <Input
@@ -721,11 +762,10 @@ export default function SingleEv({
                       label="Timeline Title"
                       placeholder="TimeLine Title"
                       crossOrigin={""}
-                      onChange={(e) => {
-                        const newTimeline = [...timeline];
-                        newTimeline[input].name = e.target.value;
-                        setTimeline(newTimeline);
-                      }}
+                      name={`timelineTitle-${input}`}
+                      inputRef={(el) =>
+                        el && (timelineTitle.current[input] = el)
+                      }
                     ></Input>
                   </div>
                   <div className="mt-2 flex flex-row gap-2">
@@ -734,21 +774,21 @@ export default function SingleEv({
                         rows={4}
                         className="bg-white"
                         label="Timeline short description"
-                        onChange={(e) => {
-                          const newTimeline = [...timeline];
-                          newTimeline[input].description = e.target.value;
-                          setTimeline(newTimeline);
-                        }}
+                        name={`timelineDescription-${input}`}
+                        ref={(el) =>
+                          el && (timelineDescription.current[input] = el)
+                        }
                       />
                     </div>
                     <div className="flex flex-col gap-1 items-center">
                       <DatePicker
-                        onChange={(date, dateString) =>
-                          onChange1(date, dateString, input)
-                        }
                         showTime
                         needConfirm={false}
                         placeholder="YYYY-MM-DD HH:mm:ss*"
+                        name={`startDate-${input}`}
+                        onChange={(date: Dayjs[], dateString) =>
+                          startdateChangeTimeline(date, dateString, input)
+                        }
                       />
 
                       <Typography
@@ -760,12 +800,13 @@ export default function SingleEv({
                       </Typography>
 
                       <DatePicker
-                        onChange={(date, dateString) =>
-                          onChange2(date, dateString, input)
-                        }
                         showTime
                         needConfirm={false}
                         placeholder="YYYY-MM-DD HH:mm:ss*"
+                        name={`finishDate-${input}`}
+                        onChange={(date: Dayjs[], dateString) =>
+                          finishdateChangeTimeline(date, dateString, input)
+                        }
                       />
                     </div>
 
@@ -832,7 +873,7 @@ export default function SingleEv({
               Resources :
             </Typography>
             <div className="p-4">
-              {inputs.map((r, input) => (
+              {ResourcesState.inputs.map((r, input) => (
                 <div className="" key={input}>
                   <div className="mt-2 flex flex-row gap-2">
                     <div className="w-3/4 flex flex-col gap-2">
@@ -840,13 +881,10 @@ export default function SingleEv({
                         rows={4}
                         className="bg-white"
                         label="Resources description"
-                        onChange={(e) => {
-                          setResources((prev) => {
-                            const newResources = [...prev];
-                            newResources[input].description = e.target.value;
-                            return newResources;
-                          });
-                        }}
+                        name={`description-${input}`}
+                        ref={(el) =>
+                          el && (resourcesDescription.current[input] = el)
+                        }
                       />
 
                       <Input
@@ -854,20 +892,17 @@ export default function SingleEv({
                         label="Resource Link"
                         placeholder="ADD URL"
                         className="bg-white text-blue-400 underline"
-                        onChange={(e) => {
-                          setResources((prev) => {
-                            const newResources = [...prev];
-                            newResources[input].link = e.target.value;
-                            return newResources;
-                          });
-                        }}
+                        name={`link-${input}`}
+                        inputRef={(el) =>
+                          el && (resourcesLink.current[input] = el)
+                        }
                       />
                     </div>
 
                     <IconButton
                       placeholder={""}
                       className="ml-2 bg-red-500 text-white px-2 py-1 rounded mx-auto"
-                      onClick={() => handleRemoveInput(input)}
+                      onClick={() => handleRemoveInputResources(input)}
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -887,7 +922,7 @@ export default function SingleEv({
                 placeholder={""}
                 variant="outlined"
                 className="bg-white text-blue-500 rounded mt-2 flex items-center gap-3 border-blue-500"
-                onClick={handleAddInput}
+                onClick={handleAddInputResources}
               >
                 Add More
                 <svg
@@ -933,10 +968,12 @@ export default function SingleEv({
             </Typography>
             <div className="w-5/6">
               <JoditEditor
-                value={prizes}
+                value={allinput.prizes}
                 config={{ ...configReg, toolbarButtonSize: "small" }}
-                onBlur={(newContent) => setPrizes(newContent)} // preferred to use only this option to update the content for performance reasons
                 onChange={(newContent) => {}}
+                onBlur={(newContent) =>
+                  setAllinput({ ...allinput, prizes: newContent })
+                }
               />
             </div>
           </div>
@@ -966,16 +1003,20 @@ export default function SingleEv({
             </Typography>
             <div className="w-3/4">
               <JoditEditor
-                value={rules}
+                value={allinput.rules}
                 config={{ ...configRules, toolbarButtonSize: "small" }} // change the toolbarButtonSize to one of the valid values
-                onBlur={(newContent) => setRules(newContent)} // preferred to use only this option to update the content for performance reasons
                 onChange={(newContent) => {}}
+                onBlur={(newContent) =>
+                  setAllinput({ ...allinput, rules: newContent })
+                }
               />
             </div>
           </div>
         )}
 
-        <Button onClick={handleSubmit}>Create Event</Button>
+        <Button onClick={handleFormSubmit} type="submit">
+          Create Event
+        </Button>
       </form>
     </div>
   );
