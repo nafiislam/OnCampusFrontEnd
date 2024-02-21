@@ -54,7 +54,7 @@ export default function MyProfilePage({ user, admin }: { user: any, admin: boole
                                 alt={user.name}
                                 className="cursor-pointer m-0 p-0"
                                 style={{ width: '13rem', height: '13rem' }}
-                                src={profilePicture?profilePicture:"https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80"}
+                                src={profilePicture ? profilePicture : "https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80"}
                                 placeholder='/images/defaultProfilePic.webp'
                             />
                         </div>
@@ -73,7 +73,7 @@ export default function MyProfilePage({ user, admin }: { user: any, admin: boole
                     <div className="flex flex-col">
                         <p className="mb-1">Department: {user.department.replace(/_/g, ' ')}</p>
                         <p className="mb-1">Batch: {user.batch}</p>
-                        <p className="mb-1">Session: {user.session}</p>
+                        {user.session && <p className="mb-1">Session: {user.session}</p>}
                         {user.phoneNumber && <p className="mb-1">Phone : {user.phoneNumber}</p>}
                         {user.dateOfBirth && <p className="mb-1">Date of Birth : {formatDate(user.dateOfBirth)}</p>}
                         {user.bloodGroup && <p className="mb-1">Blood Group : {user.bloodGroup}</p>}
@@ -127,7 +127,7 @@ export default function MyProfilePage({ user, admin }: { user: any, admin: boole
                         <ClubRoles clubRoles={user.ClubMember} />
                     )}
                     {selectedButton === "My Posts" && (
-                        <AllPosts posts={user.posts} user={null} type="all"/>
+                        <AllPosts posts={user.posts} user={null} type="all" />
                     )}
                 </div>
             </div>

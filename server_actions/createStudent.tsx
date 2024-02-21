@@ -1,7 +1,7 @@
-'use server'
-import POST from './POST';
+'use server';
+import POST from "./POST";
 export default async function createStudent(e:
-    { name: string, id: string, department: string, batch: string, session: string, clubRoles: [] }
+    { startId: string, endId: string }
 ) {
     'use server'
     console.log(e);

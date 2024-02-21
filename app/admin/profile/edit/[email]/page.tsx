@@ -22,6 +22,8 @@ import { useState } from 'react';
 import Link from "next/link";
 import POST from "@/server_actions/POST";
 import GET from "@/server_actions/GET";
+import { updateRole } from "@/server_actions/updateProfile";
+import { set } from "zod";
 
 
 export default function EditProfileAdminPage({ params }: { params: { email: string } }) {
@@ -41,6 +43,8 @@ export default function EditProfileAdminPage({ params }: { params: { email: stri
 
     const [selectedClub, setSelectedClub] = React.useState("");
     const [selectedRole, setSelectedRole] = React.useState("");
+
+    const [newRole, setNewRole] = React.useState("");
 
     const isBrowser = () => typeof window !== 'undefined'; //The approach recommended by Next.js
 
@@ -209,9 +213,51 @@ export default function EditProfileAdminPage({ params }: { params: { email: stri
         }
     }
 
+    const updateRoleButton = async () => {
+
+        if (newRole === "") {
+            setAlertMsg("You did not change the role");
+            setAlertOpen(true);
+            scrollToTop();
+            return;
+        }
+
+        if (newRole.toLowerCase() === user.role.toLowerCase()) {
+            setAlertMsg("You did not change the role");
+            setAlertOpen(true);
+            scrollToTop();
+            return;
+        }
+
+
+        const data = {
+            email: user.email,
+            prevRole: user.role.toLowerCase(),
+            newRole: newRole
+        }
+
+        console.log(data);
+        try {
+            const result = await updateRole(data);
+
+            if (result === null) {
+                throw new Error("Error updating User Role");
+            }
+            setAlertMsg("User Role Updated");
+            setUser({ ...user, role: newRole.toUpperCase() });
+            setAlertOpen(true);
+            scrollToTop();
+        } catch (error) {
+            // console.error('Error fetching data:', error);
+            setAlertMsg("Error updating User Role");
+            setAlertOpen(true);
+            scrollToTop();
+        }
+    }
+
     return (
         <div className="ml-5 mt-5">
-            <div className="flex flex-col ">
+            <div className="flex flex-col gap-3 w-2/5">
                 <Typography variant="h5" color="blue-gray" >
                     User Name : {user.name}
                 </Typography>
@@ -224,11 +270,18 @@ export default function EditProfileAdminPage({ params }: { params: { email: stri
                 <Typography variant="paragraph" color="blue-gray" >
                     User Batch : {user.batch}
                 </Typography>
-                <Typography variant="paragraph" color="blue-gray" >
-                    User Role : {user.role}
-                </Typography>
+                <div style={{ maxWidth: "200px" }} className="flex gap-3">
+                    <Select variant="outlined" color="teal" label="Select Role" value={user.role.toLowerCase()} onChange={(e) => { setNewRole(e) }} >
+                        <Option value="user">USER</Option>
+                        <Option value="admin">ADMIN</Option>
+                    </Select>
+                    <div>
+                        <Button color="green" onClick={updateRoleButton}>Update Role</Button>
+
+                    </div>
+                </div>
             </div>
-            <Card className="mt-2 w-3/5" style={{}}>
+            <Card className="mt-4 w-3/5" style={{}}>
                 <Alert open={alertOpen} onClose={() => setAlertOpen(false)}>
                     {alertMsg}
                 </Alert>
