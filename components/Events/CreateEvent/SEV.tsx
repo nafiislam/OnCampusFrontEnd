@@ -21,9 +21,8 @@ import { Dayjs } from "dayjs";
 import dynamic from "next/dynamic";
 import { useRef, useState } from "react";
 import Locations from "../DummyLocations";
+import LocationCheck from "./LocationCheck";
 import Resources from "./Resources";
-import { string } from "zod";
-import { error } from "console";
 
 const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
 
@@ -141,7 +140,7 @@ interface FormError {
   locationType: string;
   offlineLocation: string;
   onlineLink: string;
-  bothLocation:string;
+  bothLocation: string;
   organizers: string;
   sponsors: string;
   registration: string;
@@ -151,7 +150,6 @@ interface FormError {
   timeLineTitle: string;
   resourcesIndex: number[];
   resource: string;
-  
 }
 
 export default function SEV({
@@ -178,7 +176,6 @@ export default function SEV({
     hasResources || false
   );
   const [prizeIn, setPrizeIn] = useState<boolean>(hasPrize || false);
-
 
   const [description, setDescription] = useState<string>("");
   const [registration, setRegistration] = useState<string>("");
@@ -362,18 +359,28 @@ export default function SEV({
     }
 
     if (locationType === "Offline" && !locationOffline.current?.value.trim()) {
-      newErrors.offlineLocation = "Offline Location is not provided. Please provide or change the location type";
+      newErrors.offlineLocation =
+        "Offline Location is not provided. Please provide or change the location type";
     }
 
     if (locationType === "Online" && !onlineLink.current?.value.trim()) {
-      newErrors.onlineLink = "Online Link is not provided. Please provide or change the location type";
+      newErrors.onlineLink =
+        "Online Link is not provided. Please provide or change the location type";
     }
 
-    if (locationType === "Both" && (!locationOffline.current?.value.trim() || !onlineLink.current?.value.trim())) {
-      newErrors.bothLocation = "Both Location is not provided. Please provide or change the location type";
+    if (
+      locationType === "Both" &&
+      (!locationOffline.current?.value.trim() ||
+        !onlineLink.current?.value.trim())
+    ) {
+      newErrors.bothLocation =
+        "Both Location is not provided. Please provide or change the location type";
     }
 
-    if (registrationIn && (!registration.trim() || registration === "<p><br></p>")) {
+    if (
+      registrationIn &&
+      (!registration.trim() || registration === "<p><br></p>")
+    ) {
       newErrors.registration = "Registration is required";
     }
 
@@ -385,7 +392,7 @@ export default function SEV({
       newErrors.prizes = "Prizes is required";
     }
 
-    // check which timeline titles are not present 
+    // check which timeline titles are not present
     const timelineTitleIndex: number[] = [];
     for (let i = 0; i < TimeLineState.inputCount1; i++) {
       if (!timelineTitle.current[i].value.trim()) {
@@ -399,16 +406,17 @@ export default function SEV({
 
     //set the timeline title error
     if (timelineTitleIndex.length > 0) {
-      newErrors.timeLineTitle = "Timeline Title is required, fill or remove the timeline";
+      newErrors.timeLineTitle =
+        "Timeline Title is required, fill or remove the timeline";
     }
-
-
 
     // check which resources are not present(either description or link one should be present)
     const resourcesIndex: number[] = [];
     for (let i = 0; i < ResourcesState.inputCount; i++) {
       if (
-        !(resourcesDescription.current[i].childNodes[0] as HTMLInputElement).value.trim() &&
+        !(
+          resourcesDescription.current[i].childNodes[0] as HTMLInputElement
+        ).value.trim() &&
         !resourcesLink.current[i].value.trim()
       ) {
         resourcesIndex.push(i);
@@ -421,10 +429,9 @@ export default function SEV({
 
     //set the resources error
     if (resourcesIndex.length > 0) {
-      newErrors.resource = "Resource Description or Link is required, fill or remove the resource";
+      newErrors.resource =
+        "Resource Description or Link is required, fill or remove the resource";
     }
-
-
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -484,7 +491,9 @@ export default function SEV({
             inputRef={titleField}
             error={!!errors.title}
           />
-          {errors.title && <p className="text-red-500 text-xs italic">{errors.title}</p>}
+          {errors.title && (
+            <p className="text-red-500 text-xs italic">{errors.title}</p>
+          )}
         </div>
         <Typography
           variant="small"
@@ -497,9 +506,7 @@ export default function SEV({
           <JoditEditor
             value={description}
             config={config}
-            onBlur={(newContent) =>
-              setDescription(newContent)
-            } // preferred to use only this option to update the content for performance reasons
+            onBlur={(newContent) => setDescription(newContent)} // preferred to use only this option to update the content for performance reasons
           />
           {errors.description && (
             <p className="text-red-500 text-xs italic">{errors.description}</p>
@@ -624,7 +631,9 @@ export default function SEV({
                 ))}
               </Select>
               {errors.locationType && (
-                <p className="text-red-500 text-xs italic">{errors.locationType}</p>             
+                <p className="text-red-500 text-xs italic">
+                  {errors.locationType}
+                </p>
               )}
             </div>
 
@@ -650,7 +659,9 @@ export default function SEV({
                         error={!!errors.onlineLink}
                       />
                       {errors.onlineLink && (
-                        <p className="text-red-500 text-xs italic">{errors.onlineLink}</p>
+                        <p className="text-red-500 text-xs italic">
+                          {errors.onlineLink}
+                        </p>
                       )}
                     </div>
                   ) : locationType === "Offline" ? (
@@ -662,71 +673,82 @@ export default function SEV({
                       >
                         Offline venue
                       </Typography>
-                      <div className="relative flex w-full max-w-[24rem] bg-white">
-                        <div className="flex flex-row gap-4">
-                          <Menu placement="bottom-start">
-                            <MenuHandler>
-                              <Button
-                                placeholder={""}
-                                ripple={false}
-                                variant="text"
-                                color="blue-gray"
-                                className="flex flex-row h-10 items-center gap-2 rounded-r-none border border-r-0 border-blue-gray-200 bg-blue-gray-500/10 pl-3"
-                              >
-                                Populars
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  viewBox="0 0 16 16"
-                                  fill="currentColor"
-                                  className="w-4 h-4"
+                      <div className="flex flex-row">
+                        <div className="relative flex w-full max-w-[24rem] bg-white">
+                          <div className="flex flex-row gap-4">
+                            <Menu placement="bottom-start">
+                              <MenuHandler>
+                                <Button
+                                  placeholder={""}
+                                  ripple={false}
+                                  variant="text"
+                                  color="blue-gray"
+                                  className="flex flex-row h-10 items-center gap-2 rounded-r-none border border-r-0 border-blue-gray-200 bg-blue-gray-500/10 pl-3"
                                 >
-                                  <path
-                                    fillRule="evenodd"
-                                    d="M13.78 10.47a.75.75 0 0 1 0 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 1 1 1.06-1.06l.97.97V5.75a.75.75 0 0 1 1.5 0v5.69l.97-.97a.75.75 0 0 1 1.06 0ZM2.22 5.53a.75.75 0 0 1 0-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1-1.06 1.06l-.97-.97v5.69a.75.75 0 0 1-1.5 0V4.56l-.97.97a.75.75 0 0 1-1.06 0Z"
-                                    clipRule="evenodd"
-                                  />
-                                </svg>
-                              </Button>
-                            </MenuHandler>
-                            <MenuList
-                              placeholder={""}
-                              className="max-h-[20rem] max-w-[18rem]"
-                            >
-                              {Locations.map(({ name }, index) => {
-                                return (
-                                  <MenuItem
-                                    placeholder={""}
-                                    key={name}
-                                    value={name}
-                                    className="flex items-center gap-2"
-                                    onClick={(e) => {
-                                      if (locationOffline.current) {
-                                        locationOffline.current.value = name;
-                                      }
-                                      setOfflineLocation(name);
-                                      locationOffline.current?.focus();
-                                    }}
+                                  Populars
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 16 16"
+                                    fill="currentColor"
+                                    className="w-4 h-4"
                                   >
-                                    {name}
-                                  </MenuItem>
-                                );
-                              })}
-                            </MenuList>
-                          </Menu>
+                                    <path
+                                      fillRule="evenodd"
+                                      d="M13.78 10.47a.75.75 0 0 1 0 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 1 1 1.06-1.06l.97.97V5.75a.75.75 0 0 1 1.5 0v5.69l.97-.97a.75.75 0 0 1 1.06 0ZM2.22 5.53a.75.75 0 0 1 0-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1-1.06 1.06l-.97-.97v5.69a.75.75 0 0 1-1.5 0V4.56l-.97.97a.75.75 0 0 1-1.06 0Z"
+                                      clipRule="evenodd"
+                                    />
+                                  </svg>
+                                </Button>
+                              </MenuHandler>
+                              <MenuList
+                                placeholder={""}
+                                className="max-h-[20rem] max-w-[18rem]"
+                              >
+                                {Locations.map(({ name }, index) => {
+                                  return (
+                                    <MenuItem
+                                      placeholder={""}
+                                      key={name}
+                                      value={name}
+                                      className="flex items-center gap-2"
+                                      onClick={(e) => {
+                                        if (locationOffline.current) {
+                                          locationOffline.current.value = name;
+                                        }
+                                        setOfflineLocation(name);
+                                        locationOffline.current?.focus();
+                                      }}
+                                    >
+                                      {name}
+                                    </MenuItem>
+                                  );
+                                })}
+                              </MenuList>
+                            </Menu>
+                          </div>
+                          <Input
+                            defaultValue={offlineLocation}
+                            crossOrigin={""}
+                            name="location"
+                            label="Location*"
+                            className="bg-white rounded-l-none"
+                            inputRef={locationOffline}
+                            error={!!errors.offlineLocation}
+                          />
                         </div>
-                        <Input
-                          defaultValue={offlineLocation}
-                          crossOrigin={""}
-                          name="location"
-                          label="Location*"
-                          className="bg-white rounded-l-none"
-                          inputRef={locationOffline}
-                          error={!!errors.offlineLocation}
+                      </div>
+                      <div className="mt-4">
+                        <LocationCheck
+                          startDate={startDate.current}
+                          finishDate={finishDate.current}
+                          offlinelocation={locationOffline.current?.value}
                         />
                       </div>
-                        {errors.offlineLocation && (
-                          <p className="text-red-500 text-xs italic">{errors.offlineLocation}</p>
-                        )}
+                      {errors.offlineLocation && (
+                        <p className="text-red-500 text-xs italic">
+                          {errors.offlineLocation}
+                        </p>
+                      )}
                     </div>
                   ) : locationType === "Both" ? (
                     <div className="flex flex-row gap-4">
@@ -748,8 +770,10 @@ export default function SEV({
                           error={!!errors.bothLocation}
                         />
                         {errors.bothLocation && (
-                        <p className="text-red-500 text-xs italic">{errors.bothLocation}</p>
-                      )}
+                          <p className="text-red-500 text-xs italic">
+                            {errors.bothLocation}
+                          </p>
+                        )}
                       </div>
                       <div className="flex flex-col gap-1 mx-auto">
                         <Typography
@@ -822,7 +846,7 @@ export default function SEV({
                             error={!!errors.bothLocation}
                           />
                         </div>
-                      </div>                    
+                      </div>
                     </div>
                   ) : (
                     <h1 className="text-yellow-800">
@@ -866,13 +890,15 @@ export default function SEV({
                 value={registration}
                 config={{ ...configReg, toolbarButtonSize: "small" }}
                 onChange={(newContent) => {}}
-                onBlur={(newContent) =>
-                  setRegistration(newContent)
-                 // preferred to use only this option to update the content for performance reasons
+                onBlur={
+                  (newContent) => setRegistration(newContent)
+                  // preferred to use only this option to update the content for performance reasons
                 }
               />
               {errors.registration && (
-                <p className="text-red-500 text-xs italic">{errors.registration}</p>
+                <p className="text-red-500 text-xs italic">
+                  {errors.registration}
+                </p>
               )}
             </div>
           </div>
@@ -916,7 +942,9 @@ export default function SEV({
                       error={errors.timelineTitleIndex?.includes(input)}
                     />
                     {errors.timelineTitleIndex?.includes(input) && (
-                      <p className="text-red-500 text-xs italic">{errors.timeLineTitle}</p>
+                      <p className="text-red-500 text-xs italic">
+                        {errors.timeLineTitle}
+                      </p>
                     )}
                   </div>
                   <div className="mt-2 flex flex-row gap-2">
@@ -1052,7 +1080,9 @@ export default function SEV({
                       />
 
                       {errors.resourcesIndex?.includes(input) && (
-                        <p className="text-red-500 text-xs italic">{errors.resource}</p>
+                        <p className="text-red-500 text-xs italic">
+                          {errors.resource}
+                        </p>
                       )}
                     </div>
 
@@ -1128,13 +1158,10 @@ export default function SEV({
                 value={prize}
                 config={{ ...configReg, toolbarButtonSize: "small" }}
                 onChange={(newContent) => {}}
-                onBlur={(newContent) =>
-                  setPrize(newContent)
-                }
+                onBlur={(newContent) => setPrize(newContent)}
               />
               {errors.prizes && (
                 <p className="text-red-500 text-xs italic">{errors.prizes}</p>
-              
               )}
             </div>
           </div>
@@ -1167,9 +1194,7 @@ export default function SEV({
                 value={rules}
                 config={{ ...configRules, toolbarButtonSize: "small" }} // change the toolbarButtonSize to one of the valid values
                 onChange={(newContent) => {}}
-                onBlur={(newContent) =>
-                  setRules(newContent)
-                }
+                onBlur={(newContent) => setRules(newContent)}
               />
               {errors.rules && (
                 <p className="text-red-500 text-xs italic">{errors.rules}</p>
