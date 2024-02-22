@@ -22,6 +22,8 @@ import dynamic from "next/dynamic";
 import { useRef, useState } from "react";
 import Locations from "../DummyLocations";
 import Resources from "./Resources";
+import { string } from "zod";
+import { error } from "console";
 
 const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
 
@@ -131,9 +133,25 @@ interface Event {
   resources: Resources[];
 }
 
-interface FormData {
+interface FormError {
   title: string;
-  // Add more fields as needed
+  description: string;
+  startDate: string;
+  finishDate: string;
+  locationType: string;
+  offlineLocation: string;
+  onlineLink: string;
+  bothLocation:string;
+  organizers: string;
+  sponsors: string;
+  registration: string;
+  rules: string;
+  prizes: string;
+  timelineTitleIndex: number[];
+  timeLineTitle: string;
+  resourcesIndex: number[];
+  resource: string;
+  
 }
 
 export default function SEV({
@@ -161,12 +179,18 @@ export default function SEV({
   );
   const [prizeIn, setPrizeIn] = useState<boolean>(hasPrize || false);
 
+
+  const [description, setDescription] = useState<string>("");
+  const [registration, setRegistration] = useState<string>("");
+  const [prize, setPrize] = useState<string>("");
+  const [rules, setRules] = useState<string>("");
+
   const titleField = useRef<HTMLInputElement>(null);
   const startDate = useRef<String | null>(null);
   const finishDate = useRef<String | null>(null);
   const organizers = useRef<HTMLInputElement>(null);
   const sponsors = useRef<HTMLInputElement>(null);
-  const locationType = useRef<HTMLInputElement>(null);
+  const [locationType, setLocationType] = useState<string | undefined>("");
   const locationOffline = useRef<HTMLInputElement>(null);
   const [offlineLocation, setOfflineLocation] = useState<string>("");
   const onlineLink = useRef<HTMLInputElement>(null);
@@ -234,28 +258,26 @@ export default function SEV({
     resourcesLink.current.splice(input, 1);
   };
 
-  const [allinput, setAllinput] = useState<Event>({
-    title: "",
-    description: "",
-    startDate: "",
-    finishDate: "",
-    eventType: "",
-    location: "",
-    onlineLink: "",
-    organizers: "",
-    sponsors: "",
-    registration: "",
-    rules: "",
-    prizes: "",
-    eventTag: "",
-    timeline: [],
-    resources: [],
-  });
+  // const [allinput, setAllinput] = useState<Event>({
+  //   title: "",
+  //   description: "",
+  //   startDate: "",
+  //   finishDate: "",
+  //   eventType: "",
+  //   location: "",
+  //   onlineLink: "",
+  //   organizers: "",
+  //   sponsors: "",
+  //   registration: "",
+  //   rules: "",
+  //   prizes: "",
+  //   eventTag: "",
+  //   timeline: [],
+  //   resources: [],
+  // });
 
-  const [locationOption, setLocationOpton] = useState<string | undefined>("");
   const handleEventTypechange = (selected: string | undefined) => {
-    setLocationOpton(selected);
-    if (selected) setAllinput({ ...allinput, location: selected });
+    if (selected) setLocationType(selected);
     console.log(selected);
   };
 
@@ -307,34 +329,123 @@ export default function SEV({
     console.log(dateString.toString());
   };
 
-  const [errors, setErrors] = useState<Partial<FormData>>({});
+  const [errors, setErrors] = useState<Partial<FormError>>({});
 
   const handleFormSubmit = (e: any) => {
     e.preventDefault();
 
     // Validation
-    const newErrors: Partial<FormData> = {};
+    const newErrors: Partial<FormError> = {};
+
     if (!titleField.current?.value.trim()) {
       newErrors.title = "Title is required";
     }
 
+    if (!description.trim() || description === "<p><br></p>") {
+      newErrors.description = "Description is required";
+    }
+
+    if (!startDate.current) {
+      newErrors.startDate = "Start Date is required";
+    }
+
+    if (!finishDate.current) {
+      newErrors.finishDate = "Finish Date is required";
+    }
+
+    if (!organizers.current?.value.trim()) {
+      newErrors.organizers = "Organizers is required";
+    }
+
+    if (!locationType) {
+      newErrors.locationType = "Location is required";
+    }
+
+    if (locationType === "Offline" && !locationOffline.current?.value.trim()) {
+      newErrors.offlineLocation = "Offline Location is not provided. Please provide or change the location type";
+    }
+
+    if (locationType === "Online" && !onlineLink.current?.value.trim()) {
+      newErrors.onlineLink = "Online Link is not provided. Please provide or change the location type";
+    }
+
+    if (locationType === "Both" && (!locationOffline.current?.value.trim() || !onlineLink.current?.value.trim())) {
+      newErrors.bothLocation = "Both Location is not provided. Please provide or change the location type";
+    }
+
+    if (registrationIn && (!registration.trim() || registration === "<p><br></p>")) {
+      newErrors.registration = "Registration is required";
+    }
+
+    if (rulesIn && (!rules.trim() || rules === "<p><br></p>")) {
+      newErrors.rules = "Rules is required";
+    }
+
+    if (prizeIn && (!prize.trim() || prize === "<p><br></p>")) {
+      newErrors.prizes = "Prizes is required";
+    }
+
+    // check which timeline titles are not present 
+    const timelineTitleIndex: number[] = [];
+    for (let i = 0; i < TimeLineState.inputCount1; i++) {
+      if (!timelineTitle.current[i].value.trim()) {
+        timelineTitleIndex.push(i);
+      }
+    }
+
+    if (timelineTitleIndex.length > 0) {
+      newErrors.timelineTitleIndex = timelineTitleIndex;
+    }
+
+    //set the timeline title error
+    if (timelineTitleIndex.length > 0) {
+      newErrors.timeLineTitle = "Timeline Title is required, fill or remove the timeline";
+    }
+
+
+
+    // check which resources are not present(either description or link one should be present)
+    const resourcesIndex: number[] = [];
+    for (let i = 0; i < ResourcesState.inputCount; i++) {
+      if (
+        !(resourcesDescription.current[i].childNodes[0] as HTMLInputElement).value.trim() &&
+        !resourcesLink.current[i].value.trim()
+      ) {
+        resourcesIndex.push(i);
+      }
+    }
+
+    if (resourcesIndex.length > 0) {
+      newErrors.resourcesIndex = resourcesIndex;
+    }
+
+    //set the resources error
+    if (resourcesIndex.length > 0) {
+      newErrors.resource = "Resource Description or Link is required, fill or remove the resource";
+    }
+
+
+
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
-      if (titleField.current) {
-        titleField.current.focus();
+      // scroll to the 1st error
+      const errorKeys = Object.keys(newErrors);
+      const firstError = errorKeys[0];
+      const errorElement = document.getElementsByName(firstError)[0];
+      if (errorElement) {
+        errorElement.scrollIntoView({ behavior: "smooth" });
       }
       return;
     }
 
-    console.log(allinput.eventTag);
+    console.log(selectedType);
     console.log(titleField.current?.value);
-    console.log(allinput.description);
+    console.log(description);
     console.log(startDate.current);
     console.log(finishDate.current);
     console.log(organizers.current?.value);
     console.log(sponsors.current?.value);
-    console.log(locationType.current?.value);
-    console.log(locationOption);
+    console.log(locationType);
     console.log(locationOffline.current?.value);
     console.log(onlineLink.current?.value);
 
@@ -356,9 +467,9 @@ export default function SEV({
       console.log(resourcesLink.current[i].value);
     }
 
-    console.log(allinput.registration);
-    console.log(allinput.rules);
-    console.log(allinput.prizes);
+    console.log(registration);
+    console.log(rules);
+    console.log(prize);
   };
 
   return (
@@ -373,7 +484,7 @@ export default function SEV({
             inputRef={titleField}
             error={!!errors.title}
           />
-          {errors.title && <p className="text-red-500 italic">{errors.title}</p>}
+          {errors.title && <p className="text-red-500 text-xs italic">{errors.title}</p>}
         </div>
         <Typography
           variant="small"
@@ -384,12 +495,15 @@ export default function SEV({
         </Typography>
         <div>
           <JoditEditor
-            value={allinput.description}
+            value={description}
             config={config}
             onBlur={(newContent) =>
-              setAllinput({ ...allinput, description: newContent })
+              setDescription(newContent)
             } // preferred to use only this option to update the content for performance reasons
           />
+          {errors.description && (
+            <p className="text-red-500 text-xs italic">{errors.description}</p>
+          )}
         </div>
         <div className="flex flex-row gap-8 w-auto">
           <div className="flex flex-col gap-1">
@@ -406,7 +520,11 @@ export default function SEV({
               needConfirm={false}
               placeholder="YYYY-MM-DD HH:mm:ss"
               onChange={startdateChange}
+              className={errors.startDate ? "border-red-500" : ""}
             />
+            {errors.startDate && (
+              <p className="text-red-500 text-xs italic">{errors.startDate}</p>
+            )}
           </div>
           <div className="flex flex-col gap-1 mx-auto   ">
             <Typography
@@ -422,7 +540,11 @@ export default function SEV({
               needConfirm={false}
               placeholder="YYYY-MM-DD HH:mm:ss"
               onChange={finishdateChange}
+              className={errors.finishDate ? "border-red-500" : ""}
             />
+            {errors.finishDate && (
+              <p className="text-red-500 text-xs italic">{errors.finishDate}</p>
+            )}
           </div>
         </div>
 
@@ -441,7 +563,11 @@ export default function SEV({
             placeholder="any of people, batch, batch-dept, club or organization..."
             name="Organizers"
             inputRef={organizers}
+            error={!!errors.organizers}
           />
+          {errors.organizers && (
+            <p className="text-red-500 text-xs italic">{errors.organizers}</p>
+          )}
         </div>
 
         <div className="flex flex-col gap-1 w-3/4">
@@ -487,8 +613,9 @@ export default function SEV({
                 label="Select Location Type"
                 className="bg-white"
                 placeholder={undefined}
-                value={allinput.location}
+                value={locationType}
                 onChange={handleEventTypechange}
+                error={!!errors.locationType}
               >
                 {locationTypes.map((type) => (
                   <Option key={type.id} value={type.name}>
@@ -496,12 +623,15 @@ export default function SEV({
                   </Option>
                 ))}
               </Select>
+              {errors.locationType && (
+                <p className="text-red-500 text-xs italic">{errors.locationType}</p>             
+              )}
             </div>
 
             <div className="">
-              {locationOption && (
+              {locationType && (
                 <div className="w-full p-4">
-                  {locationOption === "Online" ? (
+                  {locationType === "Online" ? (
                     <div className="flex flex-col gap-1 w-1/2">
                       <Typography
                         placeholder={""}
@@ -516,10 +646,14 @@ export default function SEV({
                         placeholder="to be announced..."
                         className="bg-white"
                         name="onlineLink"
-                        ref={onlineLink}
+                        inputRef={onlineLink}
+                        error={!!errors.onlineLink}
                       />
+                      {errors.onlineLink && (
+                        <p className="text-red-500 text-xs italic">{errors.onlineLink}</p>
+                      )}
                     </div>
-                  ) : locationOption === "Offline" ? (
+                  ) : locationType === "Offline" ? (
                     <div className="flex flex-col gap-1">
                       <Typography
                         placeholder={""}
@@ -585,12 +719,16 @@ export default function SEV({
                           crossOrigin={""}
                           name="location"
                           label="Location*"
-                          className="rounded-l-none"
+                          className="bg-white rounded-l-none"
                           inputRef={locationOffline}
+                          error={!!errors.offlineLocation}
                         />
                       </div>
+                        {errors.offlineLocation && (
+                          <p className="text-red-500 text-xs italic">{errors.offlineLocation}</p>
+                        )}
                     </div>
-                  ) : locationOption === "Both" ? (
+                  ) : locationType === "Both" ? (
                     <div className="flex flex-row gap-4">
                       <div className="flex flex-col gap-1 w-1/3">
                         <Typography
@@ -607,7 +745,11 @@ export default function SEV({
                           className="bg-white"
                           name="onlineLink"
                           inputRef={onlineLink}
+                          error={!!errors.bothLocation}
                         />
+                        {errors.bothLocation && (
+                        <p className="text-red-500 text-xs italic">{errors.bothLocation}</p>
+                      )}
                       </div>
                       <div className="flex flex-col gap-1 mx-auto">
                         <Typography
@@ -675,11 +817,12 @@ export default function SEV({
                             crossOrigin={""}
                             name="location"
                             label="Location*"
-                            className="rounded-l-none"
+                            className="bg-white rounded-l-none"
                             inputRef={locationOffline}
+                            error={!!errors.bothLocation}
                           />
                         </div>
-                      </div>
+                      </div>                    
                     </div>
                   ) : (
                     <h1 className="text-yellow-800">
@@ -720,13 +863,17 @@ export default function SEV({
             </Typography>
             <div className="w-5/6">
               <JoditEditor
-                value={allinput.registration}
+                value={registration}
                 config={{ ...configReg, toolbarButtonSize: "small" }}
                 onChange={(newContent) => {}}
                 onBlur={(newContent) =>
-                  setAllinput({ ...allinput, registration: newContent })
+                  setRegistration(newContent)
+                 // preferred to use only this option to update the content for performance reasons
                 }
               />
+              {errors.registration && (
+                <p className="text-red-500 text-xs italic">{errors.registration}</p>
+              )}
             </div>
           </div>
         )}
@@ -766,7 +913,11 @@ export default function SEV({
                       inputRef={(el) =>
                         el && (timelineTitle.current[input] = el)
                       }
-                    ></Input>
+                      error={errors.timelineTitleIndex?.includes(input)}
+                    />
+                    {errors.timelineTitleIndex?.includes(input) && (
+                      <p className="text-red-500 text-xs italic">{errors.timeLineTitle}</p>
+                    )}
                   </div>
                   <div className="mt-2 flex flex-row gap-2">
                     <div className="w-1/2">
@@ -885,6 +1036,7 @@ export default function SEV({
                         ref={(el) =>
                           el && (resourcesDescription.current[input] = el)
                         }
+                        error={errors.resourcesIndex?.includes(input)}
                       />
 
                       <Input
@@ -896,7 +1048,12 @@ export default function SEV({
                         inputRef={(el) =>
                           el && (resourcesLink.current[input] = el)
                         }
+                        error={errors.resourcesIndex?.includes(input)}
                       />
+
+                      {errors.resourcesIndex?.includes(input) && (
+                        <p className="text-red-500 text-xs italic">{errors.resource}</p>
+                      )}
                     </div>
 
                     <IconButton
@@ -968,13 +1125,17 @@ export default function SEV({
             </Typography>
             <div className="w-5/6">
               <JoditEditor
-                value={allinput.prizes}
+                value={prize}
                 config={{ ...configReg, toolbarButtonSize: "small" }}
                 onChange={(newContent) => {}}
                 onBlur={(newContent) =>
-                  setAllinput({ ...allinput, prizes: newContent })
+                  setPrize(newContent)
                 }
               />
+              {errors.prizes && (
+                <p className="text-red-500 text-xs italic">{errors.prizes}</p>
+              
+              )}
             </div>
           </div>
         )}
@@ -1003,13 +1164,16 @@ export default function SEV({
             </Typography>
             <div className="w-3/4">
               <JoditEditor
-                value={allinput.rules}
+                value={rules}
                 config={{ ...configRules, toolbarButtonSize: "small" }} // change the toolbarButtonSize to one of the valid values
                 onChange={(newContent) => {}}
                 onBlur={(newContent) =>
-                  setAllinput({ ...allinput, rules: newContent })
+                  setRules(newContent)
                 }
               />
+              {errors.rules && (
+                <p className="text-red-500 text-xs italic">{errors.rules}</p>
+              )}
             </div>
           </div>
         )}
