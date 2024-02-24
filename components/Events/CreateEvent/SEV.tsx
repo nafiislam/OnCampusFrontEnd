@@ -1,5 +1,10 @@
 "use client";
-
+import {
+  ErrorAnimation,
+  LoadingAnimation,
+  SuccessAnimation,
+  WarningAnimation,
+} from "@/components/Animation";
 import {
   Button,
   IconButton,
@@ -21,8 +26,11 @@ import { Dayjs } from "dayjs";
 import dynamic from "next/dynamic";
 import { useRef, useState } from "react";
 import Locations from "../DummyLocations";
-import LocationCheck from "./LocationCheck";
 import Resources from "./Resources";
+
+import POST from "@/server_actions/POST";
+import { useRouter } from "next/navigation";
+
 
 const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
 
@@ -91,12 +99,12 @@ const configRules = {
 
 interface TimeLine {
   name: string;
-  description: string;
-  startDate: string;
-  finishDate: string;
-  meetingType: string;
-  location: string;
-  onlineLink: string;
+  description: string|null;
+  startDate: String|null;
+  finishDate: String|null;
+  meetingType: string|null;
+  location: string|null;
+  onlineLink: string|null;
 }
 
 interface TimeLineState {
@@ -167,6 +175,9 @@ export default function SEV({
   hasRegistration?: boolean;
   hasPrize?: boolean;
 }) {
+
+  const router = useRouter();
+
   const [registrationIn, setRegistrationIn] = useState<boolean>(
     hasRegistration || false
   );
@@ -201,6 +212,8 @@ export default function SEV({
   // for resources
   const resourcesDescription = useRef<HTMLDivElement[]>([]);
   const resourcesLink = useRef<HTMLInputElement[]>([]);
+
+  const [locationButtonState, setLocationButtonState] = useState(0); // 0 = "idle", 1 = "input required", 2 = "loading", 3 = "success", 4 = "not success", 5 = "internal server error"
 
   const initialTimeLineState: TimeLineState = {
     inputCount1: 0,
@@ -328,6 +341,47 @@ export default function SEV({
 
   const [errors, setErrors] = useState<Partial<FormError>>({});
 
+  const handleLocationCheck = () => {
+    if (
+      !startDate.current ||
+      !finishDate.current ||
+      !locationOffline.current?.value
+    ) {
+      setLocationButtonState(1);
+      return;
+    }
+    setLocationButtonState(2);
+
+    const data = {
+      startDate: startDate.current,
+      finishDate: finishDate.current,
+      location: locationOffline.current?.value,
+    };
+
+    console.log(data);
+
+    var conflictingEvents = [];
+
+    POST("event/checkLocation", data)
+      .then((res) => {
+        console.log(res);
+        console.log(res.status);   //why undefined!!!!
+
+        conflictingEvents = res.conflictingEvents;
+        console.log(conflictingEvents);
+
+        if (conflictingEvents.length === 0) {
+          setLocationButtonState(3);
+        } else {
+          setLocationButtonState(4);
+        }
+      })
+      .catch((err) => {
+        console.error("error" + err);
+        setLocationButtonState(5);
+      });
+  };
+
   const handleFormSubmit = (e: any) => {
     e.preventDefault();
 
@@ -445,38 +499,95 @@ export default function SEV({
       return;
     }
 
-    console.log(selectedType);
-    console.log(titleField.current?.value);
-    console.log(description);
-    console.log(startDate.current);
-    console.log(finishDate.current);
-    console.log(organizers.current?.value);
-    console.log(sponsors.current?.value);
-    console.log(locationType);
-    console.log(locationOffline.current?.value);
-    console.log(onlineLink.current?.value);
+    // console.log(selectedType);
+    // console.log(titleField.current?.value);
+    // console.log(description);
+    // console.log(startDate.current);
+    // console.log(finishDate.current);
+    // console.log(organizers.current?.value);
+    // console.log(sponsors.current?.value);
+    // console.log(locationType);
+    // console.log(locationOffline.current?.value);
+    // console.log(onlineLink.current?.value);
 
-    console.log(TimeLineState.inputCount1);
+    // console.log(TimeLineState.inputCount1);
+    // for (let i = 0; i < TimeLineState.inputCount1; i++) {
+    //   console.log(timelineTitle.current[i].value); // timelineTitle.current[i].childNodes[0].value also works, but dont know why typescript mf throws error
+    //   console.log(
+    //     (timelineDescription.current[i].childNodes[0] as HTMLInputElement).value
+    //   );
+    //   console.log(timelineStartDate.current[i]);
+    //   console.log(timelineFinishDate.current[i]);
+    // }
+
+    // for (let i = 0; i < ResourcesState.inputCount; i++) {
+    //   console.log(
+    //     (resourcesDescription.current[i].childNodes[0] as HTMLInputElement)
+    //       .value
+    //   ); // resourcesDescription.current[i].childNodes[0].value also works, but dont know why typescript mf throws error
+    //   console.log(resourcesLink.current[i].value);
+    // }
+
+    // console.log(registration);
+    // console.log(rules);
+    // console.log(prize);
+
+
+    const timeline : TimeLine[] = [];
+
     for (let i = 0; i < TimeLineState.inputCount1; i++) {
-      console.log(timelineTitle.current[i].value); // timelineTitle.current[i].childNodes[0].value also works, but dont know why typescript mf throws error
-      console.log(
-        (timelineDescription.current[i].childNodes[0] as HTMLInputElement).value
-      );
-      console.log(timelineStartDate.current[i]);
-      console.log(timelineFinishDate.current[i]);
+      // push all timelines to this array
+      timeline.push({
+        name: timelineTitle.current[i].value,
+        description: (timelineDescription.current[i].childNodes[0] as HTMLInputElement).value,
+        startDate: timelineStartDate.current[i],
+        finishDate: timelineFinishDate.current[i],
+        meetingType: null,
+        location: "",
+        onlineLink: "",
+      });
     }
+
+    const resources : Resource[] = [];
 
     for (let i = 0; i < ResourcesState.inputCount; i++) {
-      console.log(
-        (resourcesDescription.current[i].childNodes[0] as HTMLInputElement)
-          .value
-      ); // resourcesDescription.current[i].childNodes[0].value also works, but dont know why typescript mf throws error
-      console.log(resourcesLink.current[i].value);
+      // push all resources to this array
+      resources.push({
+        description: (resourcesDescription.current[i].childNodes[0] as HTMLInputElement).value,
+        link: resourcesLink.current[i].value,
+      });
     }
 
-    console.log(registration);
-    console.log(rules);
-    console.log(prize);
+    const data = {
+      title: titleField.current?.value,
+      description: description,
+      startDate: startDate.current,
+      finishDate: finishDate.current,
+      eventType: locationType,
+      location: locationOffline.current?.value,
+      onlineLink: onlineLink.current?.value,
+      organizers: organizers.current?.value,
+      sponsors: sponsors.current?.value,
+      registration: registration,
+      rules: rules,
+      prizes: prize,
+      eventTag: selectedType,
+      timeline: timeline,
+      resources: resources,
+    };
+
+    console.log(data);
+
+    POST("event/createEvent", data)
+      .then((res) => {
+        console.log(res);
+        router.push("/AllEvents");
+      })
+      .catch((err) => {
+        console.error("error" + err);
+      });
+
+
   };
 
   return (
@@ -738,11 +849,65 @@ export default function SEV({
                         </div>
                       </div>
                       <div className="mt-4">
-                        <LocationCheck
+                        {/* <LocationCheck
                           startDate={startDate.current}
                           finishDate={finishDate.current}
                           offlinelocation={locationOffline.current?.value}
-                        />
+                        /> */}
+
+                        <div className="flex flex-row gap-20">
+                          <Button
+                            className="w-1/3"
+                            onClick={handleLocationCheck}
+                          >
+                            Check Location Availability
+                          </Button>
+
+                          {locationButtonState === 0 && (
+                            <div className=""></div>
+                          )}
+                          {locationButtonState === 1 && (
+                            <div className="flex flex-row gap-4">
+                              <ErrorAnimation />
+                              <p className="text-red-500 mt-3">
+                                Please Enter Location, StartDate, FinishDate
+                                first
+                              </p>
+                            </div>
+                          )}
+                          {locationButtonState === 2 && (
+                            <div className="flex flex-row gap-4">
+                              <LoadingAnimation />
+                              <p className=" text-teal-700 mt-3">
+                                Checking Location Availability...
+                              </p>
+                            </div>
+                          )}
+                          {locationButtonState === 3 && (
+                            <div className="flex flex-row gap-4">
+                              <SuccessAnimation />
+                              <p className="text-green-500 mt-3">
+                                No Conflict in Location Detected
+                              </p>
+                            </div>
+                          )}
+                          {locationButtonState === 4 && (
+                            <div className="flex flex-row gap-4">
+                              <WarningAnimation />
+                              <p className=" text-orange-600 mt-3">
+                                Conflict in Location Detected
+                              </p>
+                            </div>
+                          )}
+                          {locationButtonState === 5 && (
+                            <div className="flex flex-row gap-4">
+                              <ErrorAnimation />
+                              <p className="text-red-500 mt-3">
+                                Internal Server Error
+                              </p>
+                            </div>
+                          )}
+                        </div>
                       </div>
                       {errors.offlineLocation && (
                         <p className="text-red-500 text-xs italic">
