@@ -464,7 +464,7 @@ export function SidebarWithContentSeparator() {
           </ListItem>
           <AccordionBody className="py-1 pl-2">
             <List className="p-0" placeholder={undefined}>
-            <Link href="/CreateEvent">
+              <Link href="/CreateEvent">
                 <ListItem placeholder={undefined}>
                   <ListItemPrefix placeholder={undefined}>
                     <ChatBubbleBottomCenterTextIcon
@@ -526,15 +526,28 @@ export function SidebarWithContentSeparator() {
           </ListItem>
           <AccordionBody className="py-1 pl-2">
             <List className="p-0" placeholder={undefined}>
-              <ListItem placeholder={undefined}>
-                <ListItemPrefix placeholder={undefined}>
-                  <ChatBubbleBottomCenterTextIcon
-                    strokeWidth={2}
-                    className="h-4 w-5"
-                  />
-                </ListItemPrefix>
-                Add notice
-              </ListItem>
+              <Link href={"/Notice/addNotice"}>
+                <ListItem placeholder={undefined}>
+                  <ListItemPrefix placeholder={undefined}>
+                    <ChatBubbleBottomCenterTextIcon
+                      strokeWidth={2}
+                      className="h-4 w-5"
+                    />
+                  </ListItemPrefix>
+                  Add notice
+                </ListItem>
+              </Link>
+              <Link href={"/Notice/allNotices"}>
+                <ListItem placeholder={undefined}>
+                  <ListItemPrefix placeholder={undefined}>
+                    <ChatBubbleBottomCenterTextIcon
+                      strokeWidth={2}
+                      className="h-4 w-5"
+                    />
+                  </ListItemPrefix>
+                  All notices
+                </ListItem>
+              </Link>
             </List>
           </AccordionBody>
         </Accordion>
@@ -618,6 +631,17 @@ export function SidebarWithContentSeparator() {
                       />
                     </ListItemPrefix>
                     All Users
+                  </ListItem>
+                </Link>
+                <Link href="/admin/reportedPosts">
+                  <ListItem placeholder={undefined}>
+                    <ListItemPrefix placeholder={undefined}>
+                      <ChatBubbleBottomCenterTextIcon
+                        strokeWidth={2}
+                        className="h-4 w-5"
+                      />
+                    </ListItemPrefix>
+                    Reported Posts
                   </ListItem>
                 </Link>
               </List>

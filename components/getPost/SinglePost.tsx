@@ -47,6 +47,7 @@ export const ContextProvider = createContext({
   status: boolean,
   changeCommentStatus: (status: boolean) => {},
   changeDeleted: (status: boolean) => {},
+  reportedBy: [],
 });
 
 export default function PostBody({ post }: { post: any }) {
@@ -97,6 +98,7 @@ export default function PostBody({ post }: { post: any }) {
         status: status,
         changeCommentStatus: changeCommentStatus,
         changeDeleted: changeDeleted,
+        reportedBy: post.reportedBy,
       }}
     >
       {deleted ? <div>Post Deleted</div> : (
