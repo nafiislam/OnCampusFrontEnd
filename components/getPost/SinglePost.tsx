@@ -1,28 +1,29 @@
 "use client";
 
-import BreadcrumbsDefault from "./BreadCrumbs";
+import POST from "@/server_actions/POST";
+import { createContext, useState } from "react";
 import AvatarImageText from "./AvatarImageText";
 import AvatarStack from "./AvatarStack";
+import BloodPost from "./BloodPost";
+import BreadcrumbsDefault from "./BreadCrumbs";
 import CommentCount from "./CommentCount";
 import DateTime from "./DateTime";
+import { DialogueBox } from "./DialogueBox";
 import ImageGallery from "./Gallery";
-import PosText from "./Posttext";
+import IntPost from "./IntPost";
 import { FileList } from "./PostAttachments";
+import PosText from "./Posttext";
+import ProductInfo from "./ProductInfo";
 import Reaction from "./Reaction";
 import CommentBody from "./SingleComment";
-import Saveicon from "./save";
-import PollList from "./poll";
-import { comment } from "postcss";
-import { useState, useContext, createContext } from "react";
-import BloodPost from "./BloodPost";
 import TuitionPost from "./TuitionPost";
-import ProductInfo from "./ProductInfo";
-import IntPost from "./IntPost";
-import { DialogueBox } from "./DialogueBox";
+import PollList from "./poll";
+import Saveicon from "./save";
 
 import {
   LockClosedIcon
 } from "@heroicons/react/24/outline";
+import { Button } from "antd";
 import { boolean } from "zod";
 
 function processNestedComments(comments: any[]) {
@@ -84,6 +85,22 @@ export default function PostBody({ post }: { post: any }) {
   const changeDeleted = (status: boolean) => {
     setDeleted(status);
   };
+
+  const [report, setReport] = useState(true);
+
+  const handleReport = () => {
+    setReport(!report);
+
+    //report post to the backend
+   
+
+    POST("post/reportPost", {id : post.id}).then((res) => {
+      console.log(res);
+    });
+
+
+  }
+
   return (
     <ContextProvider.Provider
       value={{
@@ -165,6 +182,19 @@ export default function PostBody({ post }: { post: any }) {
         <div className="flex flex-row gap-4">
           <Reaction likedBy={post.likedBy} type="post" id={post.id} />
           {commentStatus && status ? <CommentCount type="post" /> : ""}
+        </div>
+
+        <div className="mt-5">
+          {report ? (
+            <div>
+              <Button onClick={handleReport}>Report</Button>
+            </div>
+          ) : (
+            <div>
+              <Button disabled >already reported</Button>
+            </div>
+          
+          )}
         </div>
 
         <hr className="my-2 border-blue-gray-900" />

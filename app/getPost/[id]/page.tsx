@@ -17,6 +17,8 @@ const GetPost = async({ params }: { params: { id: string } }) => {
         )
     }
 
+    console.log(post)
+
   return (
     <SinglePosts post={post}/>
   )

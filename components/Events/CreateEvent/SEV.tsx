@@ -1,7 +1,9 @@
 "use client";
 import {
+  CongratsSuccessAnimation,
   ErrorAnimation,
   LoadingAnimation,
+  LoadingMailAnimation,
   SuccessAnimation,
   WarningAnimation,
 } from "@/components/Animation";
@@ -30,7 +32,6 @@ import Resources from "./Resources";
 
 import POST from "@/server_actions/POST";
 import { useRouter } from "next/navigation";
-
 
 const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
 
@@ -99,12 +100,12 @@ const configRules = {
 
 interface TimeLine {
   name: string;
-  description: string|null;
-  startDate: String|null;
-  finishDate: String|null;
-  meetingType: string|null;
-  location: string|null;
-  onlineLink: string|null;
+  description: string | null;
+  startDate: String | null;
+  finishDate: String | null;
+  meetingType: string | null;
+  location: string | null;
+  onlineLink: string | null;
 }
 
 interface TimeLineState {
@@ -145,6 +146,7 @@ interface FormError {
   description: string;
   startDate: string;
   finishDate: string;
+  startfinishDate: string;
   locationType: string;
   offlineLocation: string;
   onlineLink: string;
@@ -175,7 +177,6 @@ export default function SEV({
   hasRegistration?: boolean;
   hasPrize?: boolean;
 }) {
-
   const router = useRouter();
 
   const [registrationIn, setRegistrationIn] = useState<boolean>(
@@ -214,6 +215,8 @@ export default function SEV({
   const resourcesLink = useRef<HTMLInputElement[]>([]);
 
   const [locationButtonState, setLocationButtonState] = useState(0); // 0 = "idle", 1 = "input required", 2 = "loading", 3 = "success", 4 = "not success", 5 = "internal server error"
+
+  const [formState, setFormState] = useState(0);
 
   const initialTimeLineState: TimeLineState = {
     inputCount1: 0,
@@ -365,7 +368,7 @@ export default function SEV({
     POST("event/checkLocation", data)
       .then((res) => {
         console.log(res);
-        console.log(res.status);   //why undefined!!!!
+        console.log(res.status); //why undefined!!!!
 
         conflictingEvents = res.conflictingEvents;
         console.log(conflictingEvents);
@@ -382,7 +385,7 @@ export default function SEV({
       });
   };
 
-  const handleFormSubmit = (e: any) => {
+  const handleFormSubmit = async (e: any) => {
     e.preventDefault();
 
     // Validation
@@ -446,6 +449,22 @@ export default function SEV({
       newErrors.prizes = "Prizes is required";
     }
 
+    let startdate;
+    if (startDate.current) {
+      startdate = new Date(startDate.current.toString());
+    }
+
+    let finishdate;
+    if (finishDate.current) {
+      finishdate = new Date(finishDate.current.toString());
+    }
+
+    // check if finish date is less than start date
+    if (finishdate && startdate && startdate >= finishdate) {
+      newErrors.startfinishDate =
+        "Finish Date should be greater than Start Date";
+    }
+
     // check which timeline titles are not present
     const timelineTitleIndex: number[] = [];
     for (let i = 0; i < TimeLineState.inputCount1; i++) {
@@ -489,13 +508,18 @@ export default function SEV({
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
-      // scroll to the 1st error
-      const errorKeys = Object.keys(newErrors);
-      const firstError = errorKeys[0];
-      const errorElement = document.getElementsByName(firstError)[0];
-      if (errorElement) {
-        errorElement.scrollIntoView({ behavior: "smooth" });
-      }
+      // // scroll to the 1st error
+      // const errorKeys = Object.keys(newErrors);
+      // const firstError = errorKeys[0];
+      // const errorElement = document.getElementsByName(firstError)[0];
+      // if (errorElement) {
+      //   errorElement.scrollIntoView({ behavior: "smooth" });
+      // }
+      // return;
+
+      // scroll to top and behaviour smooth
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
 
@@ -532,14 +556,15 @@ export default function SEV({
     // console.log(rules);
     // console.log(prize);
 
-
-    const timeline : TimeLine[] = [];
+    const timeline: TimeLine[] = [];
 
     for (let i = 0; i < TimeLineState.inputCount1; i++) {
       // push all timelines to this array
       timeline.push({
         name: timelineTitle.current[i].value,
-        description: (timelineDescription.current[i].childNodes[0] as HTMLInputElement).value,
+        description: (
+          timelineDescription.current[i].childNodes[0] as HTMLInputElement
+        ).value,
         startDate: timelineStartDate.current[i],
         finishDate: timelineFinishDate.current[i],
         meetingType: null,
@@ -548,12 +573,14 @@ export default function SEV({
       });
     }
 
-    const resources : Resource[] = [];
+    const resources: Resource[] = [];
 
     for (let i = 0; i < ResourcesState.inputCount; i++) {
       // push all resources to this array
       resources.push({
-        description: (resourcesDescription.current[i].childNodes[0] as HTMLInputElement).value,
+        description: (
+          resourcesDescription.current[i].childNodes[0] as HTMLInputElement
+        ).value,
         link: resourcesLink.current[i].value,
       });
     }
@@ -578,346 +605,217 @@ export default function SEV({
 
     console.log(data);
 
-    POST("event/createEvent", data)
-      .then((res) => {
-        console.log(res);
+    setFormState(1);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    const res = await POST("event/createEvent", data);
+
+    if (res) {
+      setFormState(3);
+      setTimeout(() => {
         router.push("/AllEvents");
-      })
-      .catch((err) => {
-        console.error("error" + err);
-      });
-
-
+      }, 5000);
+    } else {
+      setFormState(2);
+    }
   };
 
   return (
     <div>
-      <form className="flex flex-col gap-6">
-        <div className="">
-          <Input
-            className="bg-white"
-            label="Name of the Event*"
-            crossOrigin={undefined}
-            name="title"
-            inputRef={titleField}
-            error={!!errors.title}
-          />
-          {errors.title && (
-            <p className="text-red-500 text-xs italic">{errors.title}</p>
-          )}
+      {formState === 1 && (
+        <div className="bg-white flex flex-col justify-center items-center">
+          <LoadingMailAnimation />
+          <div className=" mb-16 pb-16">
+            <p className="text-gray-600 text-lg ml-4">
+              Creating the event, wait for confirmation or navigate or create
+              another one...
+            </p>
+          </div>
         </div>
-        <Typography
-          variant="small"
-          className="text-blue-gray-500"
-          placeholder={""}
-        >
-          Give short description*
-        </Typography>
-        <div>
-          <JoditEditor
-            value={description}
-            config={config}
-            onBlur={(newContent) => setDescription(newContent)} // preferred to use only this option to update the content for performance reasons
-          />
-          {errors.description && (
-            <p className="text-red-500 text-xs italic">{errors.description}</p>
-          )}
+      )}
+      {formState === 3 && (
+        <div className="bg-white flex flex-col justify-center items-center">
+          <CongratsSuccessAnimation />
+          <div className=" mb-16 pb-16">
+            <p className="text-gray-600 text-lg ml-4">
+              Event created successfully, will move you on the AllEvents page
+              now
+            </p>
+          </div>
         </div>
-        <div className="flex flex-row gap-8 w-auto">
-          <div className="flex flex-col gap-1">
-            <Typography
-              className="text-blue-gray-600"
-              variant="small"
-              placeholder={""}
-            >
-              Start Date*
-            </Typography>
-            <DatePicker
-              name="startDate"
-              showTime
-              needConfirm={false}
-              placeholder="YYYY-MM-DD HH:mm:ss"
-              onChange={startdateChange}
-              className={errors.startDate ? "border-red-500" : ""}
+      )}
+      {(formState === 0 || formState === 2) && (
+        <form className="flex flex-col gap-6">
+          <div className="">
+            <Input
+              className="bg-white"
+              label="Name of the Event*"
+              crossOrigin={undefined}
+              name="title"
+              inputRef={titleField}
+              error={!!errors.title}
             />
-            {errors.startDate && (
-              <p className="text-red-500 text-xs italic">{errors.startDate}</p>
+            {errors.title && (
+              <p className="text-red-500 text-xs italic">{errors.title}</p>
             )}
           </div>
-          <div className="flex flex-col gap-1 mx-auto   ">
-            <Typography
-              className="text-blue-gray-600"
-              variant="small"
-              placeholder={""}
-            >
-              End Date
-            </Typography>
-            <DatePicker
-              name="finishDate"
-              showTime
-              needConfirm={false}
-              placeholder="YYYY-MM-DD HH:mm:ss"
-              onChange={finishdateChange}
-              className={errors.finishDate ? "border-red-500" : ""}
+          <Typography
+            variant="small"
+            className="text-blue-gray-500"
+            placeholder={""}
+          >
+            Give short description*
+          </Typography>
+          <div>
+            <JoditEditor
+              value={description}
+              config={config}
+              onBlur={(newContent) => setDescription(newContent)} // preferred to use only this option to update the content for performance reasons
             />
-            {errors.finishDate && (
-              <p className="text-red-500 text-xs italic">{errors.finishDate}</p>
+            {errors.description && (
+              <p className="text-red-500 text-xs italic">
+                {errors.description}
+              </p>
             )}
           </div>
-        </div>
-
-        <div className="flex flex-col gap-1 w-3/4">
-          <Typography
-            placeholder={""}
-            variant="small"
-            className="text-blue-gray-600"
-          >
-            Organized By*
-          </Typography>
-          <Input
-            className="bg-white"
-            crossOrigin={""}
-            label="..."
-            placeholder="any of people, batch, batch-dept, club or organization..."
-            name="Organizers"
-            inputRef={organizers}
-            error={!!errors.organizers}
-          />
-          {errors.organizers && (
-            <p className="text-red-500 text-xs italic">{errors.organizers}</p>
-          )}
-        </div>
-
-        <div className="flex flex-col gap-1 w-3/4">
-          <Typography
-            placeholder={""}
-            variant="small"
-            className="text-blue-gray-600"
-          >
-            Sponsored by
-          </Typography>
-          <Input
-            className="bg-white"
-            crossOrigin={""}
-            label="..."
-            placeholder="put comma between multiple"
-            name="Sponsors"
-            inputRef={sponsors}
-          />
-        </div>
-
-        <div className="border-blue-gray-500 rounded-md flex flex-col gap-1 mt-4">
-          <div className="flex flex-row gap-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 576 512"
-              className="w-5 h-5 fill-red-800 ml-1"
-            >
-              <path d="M408 120c0 54.6-73.1 151.9-105.2 192c-7.7 9.6-22 9.6-29.6 0C241.1 271.9 168 174.6 168 120C168 53.7 221.7 0 288 0s120 53.7 120 120zm8 80.4c3.5-6.9 6.7-13.8 9.6-20.6c.5-1.2 1-2.5 1.5-3.7l116-46.4C558.9 123.4 576 135 576 152V422.8c0 9.8-6 18.6-15.1 22.3L416 503V200.4zM137.6 138.3c2.4 14.1 7.2 28.3 12.8 41.5c2.9 6.8 6.1 13.7 9.6 20.6V451.8L32.9 502.7C17.1 509 0 497.4 0 480.4V209.6c0-9.8 6-18.6 15.1-22.3l122.6-49zM327.8 332c13.9-17.4 35.7-45.7 56.2-77V504.3L192 449.4V255c20.5 31.3 42.3 59.6 56.2 77c20.5 25.6 59.1 25.6 79.6 0zM288 152a40 40 0 1 0 0-80 40 40 0 1 0 0 80z" />
-            </svg>
-            <Typography
-              placeholder={""}
-              variant="small"
-              className="text-blue-gray-600"
-            >
-              Event Location
-            </Typography>
-          </div>
-
-          <div className="mt-1 flex flex-col gap-1">
-            <div className="w-1/3">
-              <Select
-                size="md"
-                label="Select Location Type"
-                className="bg-white"
-                placeholder={undefined}
-                value={locationType}
-                onChange={handleEventTypechange}
-                error={!!errors.locationType}
+          <div className="flex flex-row gap-8 w-auto">
+            <div className="flex flex-col gap-1">
+              <Typography
+                className="text-blue-gray-600"
+                variant="small"
+                placeholder={""}
               >
-                {locationTypes.map((type) => (
-                  <Option key={type.id} value={type.name}>
-                    {type.name}
-                  </Option>
-                ))}
-              </Select>
-              {errors.locationType && (
+                Start Date*
+              </Typography>
+              <DatePicker
+                name="startDate"
+                showTime
+                needConfirm={false}
+                placeholder="YYYY-MM-DD HH:mm:ss"
+                onChange={startdateChange}
+                className={errors.startDate ? "border-red-500" : ""}
+              />
+              {errors.startDate && (
                 <p className="text-red-500 text-xs italic">
-                  {errors.locationType}
+                  {errors.startDate}
                 </p>
               )}
             </div>
+            <div className="flex flex-col gap-1 mx-auto   ">
+              <Typography
+                className="text-blue-gray-600"
+                variant="small"
+                placeholder={""}
+              >
+                End Date
+              </Typography>
+              <DatePicker
+                name="finishDate"
+                showTime
+                needConfirm={false}
+                placeholder="YYYY-MM-DD HH:mm:ss"
+                onChange={finishdateChange}
+                className={errors.finishDate ? "border-red-500" : ""}
+              />
+              {errors.finishDate && (
+                <p className="text-red-500 text-xs italic">
+                  {errors.finishDate}
+                </p>
+              )}
+            </div>
+          </div>
+          {errors.startfinishDate && (
+            <p className="text-red-500 text-xs italic">
+              {errors.startfinishDate}
+            </p>
+          )}
 
-            <div className="">
-              {locationType && (
-                <div className="w-full p-4">
-                  {locationType === "Online" ? (
-                    <div className="flex flex-col gap-1 w-1/2">
-                      <Typography
-                        placeholder={""}
-                        variant="small"
-                        className="text-blue-gray-600"
-                      >
-                        Online Link
-                      </Typography>
-                      <Input
-                        crossOrigin={""}
-                        label="Meeting Link*"
-                        placeholder="to be announced..."
-                        className="bg-white"
-                        name="onlineLink"
-                        inputRef={onlineLink}
-                        error={!!errors.onlineLink}
-                      />
-                      {errors.onlineLink && (
-                        <p className="text-red-500 text-xs italic">
-                          {errors.onlineLink}
-                        </p>
-                      )}
-                    </div>
-                  ) : locationType === "Offline" ? (
-                    <div className="flex flex-col gap-1">
-                      <Typography
-                        placeholder={""}
-                        variant="small"
-                        className="text-blue-gray-600"
-                      >
-                        Offline venue
-                      </Typography>
-                      <div className="flex flex-row">
-                        <div className="relative flex w-full max-w-[24rem] bg-white">
-                          <div className="flex flex-row gap-4">
-                            <Menu placement="bottom-start">
-                              <MenuHandler>
-                                <Button
-                                  placeholder={""}
-                                  ripple={false}
-                                  variant="text"
-                                  color="blue-gray"
-                                  className="flex flex-row h-10 items-center gap-2 rounded-r-none border border-r-0 border-blue-gray-200 bg-blue-gray-500/10 pl-3"
-                                >
-                                  Populars
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 16 16"
-                                    fill="currentColor"
-                                    className="w-4 h-4"
-                                  >
-                                    <path
-                                      fillRule="evenodd"
-                                      d="M13.78 10.47a.75.75 0 0 1 0 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 1 1 1.06-1.06l.97.97V5.75a.75.75 0 0 1 1.5 0v5.69l.97-.97a.75.75 0 0 1 1.06 0ZM2.22 5.53a.75.75 0 0 1 0-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1-1.06 1.06l-.97-.97v5.69a.75.75 0 0 1-1.5 0V4.56l-.97.97a.75.75 0 0 1-1.06 0Z"
-                                      clipRule="evenodd"
-                                    />
-                                  </svg>
-                                </Button>
-                              </MenuHandler>
-                              <MenuList
-                                placeholder={""}
-                                className="max-h-[20rem] max-w-[18rem]"
-                              >
-                                {Locations.map(({ name }, index) => {
-                                  return (
-                                    <MenuItem
-                                      placeholder={""}
-                                      key={name}
-                                      value={name}
-                                      className="flex items-center gap-2"
-                                      onClick={(e) => {
-                                        if (locationOffline.current) {
-                                          locationOffline.current.value = name;
-                                        }
-                                        setOfflineLocation(name);
-                                        locationOffline.current?.focus();
-                                      }}
-                                    >
-                                      {name}
-                                    </MenuItem>
-                                  );
-                                })}
-                              </MenuList>
-                            </Menu>
-                          </div>
-                          <Input
-                            defaultValue={offlineLocation}
-                            crossOrigin={""}
-                            name="location"
-                            label="Location*"
-                            className="bg-white rounded-l-none"
-                            inputRef={locationOffline}
-                            error={!!errors.offlineLocation}
-                          />
-                        </div>
-                      </div>
-                      <div className="mt-4">
-                        {/* <LocationCheck
-                          startDate={startDate.current}
-                          finishDate={finishDate.current}
-                          offlinelocation={locationOffline.current?.value}
-                        /> */}
+          <div className="flex flex-col gap-1 w-3/4">
+            <Typography
+              placeholder={""}
+              variant="small"
+              className="text-blue-gray-600"
+            >
+              Organized By*
+            </Typography>
+            <Input
+              className="bg-white"
+              crossOrigin={""}
+              label="..."
+              placeholder="any of people, batch, batch-dept, club or organization..."
+              name="Organizers"
+              inputRef={organizers}
+              error={!!errors.organizers}
+            />
+            {errors.organizers && (
+              <p className="text-red-500 text-xs italic">{errors.organizers}</p>
+            )}
+          </div>
 
-                        <div className="flex flex-row gap-20">
-                          <Button
-                            className="w-1/3"
-                            onClick={handleLocationCheck}
-                          >
-                            Check Location Availability
-                          </Button>
+          <div className="flex flex-col gap-1 w-3/4">
+            <Typography
+              placeholder={""}
+              variant="small"
+              className="text-blue-gray-600"
+            >
+              Sponsored by
+            </Typography>
+            <Input
+              className="bg-white"
+              crossOrigin={""}
+              label="..."
+              placeholder="put comma between multiple"
+              name="Sponsors"
+              inputRef={sponsors}
+            />
+          </div>
 
-                          {locationButtonState === 0 && (
-                            <div className=""></div>
-                          )}
-                          {locationButtonState === 1 && (
-                            <div className="flex flex-row gap-4">
-                              <ErrorAnimation />
-                              <p className="text-red-500 mt-3">
-                                Please Enter Location, StartDate, FinishDate
-                                first
-                              </p>
-                            </div>
-                          )}
-                          {locationButtonState === 2 && (
-                            <div className="flex flex-row gap-4">
-                              <LoadingAnimation />
-                              <p className=" text-teal-700 mt-3">
-                                Checking Location Availability...
-                              </p>
-                            </div>
-                          )}
-                          {locationButtonState === 3 && (
-                            <div className="flex flex-row gap-4">
-                              <SuccessAnimation />
-                              <p className="text-green-500 mt-3">
-                                No Conflict in Location Detected
-                              </p>
-                            </div>
-                          )}
-                          {locationButtonState === 4 && (
-                            <div className="flex flex-row gap-4">
-                              <WarningAnimation />
-                              <p className=" text-orange-600 mt-3">
-                                Conflict in Location Detected
-                              </p>
-                            </div>
-                          )}
-                          {locationButtonState === 5 && (
-                            <div className="flex flex-row gap-4">
-                              <ErrorAnimation />
-                              <p className="text-red-500 mt-3">
-                                Internal Server Error
-                              </p>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                      {errors.offlineLocation && (
-                        <p className="text-red-500 text-xs italic">
-                          {errors.offlineLocation}
-                        </p>
-                      )}
-                    </div>
-                  ) : locationType === "Both" ? (
-                    <div className="flex flex-row gap-4">
-                      <div className="flex flex-col gap-1 w-1/3">
+          <div className="border-blue-gray-500 rounded-md flex flex-col gap-1 mt-4">
+            <div className="flex flex-row gap-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 576 512"
+                className="w-5 h-5 fill-red-800 ml-1"
+              >
+                <path d="M408 120c0 54.6-73.1 151.9-105.2 192c-7.7 9.6-22 9.6-29.6 0C241.1 271.9 168 174.6 168 120C168 53.7 221.7 0 288 0s120 53.7 120 120zm8 80.4c3.5-6.9 6.7-13.8 9.6-20.6c.5-1.2 1-2.5 1.5-3.7l116-46.4C558.9 123.4 576 135 576 152V422.8c0 9.8-6 18.6-15.1 22.3L416 503V200.4zM137.6 138.3c2.4 14.1 7.2 28.3 12.8 41.5c2.9 6.8 6.1 13.7 9.6 20.6V451.8L32.9 502.7C17.1 509 0 497.4 0 480.4V209.6c0-9.8 6-18.6 15.1-22.3l122.6-49zM327.8 332c13.9-17.4 35.7-45.7 56.2-77V504.3L192 449.4V255c20.5 31.3 42.3 59.6 56.2 77c20.5 25.6 59.1 25.6 79.6 0zM288 152a40 40 0 1 0 0-80 40 40 0 1 0 0 80z" />
+              </svg>
+              <Typography
+                placeholder={""}
+                variant="small"
+                className="text-blue-gray-600"
+              >
+                Event Location
+              </Typography>
+            </div>
+
+            <div className="mt-1 flex flex-col gap-1">
+              <div className="w-1/3">
+                <Select
+                  size="md"
+                  label="Select Location Type"
+                  className="bg-white"
+                  placeholder={undefined}
+                  value={locationType}
+                  onChange={handleEventTypechange}
+                  error={!!errors.locationType}
+                >
+                  {locationTypes.map((type) => (
+                    <Option key={type.id} value={type.name}>
+                      {type.name}
+                    </Option>
+                  ))}
+                </Select>
+                {errors.locationType && (
+                  <p className="text-red-500 text-xs italic">
+                    {errors.locationType}
+                  </p>
+                )}
+              </div>
+
+              <div className="">
+                {locationType && (
+                  <div className="w-full p-4">
+                    {locationType === "Online" ? (
+                      <div className="flex flex-col gap-1 w-1/2">
                         <Typography
                           placeholder={""}
                           variant="small"
@@ -932,15 +830,16 @@ export default function SEV({
                           className="bg-white"
                           name="onlineLink"
                           inputRef={onlineLink}
-                          error={!!errors.bothLocation}
+                          error={!!errors.onlineLink}
                         />
-                        {errors.bothLocation && (
+                        {errors.onlineLink && (
                           <p className="text-red-500 text-xs italic">
-                            {errors.bothLocation}
+                            {errors.onlineLink}
                           </p>
                         )}
                       </div>
-                      <div className="flex flex-col gap-1 mx-auto">
+                    ) : locationType === "Offline" ? (
+                      <div className="flex flex-col gap-1">
                         <Typography
                           placeholder={""}
                           variant="small"
@@ -948,430 +847,606 @@ export default function SEV({
                         >
                           Offline venue
                         </Typography>
-                        <div className="relative flex w-full max-w-[24rem] bg-white">
-                          <div className="flex flex-row gap-4">
-                            <Menu placement="bottom-start">
-                              <MenuHandler>
-                                <Button
-                                  placeholder={""}
-                                  ripple={false}
-                                  variant="text"
-                                  color="blue-gray"
-                                  className="flex flex-row h-10 items-center gap-2 rounded-r-none border border-r-0 border-blue-gray-200 bg-blue-gray-500/10 pl-3"
-                                >
-                                  Populars
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 16 16"
-                                    fill="currentColor"
-                                    className="w-4 h-4"
+                        <div className="flex flex-row">
+                          <div className="relative flex w-full max-w-[24rem] bg-white">
+                            <div className="flex flex-row gap-4">
+                              <Menu placement="bottom-start">
+                                <MenuHandler>
+                                  <Button
+                                    placeholder={""}
+                                    ripple={false}
+                                    variant="text"
+                                    color="blue-gray"
+                                    className="flex flex-row h-10 items-center gap-2 rounded-r-none border border-r-0 border-blue-gray-200 bg-blue-gray-500/10 pl-3"
                                   >
-                                    <path
-                                      fillRule="evenodd"
-                                      d="M13.78 10.47a.75.75 0 0 1 0 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 1 1 1.06-1.06l.97.97V5.75a.75.75 0 0 1 1.5 0v5.69l.97-.97a.75.75 0 0 1 1.06 0ZM2.22 5.53a.75.75 0 0 1 0-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1-1.06 1.06l-.97-.97v5.69a.75.75 0 0 1-1.5 0V4.56l-.97.97a.75.75 0 0 1-1.06 0Z"
-                                      clipRule="evenodd"
-                                    />
-                                  </svg>
-                                </Button>
-                              </MenuHandler>
-                              <MenuList
-                                placeholder={""}
-                                className="max-h-[20rem] max-w-[18rem]"
-                              >
-                                {Locations.map(({ name }, index) => {
-                                  return (
-                                    <MenuItem
-                                      placeholder={""}
-                                      key={name}
-                                      value={name}
-                                      className="flex items-center gap-2"
-                                      name="location"
-                                      onClick={(e) => {
-                                        if (locationOffline.current) {
-                                          locationOffline.current.value = name;
-                                        }
-                                        setOfflineLocation(name);
-                                        locationOffline.current?.focus();
-                                      }}
+                                    Populars
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      viewBox="0 0 16 16"
+                                      fill="currentColor"
+                                      className="w-4 h-4"
                                     >
-                                      {name}
-                                    </MenuItem>
-                                  );
-                                })}
-                              </MenuList>
-                            </Menu>
+                                      <path
+                                        fillRule="evenodd"
+                                        d="M13.78 10.47a.75.75 0 0 1 0 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 1 1 1.06-1.06l.97.97V5.75a.75.75 0 0 1 1.5 0v5.69l.97-.97a.75.75 0 0 1 1.06 0ZM2.22 5.53a.75.75 0 0 1 0-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1-1.06 1.06l-.97-.97v5.69a.75.75 0 0 1-1.5 0V4.56l-.97.97a.75.75 0 0 1-1.06 0Z"
+                                        clipRule="evenodd"
+                                      />
+                                    </svg>
+                                  </Button>
+                                </MenuHandler>
+                                <MenuList
+                                  placeholder={""}
+                                  className="max-h-[20rem] max-w-[18rem]"
+                                >
+                                  {Locations.map(({ name }, index) => {
+                                    return (
+                                      <MenuItem
+                                        placeholder={""}
+                                        key={name}
+                                        value={name}
+                                        className="flex items-center gap-2"
+                                        onClick={(e) => {
+                                          if (locationOffline.current) {
+                                            locationOffline.current.value =
+                                              name;
+                                          }
+                                          setOfflineLocation(name);
+                                          locationOffline.current?.focus();
+                                        }}
+                                      >
+                                        {name}
+                                      </MenuItem>
+                                    );
+                                  })}
+                                </MenuList>
+                              </Menu>
+                            </div>
+                            <Input
+                              defaultValue={offlineLocation}
+                              crossOrigin={""}
+                              name="location"
+                              label="Location*"
+                              className="bg-white rounded-l-none"
+                              inputRef={locationOffline}
+                              error={!!errors.offlineLocation}
+                            />
                           </div>
+                        </div>
+                        <div className="mt-4">
+                          {/* <LocationCheck
+                            startDate={startDate.current}
+                            finishDate={finishDate.current}
+                            offlinelocation={locationOffline.current?.value}
+                          /> */}
+
+                          <div className="flex flex-row gap-20">
+                            <Button
+                              className="w-1/3"
+                              onClick={handleLocationCheck}
+                            >
+                              Check Location Availability
+                            </Button>
+
+                            {locationButtonState === 0 && (
+                              <div className=""></div>
+                            )}
+                            {locationButtonState === 1 && (
+                              <div className="flex flex-row gap-4">
+                                <ErrorAnimation />
+                                <p className="text-red-500 mt-3">
+                                  Please Enter Location, StartDate, FinishDate
+                                  first
+                                </p>
+                              </div>
+                            )}
+                            {locationButtonState === 2 && (
+                              <div className="flex flex-row gap-4">
+                                <LoadingAnimation />
+                                <p className=" text-teal-700 mt-3">
+                                  Checking Location Availability...
+                                </p>
+                              </div>
+                            )}
+                            {locationButtonState === 3 && (
+                              <div className="flex flex-row gap-4">
+                                <SuccessAnimation />
+                                <p className="text-green-500 mt-3">
+                                  No Conflict in Location Detected
+                                </p>
+                              </div>
+                            )}
+                            {locationButtonState === 4 && (
+                              <div className="flex flex-row gap-4">
+                                <WarningAnimation />
+                                <p className=" text-orange-600 mt-3">
+                                  Conflict in Location Detected
+                                </p>
+                              </div>
+                            )}
+                            {locationButtonState === 5 && (
+                              <div className="flex flex-row gap-4">
+                                <ErrorAnimation />
+                                <p className="text-red-500 mt-3">
+                                  Internal Server Error
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                        {errors.offlineLocation && (
+                          <p className="text-red-500 text-xs italic">
+                            {errors.offlineLocation}
+                          </p>
+                        )}
+                      </div>
+                    ) : locationType === "Both" ? (
+                      <div className="flex flex-row gap-4">
+                        <div className="flex flex-col gap-1 w-1/3">
+                          <Typography
+                            placeholder={""}
+                            variant="small"
+                            className="text-blue-gray-600"
+                          >
+                            Online Link
+                          </Typography>
                           <Input
-                            defaultValue={offlineLocation}
                             crossOrigin={""}
-                            name="location"
-                            label="Location*"
-                            className="bg-white rounded-l-none"
-                            inputRef={locationOffline}
+                            label="Meeting Link*"
+                            placeholder="to be announced..."
+                            className="bg-white"
+                            name="onlineLink"
+                            inputRef={onlineLink}
                             error={!!errors.bothLocation}
                           />
+                          {errors.bothLocation && (
+                            <p className="text-red-500 text-xs italic">
+                              {errors.bothLocation}
+                            </p>
+                          )}
+                        </div>
+                        <div className="flex flex-col gap-1 mx-auto">
+                          <Typography
+                            placeholder={""}
+                            variant="small"
+                            className="text-blue-gray-600"
+                          >
+                            Offline venue
+                          </Typography>
+                          <div className="relative flex w-full max-w-[24rem] bg-white">
+                            <div className="flex flex-row gap-4">
+                              <Menu placement="bottom-start">
+                                <MenuHandler>
+                                  <Button
+                                    placeholder={""}
+                                    ripple={false}
+                                    variant="text"
+                                    color="blue-gray"
+                                    className="flex flex-row h-10 items-center gap-2 rounded-r-none border border-r-0 border-blue-gray-200 bg-blue-gray-500/10 pl-3"
+                                  >
+                                    Populars
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      viewBox="0 0 16 16"
+                                      fill="currentColor"
+                                      className="w-4 h-4"
+                                    >
+                                      <path
+                                        fillRule="evenodd"
+                                        d="M13.78 10.47a.75.75 0 0 1 0 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 1 1 1.06-1.06l.97.97V5.75a.75.75 0 0 1 1.5 0v5.69l.97-.97a.75.75 0 0 1 1.06 0ZM2.22 5.53a.75.75 0 0 1 0-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1-1.06 1.06l-.97-.97v5.69a.75.75 0 0 1-1.5 0V4.56l-.97.97a.75.75 0 0 1-1.06 0Z"
+                                        clipRule="evenodd"
+                                      />
+                                    </svg>
+                                  </Button>
+                                </MenuHandler>
+                                <MenuList
+                                  placeholder={""}
+                                  className="max-h-[20rem] max-w-[18rem]"
+                                >
+                                  {Locations.map(({ name }, index) => {
+                                    return (
+                                      <MenuItem
+                                        placeholder={""}
+                                        key={name}
+                                        value={name}
+                                        className="flex items-center gap-2"
+                                        name="location"
+                                        onClick={(e) => {
+                                          if (locationOffline.current) {
+                                            locationOffline.current.value =
+                                              name;
+                                          }
+                                          setOfflineLocation(name);
+                                          locationOffline.current?.focus();
+                                        }}
+                                      >
+                                        {name}
+                                      </MenuItem>
+                                    );
+                                  })}
+                                </MenuList>
+                              </Menu>
+                            </div>
+                            <Input
+                              defaultValue={offlineLocation}
+                              crossOrigin={""}
+                              name="location"
+                              label="Location*"
+                              className="bg-white rounded-l-none"
+                              inputRef={locationOffline}
+                              error={!!errors.bothLocation}
+                            />
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ) : (
-                    <h1 className="text-yellow-800">
-                      No Location is Applicable!
-                    </h1>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        <Switch
-          defaultChecked={registrationIn}
-          crossOrigin={""}
-          onClick={(e) => setRegistrationIn(!registrationIn)}
-          label={
-            <div>
-              <Typography
-                placeholder={""}
-                color="blue-gray"
-                className="font-medium"
-              >
-                Regestration
-              </Typography>
-            </div>
-          }
-        />
-
-        {registrationIn && (
-          <div className="flex flex-col gap-4">
-            <Typography
-              variant="small"
-              className="text-blue-gray-500"
-              placeholder={""}
-            >
-              Give registration details with Link
-            </Typography>
-            <div className="w-5/6">
-              <JoditEditor
-                value={registration}
-                config={{ ...configReg, toolbarButtonSize: "small" }}
-                onChange={(newContent) => {}}
-                onBlur={
-                  (newContent) => setRegistration(newContent)
-                  // preferred to use only this option to update the content for performance reasons
-                }
-              />
-              {errors.registration && (
-                <p className="text-red-500 text-xs italic">
-                  {errors.registration}
-                </p>
-              )}
-            </div>
-          </div>
-        )}
-
-        <Switch
-          defaultChecked={timelineIn}
-          crossOrigin={""}
-          onClick={(e) => setTimelineIn(!timelineIn)}
-          label={
-            <div>
-              <Typography
-                placeholder={""}
-                color="blue-gray"
-                className="font-medium"
-              >
-                Add Timelines
-              </Typography>
-            </div>
-          }
-        />
-
-        {timelineIn && (
-          <div className="bg-blue-gray-200 w-5/6 border-0 rounded-xl">
-            <Typography variant="h5" className="px-4 pt-4" placeholder={""}>
-              Add Timeline of Events
-            </Typography>
-            <div className="p-4">
-              {TimeLineState.inputs1.map((t, input) => (
-                <div className="" key={input}>
-                  <div className="w-11/12">
-                    <Input
-                      className="bg-white"
-                      label="Timeline Title"
-                      placeholder="TimeLine Title"
-                      crossOrigin={""}
-                      name={`timelineTitle-${input}`}
-                      inputRef={(el) =>
-                        el && (timelineTitle.current[input] = el)
-                      }
-                      error={errors.timelineTitleIndex?.includes(input)}
-                    />
-                    {errors.timelineTitleIndex?.includes(input) && (
-                      <p className="text-red-500 text-xs italic">
-                        {errors.timeLineTitle}
-                      </p>
+                    ) : (
+                      <h1 className="text-yellow-800">
+                        No Location is Applicable!
+                      </h1>
                     )}
                   </div>
-                  <div className="mt-2 flex flex-row gap-2">
-                    <div className="w-1/2">
-                      <Textarea
-                        rows={4}
-                        className="bg-white"
-                        label="Timeline short description"
-                        name={`timelineDescription-${input}`}
-                        ref={(el) =>
-                          el && (timelineDescription.current[input] = el)
-                        }
-                      />
-                    </div>
-                    <div className="flex flex-col gap-1 items-center">
-                      <DatePicker
-                        showTime
-                        needConfirm={false}
-                        placeholder="YYYY-MM-DD HH:mm:ss*"
-                        name={`startDate-${input}`}
-                        onChange={(date: Dayjs[], dateString) =>
-                          startdateChangeTimeline(date, dateString, input)
-                        }
-                      />
-
-                      <Typography
-                        variant="small"
-                        className="italic"
-                        placeholder={""}
-                      >
-                        to
-                      </Typography>
-
-                      <DatePicker
-                        showTime
-                        needConfirm={false}
-                        placeholder="YYYY-MM-DD HH:mm:ss*"
-                        name={`finishDate-${input}`}
-                        onChange={(date: Dayjs[], dateString) =>
-                          finishdateChangeTimeline(date, dateString, input)
-                        }
-                      />
-                    </div>
-
-                    <IconButton
-                      placeholder={""}
-                      className="ml-2 bg-red-500 text-white px-2 py-1 rounded"
-                      onClick={() => handleRemoveInputTimeLine(input)}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="w-5 h-5 text-white"
-                        fill="currentColor"
-                        viewBox="0 0 16 16"
-                      >
-                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
-                        <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
-                      </svg>
-                    </IconButton>
-                  </div>
-                  {/* <LocationSelector /> */}
-                  <hr className="my-4 border-white " />
-                </div>
-              ))}
-              <Button
-                placeholder={""}
-                className="bg-blue-500 text-white rounded mt-2 flex items-center gap-3"
-                onClick={handleAddInputTimeLine}
-              >
-                Add More
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-4 h-4 text-black"
-                  fill="currentColor"
-                  viewBox="0 0 16 16"
-                >
-                  <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M2 2a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1z" />
-                  <path d="M2.5 4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H3a.5.5 0 0 1-.5-.5zM8 8a.5.5 0 0 1 .5.5V10H10a.5.5 0 0 1 0 1H8.5v1.5a.5.5 0 0 1-1 0V11H6a.5.5 0 0 1 0-1h1.5V8.5A.5.5 0 0 1 8 8" />
-                </svg>
-              </Button>
+                )}
+              </div>
             </div>
           </div>
-        )}
 
-        <Switch
-          defaultChecked={resourcesIn}
-          crossOrigin={""}
-          onClick={(e) => setResourcesIn(!resourcesIn)}
-          label={
-            <div>
+          <Switch
+            defaultChecked={registrationIn}
+            crossOrigin={""}
+            onClick={(e) => setRegistrationIn(!registrationIn)}
+            label={
+              <div>
+                <Typography
+                  placeholder={""}
+                  color="blue-gray"
+                  className="font-medium"
+                >
+                  Regestration
+                </Typography>
+              </div>
+            }
+          />
+
+          {registrationIn && (
+            <div className="flex flex-col gap-4">
               <Typography
+                variant="small"
+                className="text-blue-gray-500"
                 placeholder={""}
-                color="blue-gray"
-                className="font-medium"
               >
-                Add Resources
+                Give registration details with Link
               </Typography>
+              <div className="w-5/6">
+                <JoditEditor
+                  value={registration}
+                  config={{ ...configReg, toolbarButtonSize: "small" }}
+                  onChange={(newContent) => {}}
+                  onBlur={
+                    (newContent) => setRegistration(newContent)
+                    // preferred to use only this option to update the content for performance reasons
+                  }
+                />
+                {errors.registration && (
+                  <p className="text-red-500 text-xs italic">
+                    {errors.registration}
+                  </p>
+                )}
+              </div>
             </div>
-          }
-        />
+          )}
 
-        {resourcesIn && (
-          <div className=" bg-blue-gray-300 w-5/6 border-0 rounded-xl">
-            <Typography variant="h5" className="px-4 pt-4" placeholder={""}>
-              Resources :
-            </Typography>
-            <div className="p-4">
-              {ResourcesState.inputs.map((r, input) => (
-                <div className="" key={input}>
-                  <div className="mt-2 flex flex-row gap-2">
-                    <div className="w-3/4 flex flex-col gap-2">
-                      <Textarea
-                        rows={4}
-                        className="bg-white"
-                        label="Resources description"
-                        name={`description-${input}`}
-                        ref={(el) =>
-                          el && (resourcesDescription.current[input] = el)
-                        }
-                        error={errors.resourcesIndex?.includes(input)}
-                      />
+          <Switch
+            defaultChecked={timelineIn}
+            crossOrigin={""}
+            onClick={(e) => setTimelineIn(!timelineIn)}
+            label={
+              <div>
+                <Typography
+                  placeholder={""}
+                  color="blue-gray"
+                  className="font-medium"
+                >
+                  Add Timelines
+                </Typography>
+              </div>
+            }
+          />
 
+          {timelineIn && (
+            <div className="bg-blue-gray-200 w-5/6 border-0 rounded-xl">
+              <Typography variant="h5" className="px-4 pt-4" placeholder={""}>
+                Add Timeline of Events
+              </Typography>
+              <div className="p-4">
+                {TimeLineState.inputs1.map((t, input) => (
+                  <div className="" key={input}>
+                    <div className="w-11/12">
                       <Input
+                        className="bg-white"
+                        label="Timeline Title"
+                        placeholder="TimeLine Title"
                         crossOrigin={""}
-                        label="Resource Link"
-                        placeholder="ADD URL"
-                        className="bg-white text-blue-400 underline"
-                        name={`link-${input}`}
+                        name={`timelineTitle-${input}`}
                         inputRef={(el) =>
-                          el && (resourcesLink.current[input] = el)
+                          el && (timelineTitle.current[input] = el)
                         }
-                        error={errors.resourcesIndex?.includes(input)}
+                        error={errors.timelineTitleIndex?.includes(input)}
                       />
-
-                      {errors.resourcesIndex?.includes(input) && (
+                      {errors.timelineTitleIndex?.includes(input) && (
                         <p className="text-red-500 text-xs italic">
-                          {errors.resource}
+                          {errors.timeLineTitle}
                         </p>
                       )}
                     </div>
+                    <div className="mt-2 flex flex-row gap-2">
+                      <div className="w-1/2">
+                        <Textarea
+                          rows={4}
+                          className="bg-white"
+                          label="Timeline short description"
+                          name={`timelineDescription-${input}`}
+                          ref={(el) =>
+                            el && (timelineDescription.current[input] = el)
+                          }
+                        />
+                      </div>
+                      <div className="flex flex-col gap-1 items-center">
+                        <DatePicker
+                          showTime
+                          needConfirm={false}
+                          placeholder="YYYY-MM-DD HH:mm:ss*"
+                          name={`startDate-${input}`}
+                          onChange={(date: Dayjs[], dateString) =>
+                            startdateChangeTimeline(date, dateString, input)
+                          }
+                        />
 
-                    <IconButton
-                      placeholder={""}
-                      className="ml-2 bg-red-500 text-white px-2 py-1 rounded mx-auto"
-                      onClick={() => handleRemoveInputResources(input)}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="w-5 h-5 text-white"
-                        fill="currentColor"
-                        viewBox="0 0 16 16"
+                        <Typography
+                          variant="small"
+                          className="italic"
+                          placeholder={""}
+                        >
+                          to
+                        </Typography>
+
+                        <DatePicker
+                          showTime
+                          needConfirm={false}
+                          placeholder="YYYY-MM-DD HH:mm:ss*"
+                          name={`finishDate-${input}`}
+                          onChange={(date: Dayjs[], dateString) =>
+                            finishdateChangeTimeline(date, dateString, input)
+                          }
+                        />
+                      </div>
+
+                      <IconButton
+                        placeholder={""}
+                        className="ml-2 bg-red-500 text-white px-2 py-1 rounded"
+                        onClick={() => handleRemoveInputTimeLine(input)}
                       >
-                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
-                        <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
-                      </svg>
-                    </IconButton>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="w-5 h-5 text-white"
+                          fill="currentColor"
+                          viewBox="0 0 16 16"
+                        >
+                          <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                          <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+                        </svg>
+                      </IconButton>
+                    </div>
+                    {/* <LocationSelector /> */}
+                    <hr className="my-4 border-white " />
                   </div>
-                  <hr className="my-4 border-white " />
-                </div>
-              ))}
-              <Button
-                placeholder={""}
-                variant="outlined"
-                className="bg-white text-blue-500 rounded mt-2 flex items-center gap-3 border-blue-500"
-                onClick={handleAddInputResources}
-              >
-                Add More
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 576 512"
-                  className="w-5 h-5"
+                ))}
+                <Button
+                  placeholder={""}
+                  className="bg-blue-500 text-white rounded mt-2 flex items-center gap-3"
+                  onClick={handleAddInputTimeLine}
                 >
-                  <path
-                    fill="#222730"
-                    d="M0 64C0 28.7 28.7 0 64 0H224V128c0 17.7 14.3 32 32 32H384v38.6C310.1 219.5 256 287.4 256 368c0 59.1 29.1 111.3 73.7 143.3c-3.2 .5-6.4 .7-9.7 .7H64c-35.3 0-64-28.7-64-64V64zm384 64H256V0L384 128zm48 96a144 144 0 1 1 0 288 144 144 0 1 1 0-288zm16 80c0-8.8-7.2-16-16-16s-16 7.2-16 16v48H368c-8.8 0-16 7.2-16 16s7.2 16 16 16h48v48c0 8.8 7.2 16 16 16s16-7.2 16-16V384h48c8.8 0 16-7.2 16-16s-7.2-16-16-16H448V304z"
-                  />
-                </svg>
-              </Button>
+                  Add More
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-4 h-4 text-black"
+                    fill="currentColor"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M2 2a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1z" />
+                    <path d="M2.5 4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H3a.5.5 0 0 1-.5-.5zM8 8a.5.5 0 0 1 .5.5V10H10a.5.5 0 0 1 0 1H8.5v1.5a.5.5 0 0 1-1 0V11H6a.5.5 0 0 1 0-1h1.5V8.5A.5.5 0 0 1 8 8" />
+                  </svg>
+                </Button>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        <Switch
-          defaultChecked={prizeIn}
-          crossOrigin={""}
-          onClick={(e) => setPrizeIn(!prizeIn)}
-          label={
-            <div>
+          <Switch
+            defaultChecked={resourcesIn}
+            crossOrigin={""}
+            onClick={(e) => setResourcesIn(!resourcesIn)}
+            label={
+              <div>
+                <Typography
+                  placeholder={""}
+                  color="blue-gray"
+                  className="font-medium"
+                >
+                  Add Resources
+                </Typography>
+              </div>
+            }
+          />
+
+          {resourcesIn && (
+            <div className=" bg-blue-gray-300 w-5/6 border-0 rounded-xl">
+              <Typography variant="h5" className="px-4 pt-4" placeholder={""}>
+                Resources :
+              </Typography>
+              <div className="p-4">
+                {ResourcesState.inputs.map((r, input) => (
+                  <div className="" key={input}>
+                    <div className="mt-2 flex flex-row gap-2">
+                      <div className="w-3/4 flex flex-col gap-2">
+                        <Textarea
+                          rows={4}
+                          className="bg-white"
+                          label="Resources description"
+                          name={`description-${input}`}
+                          ref={(el) =>
+                            el && (resourcesDescription.current[input] = el)
+                          }
+                          error={errors.resourcesIndex?.includes(input)}
+                        />
+
+                        <Input
+                          crossOrigin={""}
+                          label="Resource Link"
+                          placeholder="ADD URL"
+                          className="bg-white text-blue-400 underline"
+                          name={`link-${input}`}
+                          inputRef={(el) =>
+                            el && (resourcesLink.current[input] = el)
+                          }
+                          error={errors.resourcesIndex?.includes(input)}
+                        />
+
+                        {errors.resourcesIndex?.includes(input) && (
+                          <p className="text-red-500 text-xs italic">
+                            {errors.resource}
+                          </p>
+                        )}
+                      </div>
+
+                      <IconButton
+                        placeholder={""}
+                        className="ml-2 bg-red-500 text-white px-2 py-1 rounded mx-auto"
+                        onClick={() => handleRemoveInputResources(input)}
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="w-5 h-5 text-white"
+                          fill="currentColor"
+                          viewBox="0 0 16 16"
+                        >
+                          <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                          <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+                        </svg>
+                      </IconButton>
+                    </div>
+                    <hr className="my-4 border-white " />
+                  </div>
+                ))}
+                <Button
+                  placeholder={""}
+                  variant="outlined"
+                  className="bg-white text-blue-500 rounded mt-2 flex items-center gap-3 border-blue-500"
+                  onClick={handleAddInputResources}
+                >
+                  Add More
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 576 512"
+                    className="w-5 h-5"
+                  >
+                    <path
+                      fill="#222730"
+                      d="M0 64C0 28.7 28.7 0 64 0H224V128c0 17.7 14.3 32 32 32H384v38.6C310.1 219.5 256 287.4 256 368c0 59.1 29.1 111.3 73.7 143.3c-3.2 .5-6.4 .7-9.7 .7H64c-35.3 0-64-28.7-64-64V64zm384 64H256V0L384 128zm48 96a144 144 0 1 1 0 288 144 144 0 1 1 0-288zm16 80c0-8.8-7.2-16-16-16s-16 7.2-16 16v48H368c-8.8 0-16 7.2-16 16s7.2 16 16 16h48v48c0 8.8 7.2 16 16 16s16-7.2 16-16V384h48c8.8 0 16-7.2 16-16s-7.2-16-16-16H448V304z"
+                    />
+                  </svg>
+                </Button>
+              </div>
+            </div>
+          )}
+
+          <Switch
+            defaultChecked={prizeIn}
+            crossOrigin={""}
+            onClick={(e) => setPrizeIn(!prizeIn)}
+            label={
+              <div>
+                <Typography
+                  placeholder={""}
+                  color="blue-gray"
+                  className="font-medium"
+                >
+                  Prize Pool
+                </Typography>
+              </div>
+            }
+          />
+
+          {prizeIn && (
+            <div className="flex flex-col gap-4">
               <Typography
+                variant="small"
+                className="text-blue-gray-500"
                 placeholder={""}
-                color="blue-gray"
-                className="font-medium"
               >
-                Prize Pool
+                Give PrizePool details
               </Typography>
+              <div className="w-5/6">
+                <JoditEditor
+                  value={prize}
+                  config={{ ...configReg, toolbarButtonSize: "small" }}
+                  onChange={(newContent) => {}}
+                  onBlur={(newContent) => setPrize(newContent)}
+                />
+                {errors.prizes && (
+                  <p className="text-red-500 text-xs italic">{errors.prizes}</p>
+                )}
+              </div>
             </div>
-          }
-        />
+          )}
 
-        {prizeIn && (
-          <div className="flex flex-col gap-4">
-            <Typography
-              variant="small"
-              className="text-blue-gray-500"
-              placeholder={""}
-            >
-              Give PrizePool details
-            </Typography>
-            <div className="w-5/6">
-              <JoditEditor
-                value={prize}
-                config={{ ...configReg, toolbarButtonSize: "small" }}
-                onChange={(newContent) => {}}
-                onBlur={(newContent) => setPrize(newContent)}
-              />
-              {errors.prizes && (
-                <p className="text-red-500 text-xs italic">{errors.prizes}</p>
-              )}
-            </div>
-          </div>
-        )}
+          <Switch
+            defaultChecked={rulesIn}
+            crossOrigin={""}
+            onClick={(e) => setRulesIn(!rulesIn)}
+            label={
+              <div>
+                <Typography
+                  placeholder={""}
+                  color="red"
+                  className="font-medium"
+                >
+                  Rules
+                </Typography>
+              </div>
+            }
+          />
 
-        <Switch
-          defaultChecked={rulesIn}
-          crossOrigin={""}
-          onClick={(e) => setRulesIn(!rulesIn)}
-          label={
-            <div>
-              <Typography placeholder={""} color="red" className="font-medium">
-                Rules
+          {rulesIn && (
+            <div className="flex flex-col gap-4">
+              <Typography
+                variant="small"
+                className="text-blue-gray-500"
+                placeholder={""}
+              >
+                provide rules
               </Typography>
+              <div className="w-3/4">
+                <JoditEditor
+                  value={rules}
+                  config={{ ...configRules, toolbarButtonSize: "small" }} // change the toolbarButtonSize to one of the valid values
+                  onChange={(newContent) => {}}
+                  onBlur={(newContent) => setRules(newContent)}
+                />
+                {errors.rules && (
+                  <p className="text-red-500 text-xs italic">{errors.rules}</p>
+                )}
+              </div>
             </div>
-          }
-        />
+          )}
 
-        {rulesIn && (
-          <div className="flex flex-col gap-4">
-            <Typography
-              variant="small"
-              className="text-blue-gray-500"
-              placeholder={""}
-            >
-              provide rules
-            </Typography>
-            <div className="w-3/4">
-              <JoditEditor
-                value={rules}
-                config={{ ...configRules, toolbarButtonSize: "small" }} // change the toolbarButtonSize to one of the valid values
-                onChange={(newContent) => {}}
-                onBlur={(newContent) => setRules(newContent)}
-              />
-              {errors.rules && (
-                <p className="text-red-500 text-xs italic">{errors.rules}</p>
-              )}
-            </div>
-          </div>
-        )}
-
-        <Button onClick={handleFormSubmit} type="submit">
-          Create Event
-        </Button>
-      </form>
+          {formState === 2 && (
+            <p className="text-red-500 text-xs italic">
+              internal server error, please try again
+            </p>
+          )}
+          <Button onClick={handleFormSubmit} type="submit">
+            Create Event
+          </Button>
+        </form>
+      )}
     </div>
   );
 }

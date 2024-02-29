@@ -16,6 +16,7 @@
     "@types/jwt-decode": "^3.1.0",
     "antd": "^5.14.0",
     "cryptr": "^6.3.0",
+    "gantt-task-react-pro": "^0.1.1",
     "html-react-parser": "^5.1.1",
     "jodit-react": "^4.0.9",
     "jwt-decode": "^3.1.2",
@@ -28,6 +29,7 @@
     "react-dropzone": "^14.2.3",
     "react-search-autocomplete": "^8.5.2",
     "react-use-downloader": "^1.2.4",
+    "react-virtual-gantt": "^0.1.2",
     "tailwind-merge": "^2.2.1",
     "tailwind-scrollbar-hide": "^1.1.7",
     "zod": "^3.22.4"

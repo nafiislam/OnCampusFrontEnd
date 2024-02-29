@@ -115,6 +115,17 @@ export function SidebarWithContentSeparator() {
                   All
                 </ListItem>
               </Link>
+              <Link href="/ReportedPosts">
+                <ListItem placeholder={""}>
+                  <ListItemPrefix placeholder={""}>
+                    <ChatBubbleBottomCenterTextIcon
+                      strokeWidth={2}
+                      className="h-4 w-5"
+                    />
+                  </ListItemPrefix>
+                  ReportedPosts
+                </ListItem>
+              </Link>
               <Link href="/General/DISCUSSION">
                 <ListItem placeholder={""}>
                   <ListItemPrefix placeholder={""}>
