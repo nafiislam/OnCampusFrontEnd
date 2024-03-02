@@ -29,7 +29,7 @@ const eventTypes = [
   },
   {
     id: 8,
-    name: "Rag_Concert",
+    name: "Rag_concert",
   },
   {
     id: 9,

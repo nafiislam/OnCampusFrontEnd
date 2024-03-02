@@ -210,7 +210,13 @@ const WritePost = () => {
       if (fileStates?.some((fileState) => fileState.progress !== "COMPLETE")) {
         setAlertMsg("Files are still uploading");
         setAlertOpen(true);
-        scrollToTop();
+     7
+     
+     
+     
+     
+     
+    scrollToTop();
         return;
       }
     }

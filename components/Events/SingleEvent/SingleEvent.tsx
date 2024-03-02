@@ -1,4 +1,5 @@
 "use client";
+import POST from "@/server_actions/POST";
 import {
   Button,
   Timeline,
@@ -10,7 +11,9 @@ import {
   Tooltip,
   Typography,
 } from "@material-tailwind/react";
-import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import AddEventGoogleCalender from "./AddToGoogleCalender";
 import AvatarImageText from "./AvatarImageText";
 import AvatarStack from "./AvatarStack";
 import { svgIcons } from "./DummyIconColor";
@@ -21,11 +24,66 @@ interface SectionOffset {
   height: number;
 }
 
+function convertDateTimeFormat(inputDateTime: string) {
+  // Parse input datetime string
+  let dateObj = new Date(inputDateTime);
+
+  // Format into desired datetime format: "YYYY-MM-DDTHH:mm:ss"
+  let year = dateObj.getFullYear();
+  let month = String(dateObj.getMonth() + 1).padStart(2, "0"); // Months are zero-indexed
+  let day = String(dateObj.getDate()).padStart(2, "0");
+  let hours = String(dateObj.getHours()).padStart(2, "0");
+  let minutes = String(dateObj.getMinutes()).padStart(2, "0");
+  let seconds = String(dateObj.getSeconds()).padStart(2, "0");
+
+  // Construct the formatted datetime string
+  let formattedDateTime = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+
+  return formattedDateTime;
+}
+
+function reverseDateTimeFormat(originalDateString: string) {
+  // Convert the original date string to a Date object
+  const originalDate = new Date(originalDateString);
+
+  // Get the individual components of the date
+  const year = originalDate.getFullYear();
+  const month = ("0" + (originalDate.getMonth() + 1)).slice(-2); // Adding 1 because months are zero-indexed
+  const day = ("0" + originalDate.getDate()).slice(-2); // Adding zero padding
+  const hours = ("0" + originalDate.getHours()).slice(-2);
+  const minutes = ("0" + originalDate.getMinutes()).slice(-2);
+  const seconds = ("0" + originalDate.getSeconds()).slice(-2);
+  const milliseconds = originalDate.getMilliseconds();
+
+  // Format the date string in the desired format
+  const formattedDateString = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}Z`;
+
+  return formattedDateString;
+}
+
 const SingleEvent = ({ event }: { event: any }) => {
+  const router = useRouter();
+
   const [activeSection, setActiveSection] = useState<string | null>(null);
+
+  const sectionsRef = useRef<{ [key: string]: HTMLDivElement | null }>({});
+
+  const scrollToSection = (sectionId: string) => {
+    const section = sectionsRef.current[sectionId];
+    if (section) {
+      // section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      let offset = document.getElementById("section1")?.offsetTop;
+      if (!offset) offset = 0;
+      window.scrollTo({
+        top: section.offsetTop - offset,
+        behavior: "smooth",
+      });
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
+      const initialHeight = document.getElementById("section1")?.offsetTop;
       const sectionOffsets = Array.from(
         document.querySelectorAll("[data-section]")
       ).map((section) => ({
@@ -34,10 +92,17 @@ const SingleEvent = ({ event }: { event: any }) => {
         height: (section as HTMLElement).offsetHeight,
       }));
 
-      const scrollPosition = window.scrollY + window.innerHeight / 2;
+      const scrollPosition = window.scrollY;
 
       for (const { id, offset, height } of sectionOffsets) {
-        if (scrollPosition >= offset && scrollPosition < offset + height) {
+        let newoffset;
+        if (initialHeight != null) {
+          newoffset = offset - initialHeight;
+        } else newoffset = offset;
+        if (
+          scrollPosition >= newoffset &&
+          scrollPosition < newoffset + height
+        ) {
           setActiveSection(id);
           break;
         }
@@ -64,11 +129,41 @@ const SingleEvent = ({ event }: { event: any }) => {
     );
   };
 
+  const [participating, setParticipating] = useState(
+    // event.participatedBy.includes(event.user.id)
+    event.isParticipating
+  );
+
+  const handleParticipating = async () => {
+    setParticipating(!participating);
+
+    // send request to server
+    if (participating) {
+      await POST("event/participateEvent", {
+        id: event.id,
+        type: "unparticipate",
+      });
+    } else {
+      await POST("event/participateEvent", {
+        id: event.id,
+        type: "participate",
+      });
+    }
+
+    // update event object
+    router.refresh();
+  };
+
   return (
     <div className="">
       <div className="flex flex-row gap-8">
         <div className="w-3/4">
-          <div id="section1" data-section className="bg-white">
+          <div
+            ref={(el) => (sectionsRef.current["section1"] = el)}
+            id="section1"
+            data-section
+            className="bg-white"
+          >
             <div className="flex flex-col items-center gap-8">
               {/* <img
                 src="/images/event1.jpg"
@@ -115,7 +210,7 @@ const SingleEvent = ({ event }: { event: any }) => {
                 </svg>
 
                 <Typography variant="small" placeholder={undefined}>
-                  {event.Sponsors}
+                  {event.Sponsors || "No Sponsors"}
                 </Typography>
               </div>
               {event.location && (
@@ -177,7 +272,7 @@ const SingleEvent = ({ event }: { event: any }) => {
                 </svg>
 
                 <Typography variant="small" placeholder={undefined}>
-                  {event.startDate} to {event.finishDate}
+                  {new Date(reverseDateTimeFormat(event.startDate)).toLocaleString()} to {new Date(reverseDateTimeFormat(event.finishDate)).toLocaleString()}
                 </Typography>
               </div>
 
@@ -196,59 +291,134 @@ const SingleEvent = ({ event }: { event: any }) => {
                 </svg>
 
                 <Typography variant="small" placeholder={undefined}>
-                  Posted By :
-                  <Tooltip content={<AvatarImageText />}>
+                  Posted By -{" "}
+                  <Tooltip
+                    className="border border-blue-gray-50 bg-white px-4 py-3 shadow-xl shadow-black/10"
+                    content={<AvatarImageText user={event.user} />}
+                  >
                     <span className="text-blue-600">{event.user.name} </span>
                   </Tooltip>
-                  {event.createdAt}
+                  at{" " + new Date(event.createdAt).toLocaleString()}
                 </Typography>
               </div>
 
               <hr className="border-gray-700 my-2" />
 
               <div className="flex items-center gap-4">
-                <Button
-                  variant="text"
+                {participating ? (
+                  <Button
+                    variant="filled"
+                    color="blue"
+                    onClick={handleParticipating}
+                    className="flex items-center gap-3"
+                    placeholder={undefined}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      className="w-6 h-6"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    Participating
+                  </Button>
+                ) : (
+                  <Button
+                    variant="gradient"
+                    onClick={handleParticipating}
+                    className="flex items-center gap-3"
+                    placeholder={undefined}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="w-6 h-6"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"
+                      />
+                    </svg>
+                    Participate
+                  </Button>
+                )}
+
+                {/* <Button
+                  size="sm"
+                  variant="outlined"
+                  color="blue-gray"
                   className="flex items-center gap-3"
-                  placeholder={undefined}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="w-6 h-6"
+                    viewBox="0 0 48 48"
+                    className="h-8 w-8"
                   >
+                    <rect width="22" height="22" x="13" y="13" fill="#fff" />
+                    <polygon
+                      fill="#1e88e5"
+                      points="25.68,20.92 26.688,22.36 28.272,21.208 28.272,29.56 30,29.56 30,18.616 28.56,18.616"
+                    />
                     <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"
+                      fill="#1e88e5"
+                      d="M22.943,23.745c0.625-0.574,1.013-1.37,1.013-2.249c0-1.747-1.533-3.168-3.417-3.168 c-1.602,0-2.972,1.009-3.33,2.453l1.657,0.421c0.165-0.664,0.868-1.146,1.673-1.146c0.942,0,1.709,0.646,1.709,1.44 c0,0.794-0.767,1.44-1.709,1.44h-0.997v1.728h0.997c1.081,0,1.993,0.751,1.993,1.64c0,0.904-0.866,1.64-1.931,1.64 c-0.962,0-1.784-0.61-1.914-1.418L17,26.802c0.262,1.636,1.81,2.87,3.6,2.87c2.007,0,3.64-1.511,3.64-3.368 C24.24,25.281,23.736,24.363,22.943,23.745z"
+                    />
+                    <polygon
+                      fill="#fbc02d"
+                      points="34,42 14,42 13,38 14,34 34,34 35,38"
+                    />
+                    <polygon
+                      fill="#4caf50"
+                      points="38,35 42,34 42,14 38,13 34,14 34,34"
+                    />
+                    <path
+                      fill="#1e88e5"
+                      d="M34,14l1-4l-1-4H9C7.343,6,6,7.343,6,9v25l4,1l4-1V14H34z"
+                    />
+                    <polygon fill="#e53935" points="34,34 34,42 42,34" />
+                    <path
+                      fill="#1565c0"
+                      d="M39,6h-5v8h8V9C42,7.343,40.657,6,39,6z"
+                    />
+                    <path
+                      fill="#1565c0"
+                      d="M9,42h5v-8H6v5C6,40.657,7.343,42,9,42z"
                     />
                   </svg>
-                  Participating
-                </Button>
-                <Button
-                  variant="text"
-                  className="flex items-center gap-3"
-                  placeholder={undefined}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={2}
-                    stroke="currentColor"
-                    className="h-5 w-5"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z"
-                    />
-                  </svg>
-                  Add to Bookmark
-                </Button>
+                  Add To Calender
+                </Button> */}
+
+                <AddEventGoogleCalender
+                  event={{
+                    summary: event.title,
+                    location: event.location || "Online",
+
+                    start: {
+                      dateTime: convertDateTimeFormat(event.startDate),
+                      timeZone: "Asia/Kolkata",
+                    },
+                    end: {
+                      dateTime: convertDateTimeFormat(event.finishDate),
+                      timeZone: "Asia/Kolkata",
+                    },
+                    reminders: {
+                      useDefault: false,
+                      overrides: [
+                        { method: "email", minutes: 24 * 60 },
+                        { method: "popup", minutes: 10 },
+                      ],
+                    },
+                  }}
+                />
 
                 <div className="ml-auto flex flex-row gap-2">
                   <Typography
@@ -256,27 +426,39 @@ const SingleEvent = ({ event }: { event: any }) => {
                     variant="small"
                     placeholder={undefined}
                   >
-                    participating - 300
+                    participating - {event.participatedBy.length}
                   </Typography>
-                  <AvatarStack />
+                  <AvatarStack users={event.participatedBy} />
                 </div>
               </div>
 
               <hr className="border-gray-700 my-2" />
             </div>
           </div>
-          <div id="section2" data-section className="">
+          <div
+            ref={(el) => (sectionsRef.current["section2"] = el)}
+            id="section2"
+            data-section
+            className=""
+          >
             <Typography variant="h3" placeholder={undefined}>
               Event Details
             </Typography>
             <Typography variant="small" placeholder={undefined}>
-              <div dangerouslySetInnerHTML={{ __html: event.description }}></div>
+              <div
+                dangerouslySetInnerHTML={{ __html: event.description }}
+              ></div>
             </Typography>
 
             <hr className="border-gray-700 my-8" />
           </div>
           {event.registration && (
-            <div id="section3" data-section className="">
+            <div
+              ref={(el) => (sectionsRef.current["section3"] = el)}
+              id="section3"
+              data-section
+              className=""
+            >
               <Typography variant="h3" placeholder={undefined}>
                 Registration Details
               </Typography>
@@ -288,7 +470,12 @@ const SingleEvent = ({ event }: { event: any }) => {
             </div>
           )}
           {event.timeline && event.timeline.length > 0 && (
-            <div id="section4" data-section className="">
+            <div
+              ref={(el) => (sectionsRef.current["section4"] = el)}
+              id="section4"
+              data-section
+              className=""
+            >
               <div className="">
                 <Typography
                   className="my-4 p-8"
@@ -343,32 +530,32 @@ const SingleEvent = ({ event }: { event: any }) => {
                                 {timeline.location && (
                                   <div className="">
                                     <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                  strokeWidth={1.5}
-                                  stroke="currentColor"
-                                  className="w-4 h-4 ml-8"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-                                  />
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"
-                                  />
-                                </svg>
-                                <Typography
-                                  variant="small"
-                                  color="gray"
-                                  className="font-normal"
-                                  placeholder={undefined}
-                                >
-                                  {timeline.location}
-                                </Typography>
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      fill="none"
+                                      viewBox="0 0 24 24"
+                                      strokeWidth={1.5}
+                                      stroke="currentColor"
+                                      className="w-4 h-4 ml-8"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                                      />
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"
+                                      />
+                                    </svg>
+                                    <Typography
+                                      variant="small"
+                                      color="gray"
+                                      className="font-normal"
+                                      placeholder={undefined}
+                                    >
+                                      {timeline.location}
+                                    </Typography>
                                   </div>
                                 )}
                               </div>
@@ -380,9 +567,12 @@ const SingleEvent = ({ event }: { event: any }) => {
                               variant="small"
                               color="gray"
                               className="font-normal mt-4 text-gray-600"
-                              
                             >
-                              <div dangerouslySetInnerHTML={{ __html: timeline.description }}></div>
+                              <div
+                                dangerouslySetInnerHTML={{
+                                  __html: timeline.description,
+                                }}
+                              ></div>
                             </Typography>
                           </TimelineBody>
                         </TimelineItem>
@@ -397,7 +587,12 @@ const SingleEvent = ({ event }: { event: any }) => {
           )}
 
           {event.prizes && (
-            <div id="section5" data-section className="">
+            <div
+              ref={(el) => (sectionsRef.current["section5"] = el)}
+              id="section5"
+              data-section
+              className=""
+            >
               <Typography variant="h3" placeholder={undefined}>
                 Prize Pool
               </Typography>
@@ -410,7 +605,12 @@ const SingleEvent = ({ event }: { event: any }) => {
           )}
 
           {event.resources && event.resources.length > 0 && (
-            <div id="section6" data-section className="">
+            <div
+              ref={(el) => (sectionsRef.current["section6"] = el)}
+              id="section6"
+              data-section
+              className=""
+            >
               <Typography variant="h3" placeholder={undefined}>
                 Resources
               </Typography>
@@ -432,7 +632,12 @@ const SingleEvent = ({ event }: { event: any }) => {
           )}
 
           {event.rules && (
-            <div id="section7" data-section className="">
+            <div
+              ref={(el) => (sectionsRef.current["section7"] = el)}
+              id="section7"
+              data-section
+              className=""
+            >
               <Typography variant="h3" placeholder={undefined}>
                 Rules
               </Typography>
@@ -453,14 +658,18 @@ const SingleEvent = ({ event }: { event: any }) => {
                   activeSection === "section1" ? "text-black" : ""
                 }`}
               >
-                <a href="#section1">general Information</a>
+                <button onClick={() => scrollToSection("section1")}>
+                  general Information
+                </button>
               </li>
               <li
                 className={`py-2 px-4 ${
                   activeSection === "section2" ? "text-black" : ""
                 }`}
               >
-                <a href="#section2">Details</a>
+                <button onClick={() => scrollToSection("section2")}>
+                  Details
+                </button>
               </li>
               {event.registration && (
                 <li
@@ -468,16 +677,20 @@ const SingleEvent = ({ event }: { event: any }) => {
                     activeSection === "section3" ? "text-black" : ""
                   }`}
                 >
-                  <a href="#section3">Registration</a>
+                  <button onClick={() => scrollToSection("section3")}>
+                    Registration
+                  </button>
                 </li>
               )}
-              {event.timeline && event.timeline.length>0 && (
+              {event.timeline && event.timeline.length > 0 && (
                 <li
                   className={`py-2 px-4 ${
                     activeSection === "section4" ? "text-black" : ""
                   }`}
                 >
-                  <a href="#section4">Timeline</a>
+                  <button onClick={() => scrollToSection("section4")}>
+                    Timeline
+                  </button>
                 </li>
               )}
               {event.prizes && (
@@ -486,16 +699,20 @@ const SingleEvent = ({ event }: { event: any }) => {
                     activeSection === "section5" ? "text-black" : ""
                   }`}
                 >
-                  <a href="#section5">prizePools</a>
+                  <button onClick={() => scrollToSection("section5")}>
+                    prizePools
+                  </button>
                 </li>
               )}
-              {event.resources && event.resources.length>0 && (
+              {event.resources && event.resources.length > 0 && (
                 <li
                   className={`py-2 px-4 ${
                     activeSection === "section6" ? "text-black" : ""
                   }`}
                 >
-                  <a href="#section6">Resources</a>
+                  <button onClick={() => scrollToSection("section6")}>
+                    Resources
+                  </button>
                 </li>
               )}
               {event.rules && (
@@ -504,7 +721,9 @@ const SingleEvent = ({ event }: { event: any }) => {
                     activeSection === "section7" ? "text-black" : ""
                   }`}
                 >
-                  <a href="#section7">Rules</a>
+                  <button onClick={() => scrollToSection("section7")}>
+                    Rules
+                  </button>
                 </li>
               )}
             </ul>
