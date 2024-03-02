@@ -444,11 +444,11 @@ const SingleEvent = ({ event }: { event: any }) => {
             <Typography variant="h3" placeholder={undefined}>
               Event Details
             </Typography>
-            <Typography variant="small" placeholder={undefined}>
+            {/* <Typography variant="small" placeholder={undefined}> */}
               <div
                 dangerouslySetInnerHTML={{ __html: event.description }}
               ></div>
-            </Typography>
+            {/* </Typography> */}
 
             <hr className="border-gray-700 my-8" />
           </div>
@@ -562,18 +562,18 @@ const SingleEvent = ({ event }: { event: any }) => {
                             </div>
                           </TimelineHeader>
                           <TimelineBody className="pb-8">
-                            <Typography
+                            {/* <Typography
                               placeholder={""}
                               variant="small"
                               color="gray"
                               className="font-normal mt-4 text-gray-600"
-                            >
+                            > */}
                               <div
                                 dangerouslySetInnerHTML={{
                                   __html: timeline.description,
                                 }}
                               ></div>
-                            </Typography>
+                            {/* </Typography> */}
                           </TimelineBody>
                         </TimelineItem>
                       </Timeline>
@@ -642,9 +642,9 @@ const SingleEvent = ({ event }: { event: any }) => {
                 Rules
               </Typography>
 
-              <Typography variant="small" placeholder={undefined}>
+              {/* <Typography variant="small" placeholder={undefined}> */}
                 <div dangerouslySetInnerHTML={{ __html: event.rules }}></div>
-              </Typography>
+              {/* </Typography> */}
               <hr className="border-gray-700 my-8" />
             </div>
           )}

@@ -51,9 +51,8 @@ export function SidebarWithContentSeparator() {
       <>
         <Card
           placeholder={""}
-          className="h-[calc(130vh-2rem)] w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/2"
+          className=" min-h-screen h-auto w-full max-w-[20rem] p-4 shadow-2xl shadow-blue-gray-900/2"
         >
-
           <List placeholder={""}>
             <Accordion
               placeholder={""}
@@ -95,9 +94,9 @@ export function SidebarWithContentSeparator() {
                           className="h-4 w-5"
                         />
                       </ListItemPrefix>
-                        Login
+                      Login
                     </ListItem>
-                    </button>
+                  </button>
                 </List>
               </AccordionBody>
             </Accordion>
@@ -109,7 +108,7 @@ export function SidebarWithContentSeparator() {
     return (
       <Card
         placeholder={""}
-        className="h-[calc(130vh-2rem)] w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/2"
+        className=" min-h-screen h-auto w-full max-w-[20rem] p-4 shadow-2xl shadow-blue-gray-900/2"
       >
         <div className="mb-2 p-4">
           {/* <Typography variant="h5" color="blue-gray">
@@ -508,10 +507,20 @@ export function SidebarWithContentSeparator() {
                 <Link href="/CreateEvent">
                   <ListItem placeholder={undefined}>
                     <ListItemPrefix placeholder={undefined}>
-                      <ChatBubbleBottomCenterTextIcon
-                        strokeWidth={2}
-                        className="h-4 w-5"
-                      />
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="w-5 h-5"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
+                        />
+                      </svg>
                     </ListItemPrefix>
                     Create Event
                   </ListItem>
@@ -519,10 +528,20 @@ export function SidebarWithContentSeparator() {
                 <Link href="/AllEvents">
                   <ListItem placeholder={undefined}>
                     <ListItemPrefix placeholder={undefined}>
-                      <ChatBubbleBottomCenterTextIcon
-                        strokeWidth={2}
-                        className="h-4 w-5"
-                      />
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="w-5 h-5"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125"
+                        />
+                      </svg>
                     </ListItemPrefix>
                     All Events
                   </ListItem>
