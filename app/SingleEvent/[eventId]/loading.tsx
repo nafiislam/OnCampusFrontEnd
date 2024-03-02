@@ -6,7 +6,7 @@ function loading() {
   return (
     <div className="bg-white flex flex-col pt-20 pl-72">
       <RedirectingAnimation />
-      <p className="text-gray-600 text-lg ml-4 pl-16">Redirecting to he Event...</p>
+      <p className="text-gray-600 text-lg ml-4 pl-16">Redirecting to the Event...</p>
     </div>
   )
 }

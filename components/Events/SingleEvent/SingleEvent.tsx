@@ -1,4 +1,5 @@
 "use client";
+import POST from "@/server_actions/POST";
 import {
   Button,
   Timeline,
@@ -10,11 +11,12 @@ import {
   Tooltip,
   Typography,
 } from "@material-tailwind/react";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import AddEventGoogleCalender from "./AddToGoogleCalender";
 import AvatarImageText from "./AvatarImageText";
 import AvatarStack from "./AvatarStack";
 import { svgIcons } from "./DummyIconColor";
-import POST from "@/server_actions/POST";
 
 interface SectionOffset {
   id: string;
@@ -22,7 +24,46 @@ interface SectionOffset {
   height: number;
 }
 
+function convertDateTimeFormat(inputDateTime: string) {
+  // Parse input datetime string
+  let dateObj = new Date(inputDateTime);
+
+  // Format into desired datetime format: "YYYY-MM-DDTHH:mm:ss"
+  let year = dateObj.getFullYear();
+  let month = String(dateObj.getMonth() + 1).padStart(2, "0"); // Months are zero-indexed
+  let day = String(dateObj.getDate()).padStart(2, "0");
+  let hours = String(dateObj.getHours()).padStart(2, "0");
+  let minutes = String(dateObj.getMinutes()).padStart(2, "0");
+  let seconds = String(dateObj.getSeconds()).padStart(2, "0");
+
+  // Construct the formatted datetime string
+  let formattedDateTime = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+
+  return formattedDateTime;
+}
+
+function reverseDateTimeFormat(originalDateString: string) {
+  // Convert the original date string to a Date object
+  const originalDate = new Date(originalDateString);
+
+  // Get the individual components of the date
+  const year = originalDate.getFullYear();
+  const month = ("0" + (originalDate.getMonth() + 1)).slice(-2); // Adding 1 because months are zero-indexed
+  const day = ("0" + originalDate.getDate()).slice(-2); // Adding zero padding
+  const hours = ("0" + originalDate.getHours()).slice(-2);
+  const minutes = ("0" + originalDate.getMinutes()).slice(-2);
+  const seconds = ("0" + originalDate.getSeconds()).slice(-2);
+  const milliseconds = originalDate.getMilliseconds();
+
+  // Format the date string in the desired format
+  const formattedDateString = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}Z`;
+
+  return formattedDateString;
+}
+
 const SingleEvent = ({ event }: { event: any }) => {
+  const router = useRouter();
+
   const [activeSection, setActiveSection] = useState<string | null>(null);
 
   const sectionsRef = useRef<{ [key: string]: HTMLDivElement | null }>({});
@@ -90,20 +131,27 @@ const SingleEvent = ({ event }: { event: any }) => {
 
   const [participating, setParticipating] = useState(
     // event.participatedBy.includes(event.user.id)
-    false
+    event.isParticipating
   );
 
-  const handleParticipating = () => {
+  const handleParticipating = async () => {
     setParticipating(!participating);
 
     // send request to server
-    if(participating){
-      POST("event/participateEvent", { id: event.id, type: "unparticipate"})
-    }else{
-      POST("event/participateEvent", { id: event.id, type: "participate"})
+    if (participating) {
+      await POST("event/participateEvent", {
+        id: event.id,
+        type: "unparticipate",
+      });
+    } else {
+      await POST("event/participateEvent", {
+        id: event.id,
+        type: "participate",
+      });
     }
 
-
+    // update event object
+    router.refresh();
   };
 
   return (
@@ -162,7 +210,7 @@ const SingleEvent = ({ event }: { event: any }) => {
                 </svg>
 
                 <Typography variant="small" placeholder={undefined}>
-                  {event.Sponsors}
+                  {event.Sponsors || "No Sponsors"}
                 </Typography>
               </div>
               {event.location && (
@@ -224,7 +272,7 @@ const SingleEvent = ({ event }: { event: any }) => {
                 </svg>
 
                 <Typography variant="small" placeholder={undefined}>
-                  {event.startDate} to {event.finishDate}
+                  {new Date(reverseDateTimeFormat(event.startDate)).toLocaleString()} to {new Date(reverseDateTimeFormat(event.finishDate)).toLocaleString()}
                 </Typography>
               </div>
 
@@ -243,14 +291,14 @@ const SingleEvent = ({ event }: { event: any }) => {
                 </svg>
 
                 <Typography variant="small" placeholder={undefined}>
-                  Posted By :
+                  Posted By -{" "}
                   <Tooltip
                     className="border border-blue-gray-50 bg-white px-4 py-3 shadow-xl shadow-black/10"
-                    content={<AvatarImageText />}
+                    content={<AvatarImageText user={event.user} />}
                   >
                     <span className="text-blue-600">{event.user.name} </span>
                   </Tooltip>
-                  {event.createdAt}
+                  at{" " + new Date(event.createdAt).toLocaleString()}
                 </Typography>
               </div>
 
@@ -281,7 +329,7 @@ const SingleEvent = ({ event }: { event: any }) => {
                   </Button>
                 ) : (
                   <Button
-                    variant="text"
+                    variant="gradient"
                     onClick={handleParticipating}
                     className="flex items-center gap-3"
                     placeholder={undefined}
@@ -303,27 +351,74 @@ const SingleEvent = ({ event }: { event: any }) => {
                     Participate
                   </Button>
                 )}
-                <Button
-                  variant="text"
+
+                {/* <Button
+                  size="sm"
+                  variant="outlined"
+                  color="blue-gray"
                   className="flex items-center gap-3"
-                  placeholder={undefined}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={2}
-                    stroke="currentColor"
-                    className="h-5 w-5"
+                    viewBox="0 0 48 48"
+                    className="h-8 w-8"
                   >
+                    <rect width="22" height="22" x="13" y="13" fill="#fff" />
+                    <polygon
+                      fill="#1e88e5"
+                      points="25.68,20.92 26.688,22.36 28.272,21.208 28.272,29.56 30,29.56 30,18.616 28.56,18.616"
+                    />
                     <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z"
+                      fill="#1e88e5"
+                      d="M22.943,23.745c0.625-0.574,1.013-1.37,1.013-2.249c0-1.747-1.533-3.168-3.417-3.168 c-1.602,0-2.972,1.009-3.33,2.453l1.657,0.421c0.165-0.664,0.868-1.146,1.673-1.146c0.942,0,1.709,0.646,1.709,1.44 c0,0.794-0.767,1.44-1.709,1.44h-0.997v1.728h0.997c1.081,0,1.993,0.751,1.993,1.64c0,0.904-0.866,1.64-1.931,1.64 c-0.962,0-1.784-0.61-1.914-1.418L17,26.802c0.262,1.636,1.81,2.87,3.6,2.87c2.007,0,3.64-1.511,3.64-3.368 C24.24,25.281,23.736,24.363,22.943,23.745z"
+                    />
+                    <polygon
+                      fill="#fbc02d"
+                      points="34,42 14,42 13,38 14,34 34,34 35,38"
+                    />
+                    <polygon
+                      fill="#4caf50"
+                      points="38,35 42,34 42,14 38,13 34,14 34,34"
+                    />
+                    <path
+                      fill="#1e88e5"
+                      d="M34,14l1-4l-1-4H9C7.343,6,6,7.343,6,9v25l4,1l4-1V14H34z"
+                    />
+                    <polygon fill="#e53935" points="34,34 34,42 42,34" />
+                    <path
+                      fill="#1565c0"
+                      d="M39,6h-5v8h8V9C42,7.343,40.657,6,39,6z"
+                    />
+                    <path
+                      fill="#1565c0"
+                      d="M9,42h5v-8H6v5C6,40.657,7.343,42,9,42z"
                     />
                   </svg>
-                  Add to Bookmark
-                </Button>
+                  Add To Calender
+                </Button> */}
+
+                <AddEventGoogleCalender
+                  event={{
+                    summary: event.title,
+                    location: event.location || "Online",
+
+                    start: {
+                      dateTime: convertDateTimeFormat(event.startDate),
+                      timeZone: "Asia/Kolkata",
+                    },
+                    end: {
+                      dateTime: convertDateTimeFormat(event.finishDate),
+                      timeZone: "Asia/Kolkata",
+                    },
+                    reminders: {
+                      useDefault: false,
+                      overrides: [
+                        { method: "email", minutes: 24 * 60 },
+                        { method: "popup", minutes: 10 },
+                      ],
+                    },
+                  }}
+                />
 
                 <div className="ml-auto flex flex-row gap-2">
                   <Typography
@@ -331,9 +426,9 @@ const SingleEvent = ({ event }: { event: any }) => {
                     variant="small"
                     placeholder={undefined}
                   >
-                    participating - 300
+                    participating - {event.participatedBy.length}
                   </Typography>
-                  <AvatarStack />
+                  <AvatarStack users={event.participatedBy} />
                 </div>
               </div>
 

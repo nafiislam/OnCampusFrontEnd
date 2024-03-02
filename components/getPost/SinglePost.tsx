@@ -84,21 +84,6 @@ export default function PostBody({ post }: { post: any }) {
   const [deleted, setDeleted] = useState(false);
   const changeDeleted = (status: boolean) => {
     setDeleted(status);
-  };
-
-  const [report, setReport] = useState(true);
-
-  const handleReport = () => {
-    setReport(!report);
-
-    //report post to the backend
-   
-
-    POST("post/reportPost", {id : post.id}).then((res) => {
-      console.log(res);
-    });
-
-
   }
 
   return (
@@ -182,19 +167,6 @@ export default function PostBody({ post }: { post: any }) {
         <div className="flex flex-row gap-4">
           <Reaction likedBy={post.likedBy} type="post" id={post.id} />
           {commentStatus && status ? <CommentCount type="post" /> : ""}
-        </div>
-
-        <div className="mt-5">
-          {report ? (
-            <div>
-              <Button onClick={handleReport}>Report</Button>
-            </div>
-          ) : (
-            <div>
-              <Button disabled >already reported</Button>
-            </div>
-          
-          )}
         </div>
 
         <hr className="my-2 border-blue-gray-900" />
