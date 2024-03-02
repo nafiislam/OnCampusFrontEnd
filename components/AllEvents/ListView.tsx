@@ -5,7 +5,7 @@ function ListView({ events }: { events: any[] }) {
   const router = useRouter();
 
   const redirect = (id: string) => () => {
-    router.push(`/event/${id}`);
+    router.push(`/SingleEvent/${id}`);
   };
 
   return (
