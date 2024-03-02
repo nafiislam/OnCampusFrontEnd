@@ -5,7 +5,7 @@ import ImageGallery from "./Gallery";
 import { FileList } from "./PostAttachments";
 import DialogueBox from "./DialogueBox";
 // import dynamic from "next/dynamic";
-import PdfComp from "./PdfComp";
+
 import { pdfjs } from "react-pdf";
 pdfjs.GlobalWorkerOptions.workerSrc =
   "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
@@ -37,19 +37,17 @@ const SingleNotice = ({ notice }: { notice: any }) => {
               <DialogueBox author={notice.author} nid={notice.id} />
             </div>
             <PosText title={notice.title} content={notice.description} />
-            <FileList
-              files={notice.attachments}
-              fileNames={notice.attachmentNames}
-            />
-
-            {/* <iframe src="/1.pdf" className="w-1/2 h-full"></iframe> */}
-            {/* <PdfComp
-        pdfFile={notice.pdfFile}
-      /> */}
+            
             <ImageGallery
               images={notice.images}
               imageNames={notice.imageNames}
             />
+            <FileList
+              files={notice.attachments}
+              fileNames={notice.attachmentNames}
+            />
+            
+            {/* <iframe src="/1.pdf" className="ustom-iframe-style"></iframe> */}
           </ContextProvider.Provider>
         </>
       )}
