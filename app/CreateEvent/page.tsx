@@ -8,6 +8,7 @@ import {
   Typography as Typography1,
 } from "@material-tailwind/react";
 import { useState } from "react";
+import SEV from "@/components/Events/CreateEvent/SEV";
 
 interface TimeLine {
   name: string;
@@ -106,7 +107,7 @@ function CreateEvent() {
             <div className="w-5/6">
               <div className="p-4 my-8 border border-gray-300 rounded-md bg-blue-gray-50">
                 {/* Use the key prop to force re-rendering based on selectedOption */}
-                <SingleEv
+                <SEV
                   key={selectedOption}
                   selectedType={selectedOption}
                   {...eventPropsMap[selectedOption]}

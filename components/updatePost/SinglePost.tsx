@@ -25,11 +25,8 @@ import { redirect } from "next/navigation";
 import { Replace } from "lucide-react";
 import dynamic from "next/dynamic";
 const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
-import {
-  MultiImageDropzone,
-  type FileState,
-} from "../../components/MultiImageDropzone";
-import { MultiFileDropzone } from "../../components/MultiFileDropzone";
+import { MultiImageDropzone, type FileState } from "../MultiImageDropzone";
+import { MultiFileDropzone } from "../MultiFileDropzone";
 import { useEdgeStore } from "@/lib/edgestore";
 import { useRouter } from "next/navigation";
 import { set } from "zod";
@@ -209,14 +206,14 @@ const UpdatePost = ({ post }: { post: any }) => {
       }
     }
 
-    if (imgStates?.length+images.length > 6) {
+    if (imgStates?.length + images.length > 6) {
       setAlertMsg("Maximum 6 images are allowed");
       setAlertOpen(true);
       scrollToTop();
       return;
     }
 
-    if (fileStates?.length+attachments.length > 6) {
+    if (fileStates?.length + attachments.length > 6) {
       setAlertMsg("Maximum 6 files are allowed");
       setAlertOpen(true);
       scrollToTop();
@@ -263,30 +260,30 @@ const UpdatePost = ({ post }: { post: any }) => {
       );
     });
 
-    const prevImg:customFile[] = []
+    const prevImg: customFile[] = [];
 
-    images?.map((img,i)=>{
+    images?.map((img, i) => {
       prevImg.push({
-        url:img,
+        url: img,
         name: imagNames[i],
-        key:""
-      })
-    })
+        key: "",
+      });
+    });
 
-    const prevFile:customFile[] = []
-    attachments.map((file,i)=>{
+    const prevFile: customFile[] = [];
+    attachments.map((file, i) => {
       prevFile.push({
-        url:file,
-        name:attachmentNames[i],
-        key:""
-      })
-    })
+        url: file,
+        name: attachmentNames[i],
+        key: "",
+      });
+    });
 
-    imgList = prevImg.concat(imgList)
-    list = prevFile.concat(list)
+    imgList = prevImg.concat(imgList);
+    list = prevFile.concat(list);
 
-    const pid = post.id
-    
+    const pid = post.id;
+
     const data = {
       title,
       content,
@@ -294,10 +291,10 @@ const UpdatePost = ({ post }: { post: any }) => {
       imgList,
       list,
       radio,
-      pid
+      pid,
     };
     startTransition(async () => {
-      const res = await POST('post/updatePost', data);
+      const res = await POST("post/updatePost", data);
       if (res) {
         console.log(res);
         imgStates?.map(async (imgState) => {
@@ -305,7 +302,8 @@ const UpdatePost = ({ post }: { post: any }) => {
             const res = await edgestore.myPublicFiles.confirmUpload({
               url: imgUrls?.find((url) => url.key === imgState.key)?.url ?? "",
             });
-          } catch (err) {
+          }
+          catch (err) {
             console.log(err);
           }
         });
@@ -322,6 +320,7 @@ const UpdatePost = ({ post }: { post: any }) => {
 
         setAlertMsg((prev) => "Post updated successfully");
         setAlertOpen(true);
+        scrollToTop();
       } else {
         console.log("error");
       }
@@ -364,7 +363,7 @@ const UpdatePost = ({ post }: { post: any }) => {
   const [attachmentNames, setAttachmentNames] = useState(post.attachmentNames);
   const [attachments, setAttachments] = useState(post.attachments);
 
-  console.log(attachmentNames)
+  console.log(attachmentNames);
 
   function updateImgProgress(key: string, progress: FileState["progress"]) {
     setImgStates((imgStates) => {
@@ -585,7 +584,7 @@ const UpdatePost = ({ post }: { post: any }) => {
                       <FileIcon size="30" className="shrink-0" />
                       <div className="min-w-0 text-sm">
                         <div className="overflow-hidden overflow-ellipsis whitespace-nowrap">
-                          {post.attachmentNames[i]}
+                          {attachmentNames[i]}
                         </div>
                       </div>
                       <div className="grow" />

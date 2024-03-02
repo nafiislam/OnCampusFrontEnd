@@ -1,28 +1,29 @@
 "use client";
 
-import BreadcrumbsDefault from "./BreadCrumbs";
+import POST from "@/server_actions/POST";
+import { createContext, useState } from "react";
 import AvatarImageText from "./AvatarImageText";
 import AvatarStack from "./AvatarStack";
+import BloodPost from "./BloodPost";
+import BreadcrumbsDefault from "./BreadCrumbs";
 import CommentCount from "./CommentCount";
 import DateTime from "./DateTime";
+import { DialogueBox } from "./DialogueBox";
 import ImageGallery from "./Gallery";
-import PosText from "./Posttext";
+import IntPost from "./IntPost";
 import { FileList } from "./PostAttachments";
+import PosText from "./Posttext";
+import ProductInfo from "./ProductInfo";
 import Reaction from "./Reaction";
 import CommentBody from "./SingleComment";
-import Saveicon from "./save";
-import PollList from "./poll";
-import { comment } from "postcss";
-import { useState, useContext, createContext } from "react";
-import BloodPost from "./BloodPost";
 import TuitionPost from "./TuitionPost";
-import ProductInfo from "./ProductInfo";
-import IntPost from "./IntPost";
-import { DialogueBox } from "./DialogueBox";
+import PollList from "./poll";
+import Saveicon from "./save";
 
 import {
   LockClosedIcon
 } from "@heroicons/react/24/outline";
+import { Button } from "antd";
 import { boolean } from "zod";
 
 function processNestedComments(comments: any[]) {
@@ -47,6 +48,7 @@ export const ContextProvider = createContext({
   status: boolean,
   changeCommentStatus: (status: boolean) => {},
   changeDeleted: (status: boolean) => {},
+  reportedBy: [],
 });
 
 export default function PostBody({ post }: { post: any }) {
@@ -83,7 +85,8 @@ export default function PostBody({ post }: { post: any }) {
   const [deleted, setDeleted] = useState(false);
   const changeDeleted = (status: boolean) => {
     setDeleted(status);
-  };
+  }
+
   return (
     <ContextProvider.Provider
       value={{
@@ -97,6 +100,7 @@ export default function PostBody({ post }: { post: any }) {
         status: status,
         changeCommentStatus: changeCommentStatus,
         changeDeleted: changeDeleted,
+        reportedBy: post.reportedBy,
       }}
     >
       {deleted ? <div>Post Deleted</div> : (
