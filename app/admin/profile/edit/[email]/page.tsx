@@ -274,6 +274,9 @@ export default function EditProfileAdminPage({ params }: { params: { email: stri
                     <Select variant="outlined" color="teal" label="Select Role" value={user.role.toLowerCase()} onChange={(e) => { setNewRole(e) }} >
                         <Option value="user">USER</Option>
                         <Option value="admin">ADMIN</Option>
+                        <Option value="cr">CR</Option>
+                        <Option value="br">BR</Option>
+
                     </Select>
                     <div>
                         <Button color="green" onClick={updateRoleButton}>Update Role</Button>
