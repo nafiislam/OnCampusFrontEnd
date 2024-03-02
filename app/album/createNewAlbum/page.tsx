@@ -347,7 +347,9 @@ const WriteAlbum = () => {
                         className="mt-8 mb-2 max-w-screen-xl sm:w-200"
                     >
                         <div className="flex flex-col gap-4">
-                            <Input variant="outlined" style={{ maxWidth: "300px" }} color="teal" label="Gallery Name" placeholder="" type="text" onChange={(e) => setAlbumName(e.target.value)} value={albumName} />
+                            <div style={{ maxWidth: "300px" }}>
+                                <Input variant="outlined" color="teal" label="Gallery Name" placeholder="" type="text" onChange={(e) => setAlbumName(e.target.value)} value={albumName} />
+                            </div>
                             <Textarea
                                 color="teal"
                                 label="Gallery Description"
@@ -429,8 +431,8 @@ const WriteAlbum = () => {
                             </CardHeader>
                             <CardBody className="px-0">
                                 <div className="flex flex-row gap-2 w-full">
-                                    <div className="flex flex-col gap-2 w-1/3">
-                                        <Input style={{ maxWidth: "300px" }} variant="outlined" color="teal" label="Image Name" placeholder="" type="text"
+                                    <div className="flex flex-col gap-2 w-1/3" style={{ maxWidth: "300px" }} >
+                                        <Input variant="outlined" color="teal" label="Image Name" placeholder="" type="text"
                                             onChange={(e) => setNewImage({ ...newImage, name: e.target.value })} value={newImage.name} />
                                         <Input style={{ maxWidth: "300px" }} variant="outlined" color="teal" label="Caption" placeholder="" type="text"
                                             onChange={(e) => setNewImage({ ...newImage, caption: e.target.value })} value={newImage.caption} />
@@ -441,7 +443,7 @@ const WriteAlbum = () => {
                                         <Input style={{ maxWidth: "300px" }} variant="outlined" color="teal" label="GPS Altitude" placeholder="" type="number"
                                             onChange={(e) => setNewImage({ ...newImage, gps_alt: e.target.value })} value={newImage.gps_alt} />
                                     </div>
-                                    <div className="w-2/3">
+                                    <div className="w-2/3" style={{ marginLeft: "50px" }} >
                                         <MultiImageDropzone
                                             value={newImage.imgStates}
                                             dropzoneOptions={{
@@ -526,8 +528,8 @@ const WriteAlbum = () => {
 
                                 </div>
 
-                                <div className="flex flex-row w-1/3">
-                                    <Input style={{ maxWidth: "300px" }} variant="outlined" color="teal" label="Link" placeholder="" type="number"
+                                <div className="flex flex-row w-1/3" style={{ maxWidth: "300px" }}>
+                                    <Input variant="outlined" color="teal" label="Link" placeholder="" type="number"
                                         onChange={(e) => setNewLink(e.target.value)} value={newLink} />
                                     <div >
                                         <Tooltip content="Add Link" >
