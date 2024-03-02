@@ -165,6 +165,25 @@ export default function SingleEv({
   const [timeline, setTimeline] = useState<TimeLine[]>([]);
   const [resources, setResources] = useState<Resources[]>([]);
 
+
+  const [allinput, setAllinput] = useState<Event>({
+    title: "",
+    description: "",
+    startDate: "",
+    finishDate: "",
+    eventType: "",
+    location: "",
+    onlineLink: "",
+    organizers: "",
+    sponsors: "",
+    registration: "",
+    rules: "",
+    prizes: "",
+    eventTag: "",
+    timeline: [],
+    resources: [],
+  });
+
   const startdateChange: DatePickerProps<Dayjs[]>["onChange"] = (
     date,
     dateString
@@ -311,13 +330,20 @@ export default function SingleEv({
     setTimeline(newTimeline);
   };
 
+  const handleFormSubmit = (e:any) => {
+     //set all the inputs from input fields
+     
+     
+  }
+
   return (
     <div>
-      <div className="flex flex-col gap-6">
+      <form action={handleFormSubmit} className="flex flex-col gap-6">
         <Input
           className="bg-white"
           label="Name of the Event*"
           crossOrigin={undefined}
+          name="title"
           onChange={(e) => setTitle(e.target.value)}
         />
         <Typography
@@ -950,7 +976,7 @@ export default function SingleEv({
         )}
 
         <Button onClick={handleSubmit}>Create Event</Button>
-      </div>
+      </form>
     </div>
   );
 }

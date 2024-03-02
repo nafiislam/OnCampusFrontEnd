@@ -1,33 +1,27 @@
 "use client";
-import React from "react";
 import {
+  BeakerIcon,
+  BookOpenIcon,
+  CalendarDaysIcon,
+  ChatBubbleBottomCenterTextIcon,
+  ChevronRightIcon,
+  CurrencyBangladeshiIcon,
+  ShoppingBagIcon,
+  Square3Stack3DIcon,
+} from "@heroicons/react/24/outline";
+import {
+  Accordion,
+  AccordionBody,
+  AccordionHeader,
   Card,
-  Typography,
   List,
   ListItem,
   ListItemPrefix,
-  ListItemSuffix,
-  Chip,
-  Accordion,
-  AccordionHeader,
-  AccordionBody,
+  Typography,
 } from "@material-tailwind/react";
-import {
-  Square3Stack3DIcon,
-  BookOpenIcon,
-  UserGroupIcon,
-  CalendarDaysIcon,
-  ChevronRightIcon,
-  ChatBubbleBottomCenterTextIcon,
-  BeakerIcon,
-  ShoppingBagIcon,
-  ComputerDesktopIcon,
-  CurrencyBangladeshiIcon,
-  ScaleIcon,
-} from "@heroicons/react/24/outline";
-import { useEffect } from "react";
-import { useSession, signIn, signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
+import React, { useEffect } from "react";
 
 export function SidebarWithContentSeparator() {
   const [open, setOpen] = React.useState(0);
@@ -59,6 +53,7 @@ export function SidebarWithContentSeparator() {
           placeholder={""}
           className="h-[calc(130vh-2rem)] w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/2"
         >
+
           <List placeholder={""}>
             <Accordion
               placeholder={""}
