@@ -9,6 +9,10 @@ import {
 } from "@/components/Animation";
 import {
   Button,
+  Dialog,
+  DialogBody,
+  DialogFooter,
+  DialogHeader,
   IconButton,
   Input,
   Menu,
@@ -32,6 +36,7 @@ import Resources from "./Resources";
 
 import POST from "@/server_actions/POST";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
 
@@ -179,15 +184,11 @@ export default function SEV({
 }) {
   const router = useRouter();
 
-  const [isDialogOpen, setDialogOpen] = useState(false);
+  const [open, setOpen] = useState(false);
 
-  const handleOpenDialog = () => {
-    setDialogOpen(true);
-  };
+  const [conflictEvent, setConflictEvent] = useState<any[]>([]);
 
-  const handleCloseDialog = () => {
-    setDialogOpen(false);
-  };
+  const handleOpen = () => setOpen(!open);
 
   const [registrationIn, setRegistrationIn] = useState<boolean>(
     hasRegistration || false
@@ -356,10 +357,6 @@ export default function SEV({
   const [errors, setErrors] = useState<Partial<FormError>>({});
 
   var conflictingEvents: any[] = [];
-  var conflictingEventsTitle: string[] = [];
-  var conflictingEventsStartDate: string[] = [];
-  var conflictingEventsFinishDate: string[] = [];
-  var conflictingEventsLocation: string[] = [];
   const handleLocationCheck = () => {
     if (
       !startDate.current ||
@@ -395,6 +392,7 @@ export default function SEV({
           setLocationButtonState(3);
         } else {
           setLocationButtonState(4);
+          setConflictEvent(conflictingEvents);
         }
       })
       .catch((err) => {
@@ -979,50 +977,42 @@ export default function SEV({
                                 <p className=" text-orange-600 mt-3">
                                   Conflict in Location Detected
                                 </p>
-                                {/* <Button
-                                  onClick={handleOpenDialog}
-                                  variant="text"
-                                  className=" text-blue-400 underline"
-                                >
-                                  See Conflicting Event(s)
+                                <Button onClick={handleOpen} variant="text" className=" text-blue-500 underline">
+                                  Click to see
                                 </Button>
-
-                                {isDialogOpen && (
-                                  <div className="fixed inset-0 flex items-center justify-center">
-                                    <div className="absolute inset-0 bg-gray-800 opacity-50">
-                                      Conflicting Event(s)
-                                    </div>
-                                    <div className="z-10 bg-white p-6 rounded shadow-md">
-                                      {conflictingEvents.map((event: any) => {
-                                        return (
-                                          <div
-                                            key={event.title}
-                                            className="flex flex-col gap-2"
-                                          >
-                                            <p className="text-red-500">
-                                              {event.title}
-                                            </p>
-                                            <p className="text-red-500">
-                                              {event.startDate}
-                                            </p>
-                                            <p className="text-red-500">
-                                              {event.finishDate}
-                                            </p>
-                                            <p className="text-red-500">
-                                              {event.location}
-                                            </p>
-                                          </div>
-                                        );
-                                      })}
-                                      <Button
-                                        onClick={handleOpenDialog}
-                                        color="red"
+                                <div className="flex flex-col gap-2">
+                                  {conflictEvent.map((event: any) => {
+                                    return (
+                                      <div
+                                        key={event.id}
+                                        className="flex flex-row gap-2"
                                       >
-                                        See Conflicting Event(s)
-                                      </Button>
-                                    </div>
-                                  </div>
-                                )} */}
+                                        <Dialog
+                                          open={open}
+                                          handler={handleOpen}
+                                        >
+                                          <DialogHeader>
+                                            Conflicting Event(s)
+                                          </DialogHeader>
+                                          <DialogBody>
+                                            <Link href={`/SingleEvent/${event.id}`}>{event.title + "..."}<span className="text-blue-500">see details</span></Link>
+                                          </DialogBody>
+                                          <DialogFooter>
+                                            <Button
+                                              variant="text"
+                                              color="red"
+                                              onClick={handleOpen}
+                                              className="mr-1"
+                                            >
+                                              <span>Close</span>
+                                            </Button>
+                                            
+                                          </DialogFooter>
+                                        </Dialog>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
                               </div>
                             )}
                             {locationButtonState === 5 && (
