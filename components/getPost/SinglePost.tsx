@@ -132,7 +132,7 @@ export default function PostBody({ post }: { post: any }) {
                 />
               </svg>
 
-                {new Date(d).toLocaleString() ?? ""}
+                {"44"}
               
             </div>
             {status ? "" : <LockClosedIcon className="w-7 h-7" />}
