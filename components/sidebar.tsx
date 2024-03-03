@@ -790,6 +790,17 @@ export function SidebarWithContentSeparator() {
                       Analysis of posts
                     </ListItem>
                   </Link>
+                  <Link href="/admin/analysis/eventAll">
+                    <ListItem placeholder={undefined}>
+                      <ListItemPrefix placeholder={undefined}>
+                        <ChatBubbleBottomCenterTextIcon
+                          strokeWidth={2}
+                          className="h-4 w-5"
+                        />
+                      </ListItemPrefix>
+                      Analysis of events
+                    </ListItem>
+                  </Link>
                 </List>
               </AccordionBody>
             </Accordion>

@@ -65,7 +65,7 @@ const ProductPost = () => {
         <Input
             required
             type="text"
-            placeholder="Write hospital name"
+            placeholder="Write product name"
             value={name}
             onChange={(e) => {
                 setName(e.target.value)
