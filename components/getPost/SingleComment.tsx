@@ -49,7 +49,7 @@ export default function CommentBody({
           </div>
 
           <div className="pt-2">
-            {comment.content && !updateStatus ? Parser(comment.content) : ""}
+            {comment.content && !updateStatus ? <div dangerouslySetInnerHTML={{ __html: comment.content }}></div> : ""}
             {updateStatus ? (
               <CommentUpdate
                 type="comment"

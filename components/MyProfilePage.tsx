@@ -307,7 +307,7 @@ export default function MyProfilePage({ user }: { user: any }) {
                     {/* Content based on the selected button */}
                     {selectedButton === "About Me" && (
                         <div className="content" style={{ display: 'block' }}>
-                            {user.aboutMe ? Parser(user.aboutMe) : <p>No Information Available</p>}
+                            {user.aboutMe ? <div dangerouslySetInnerHTML={{ __html: user.aboutMe }}></div>: <p>No Information Available</p>}
                         </div>
                     )}
                     {selectedButton === "My Club Roles" && (
