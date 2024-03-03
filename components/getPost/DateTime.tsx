@@ -18,9 +18,9 @@ function DateTime({ date }: { date: string}) {
           />
         </svg>
 
-        <Typography variant="lead" placeholder={undefined} className="text-sm">
+        {/* <Typography variant="lead" placeholder={undefined} className="text-sm">
           {date??""}
-        </Typography>
+        </Typography> */}
       </div>
     </>
   );

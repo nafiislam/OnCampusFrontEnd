@@ -116,7 +116,7 @@ export default function PostBody({ post }: { post: any }) {
 
           <div className="flex flex-row gap-2">
             <BreadcrumbsDefault type={post.type} tags={post.tags} />
-            {/* <DateTime date={post.createdAt} /> */}
+            <DateTime date={post.createdAt} />
             {status ? "" : <LockClosedIcon className="w-7 h-7" />}
             <span className="ml-auto">
               <div className="flex flex-row">
