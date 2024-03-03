@@ -60,6 +60,7 @@ export default function PostBody({ post }: { post: any }) {
     ...post,
     comments: processNestedComments(comments),
   };
+  const d=post.createdAt;
   post.createdAt = new Date(post.createdAt).toLocaleString();
   const anonymous = {
     profilePicture:
@@ -131,13 +132,8 @@ export default function PostBody({ post }: { post: any }) {
                 />
               </svg>
 
-              <Typography
-                variant="lead"
-                placeholder={undefined}
-                className="text-sm"
-              >
-                {post.createdAt ?? ""}
-              </Typography>
+                {new Date(d).toLocaleString() ?? ""}
+              
             </div>
             {status ? "" : <LockClosedIcon className="w-7 h-7" />}
             <span className="ml-auto">
