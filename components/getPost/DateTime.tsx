@@ -19,7 +19,7 @@ function DateTime({ date }: { date: string}) {
         </svg>
 
         
-          {date??"3/3/2024, 2:48:25 AM"}
+          {date==null?"3/3/2024, 2:48:25 AM":date}
         
       </div>
     </>
