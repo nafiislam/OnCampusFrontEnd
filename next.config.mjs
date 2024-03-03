@@ -8,6 +8,12 @@ const nextConfig = {
             port: '',
             pathname: '/**',
           },
+          {
+            protocol: 'https',
+            hostname: '**.me',
+            port: '',
+            pathname: '/**',
+          },
         ],
       },
       webpack: (config) => {
