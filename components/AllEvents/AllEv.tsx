@@ -1,12 +1,12 @@
 "use client";
 
-import { IconButton } from "@material-tailwind/react";
+import { IconButton, Typography } from "@material-tailwind/react";
 import { Task } from "gantt-task-react-pro";
 import { useState } from "react";
 import GanttPage from "./Gantt";
 import ListView from "./ListView";
 
-function AllEv({ events }: { events: any[] }) {
+function AllEv({ pageTitle, events }: { pageTitle:string, events: any[] }) {
   const [viewState, setViewState] = useState<string>("listview");
 
   const handleViewChange = (view: string) => {
@@ -31,6 +31,9 @@ function AllEv({ events }: { events: any[] }) {
 
   return (
     <div>
+      <div className="mb-8 w-3/5 flex">
+        <Typography className="mx-auto" variant="h2" color="blue">{pageTitle}</Typography>
+      </div>
       <div className="flex flex-row gap-4 mb-8">
         <IconButton
           variant="text"
@@ -56,7 +59,6 @@ function AllEv({ events }: { events: any[] }) {
             />
           </svg>
         </IconButton>
-
         <IconButton
           variant="text"
           onClick={() => {

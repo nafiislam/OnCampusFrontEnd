@@ -4,13 +4,13 @@ import Link from "next/link";
 import AllEv from "@/components/AllEvents/AllEv";
 
 async function Allevents() {
-  const res = await POST("event/getEvents", {});
+  const res = await POST("event/myParticipatingEvents", {});
   console.log(res);
   if (res) {
     console.log(res);
     return (
       <div>
-        <AllEv pageTitle="All Events" events={res.events} />
+        <AllEv pageTitle="My Participating Events" events={res.events} />
       </div>
     );
   } else {

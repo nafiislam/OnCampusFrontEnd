@@ -179,6 +179,16 @@ export default function SEV({
 }) {
   const router = useRouter();
 
+  const [isDialogOpen, setDialogOpen] = useState(false);
+
+  const handleOpenDialog = () => {
+    setDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+  };
+
   const [registrationIn, setRegistrationIn] = useState<boolean>(
     hasRegistration || false
   );
@@ -267,6 +277,7 @@ export default function SEV({
       inputCount: prevState.inputCount - 1,
     }));
 
+    // remove the input numbered index from the array
     resourcesDescription.current.splice(input, 1);
     resourcesLink.current.splice(input, 1);
   };
@@ -344,6 +355,11 @@ export default function SEV({
 
   const [errors, setErrors] = useState<Partial<FormError>>({});
 
+  var conflictingEvents: any[] = [];
+  var conflictingEventsTitle: string[] = [];
+  var conflictingEventsStartDate: string[] = [];
+  var conflictingEventsFinishDate: string[] = [];
+  var conflictingEventsLocation: string[] = [];
   const handleLocationCheck = () => {
     if (
       !startDate.current ||
@@ -363,8 +379,6 @@ export default function SEV({
 
     console.log(data);
 
-    var conflictingEvents = [];
-
     POST("event/checkLocation", data)
       .then((res) => {
         console.log(res);
@@ -372,6 +386,10 @@ export default function SEV({
 
         conflictingEvents = res.conflictingEvents;
         console.log(conflictingEvents);
+
+        conflictingEvents.map((event: any) => {
+          console.log(event.title);
+        });
 
         if (conflictingEvents.length === 0) {
           setLocationButtonState(3);
@@ -961,6 +979,50 @@ export default function SEV({
                                 <p className=" text-orange-600 mt-3">
                                   Conflict in Location Detected
                                 </p>
+                                {/* <Button
+                                  onClick={handleOpenDialog}
+                                  variant="text"
+                                  className=" text-blue-400 underline"
+                                >
+                                  See Conflicting Event(s)
+                                </Button>
+
+                                {isDialogOpen && (
+                                  <div className="fixed inset-0 flex items-center justify-center">
+                                    <div className="absolute inset-0 bg-gray-800 opacity-50">
+                                      Conflicting Event(s)
+                                    </div>
+                                    <div className="z-10 bg-white p-6 rounded shadow-md">
+                                      {conflictingEvents.map((event: any) => {
+                                        return (
+                                          <div
+                                            key={event.title}
+                                            className="flex flex-col gap-2"
+                                          >
+                                            <p className="text-red-500">
+                                              {event.title}
+                                            </p>
+                                            <p className="text-red-500">
+                                              {event.startDate}
+                                            </p>
+                                            <p className="text-red-500">
+                                              {event.finishDate}
+                                            </p>
+                                            <p className="text-red-500">
+                                              {event.location}
+                                            </p>
+                                          </div>
+                                        );
+                                      })}
+                                      <Button
+                                        onClick={handleOpenDialog}
+                                        color="red"
+                                      >
+                                        See Conflicting Event(s)
+                                      </Button>
+                                    </div>
+                                  </div>
+                                )} */}
                               </div>
                             )}
                             {locationButtonState === 5 && (
