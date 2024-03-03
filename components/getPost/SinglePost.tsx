@@ -117,22 +117,6 @@ export default function PostBody({ post }: { post: any }) {
           <div className="flex flex-row gap-2">
             <BreadcrumbsDefault type={post.type} tags={post.tags} />
             {/* <DateTime date={post.createdAt} /> */}
-
-              <svg
-                className="w-4 h-5"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M2 12a10 10 0 1 1 20 0 10 10 0 0 1-20 0Zm11-4a1 1 0 1 0-2 0v4c0 .3.1.5.3.7l3 3a1 1 0 0 0 1.4-1.4L13 11.6V8Z"
-                  clipRule="evenodd"
-                />
-              </svg>
-
-                {"44"}
             {status ? "" : <LockClosedIcon className="w-7 h-7" />}
             <span className="ml-auto">
               <div className="flex flex-row">
