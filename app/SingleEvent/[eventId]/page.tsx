@@ -11,9 +11,7 @@ export default async function Home({
   if (res) {
     console.log(res);
     return (
-      <div>
         <SingleEvent event={res.event} />
-      </div>
     );
   }
   else {

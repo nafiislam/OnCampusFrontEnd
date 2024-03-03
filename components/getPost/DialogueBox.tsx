@@ -35,6 +35,7 @@ export function DialogueBox({
   const {
     intBy,
     changeIntBy,
+    reportedBy,
     user,
     changeStatus,
     changeCommentStatus,
@@ -48,6 +49,15 @@ export function DialogueBox({
     }
   });
   const [isInt, setIsInt] = useState(check);
+
+  var checkReport = false;
+  reportedBy.map((u) => {
+    if (u.email == user.email) {
+      checkReport = true;
+    }
+  });
+  const [isReport, setIsReport] = useState(checkReport);
+
   const [isOpened, setIsOpened] = useState(status);
   const [isCommentStatus, setIsCommentStatus] = useState(commentStatus);
 
@@ -63,6 +73,19 @@ export function DialogueBox({
     const res = await POST("post/int/", { id: pid, type: "unInt" });
     if (res) {
       changeIntBy(intBy.filter((u) => u.email != user.email));
+    }
+  };
+
+  const handleReport = async () => {
+    const res = await POST("post/report/", { id: pid, type: "report" });
+    if (res) {
+      console.log(res)
+    }
+  };
+  const handleUnReport = async () => {
+    const res = await POST("post/report/", { id: pid, type: "unReport" });
+    if (res) {
+      console.log(res)
     }
   };
 
@@ -172,6 +195,26 @@ export function DialogueBox({
               }}
             >
               {isInt ? "UnInt post" : "Int post"}
+            </MenuItem>
+          </>
+        ) : (
+          ""
+        )}
+
+        {isOpened ? (
+          <>
+            <MenuItem
+              onClick={() => {
+                if (isReport) {
+                  setIsReport((prev) => !prev);
+                  handleUnReport();
+                } else {
+                  setIsReport((prev) => !prev);
+                  handleReport();
+                }
+              }}
+            >
+              {isReport ? "UnReport post" : "Report post"}
             </MenuItem>
           </>
         ) : (

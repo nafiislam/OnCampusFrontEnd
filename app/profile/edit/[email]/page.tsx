@@ -11,7 +11,7 @@ import { useRef } from "react";
 import { MultiImageDropzone, FileState } from "@/components/MultiImageDropZoneModified";
 import { useEdgeStore } from "@/lib/edgestore";
 import { useTransition } from "react";
-import updateProfile from "@/server_actions/updateProfile";
+import { updateProfile, updateRole, updatePassword } from "@/server_actions/updateProfile";
 
 interface customImg {
     url: string;
@@ -40,6 +40,11 @@ export default function Profile({ params }: { params: { email: string } }) {
 
     const [isPending, startTransition] = useTransition()
     const [submitting, setSubmitting] = useState(false);
+
+    const [prevPassword, setPrevPassword] = useState("");
+    const [newPassword, setNewPassword] = useState("");
+
+    const [newRole, setNewRole] = useState("");
 
     const config =
     {
@@ -136,13 +141,80 @@ export default function Profile({ params }: { params: { email: string } }) {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    async function updatePasswordButton() {
+        const res = await updatePassword({
+            previousPassword: prevPassword,
+            newPassword: newPassword
+        });
+        if (res) {
+            console.log(res);
+            setAlertMsg(prev => "Password Updated Successfully");
+            setAlertOpen(true);
+            scrollToTop();
+            return;
+        } else {
+            console.log("error");
+            setAlertMsg(prev => "Password is incorrect!!")
+            setAlertOpen(prev => true);
+            scrollToTop()
+        }
+    }
+
+    async function updateRoleButton() {
+
+        if (newRole === "") {
+            setAlertMsg("You did not change the role");
+            setAlertOpen(true);
+            scrollToTop();
+            return;
+        }
+
+        if (newRole.toLowerCase() === user.role.toLowerCase()) {
+            setAlertMsg("You did not change the role");
+            setAlertOpen(true);
+            scrollToTop();
+            return;
+        }
+
+        const res = await updateRole({
+
+            email: user.email,
+            prevRole: user.role.toLowerCase(),
+            newRole: newRole
+
+        });
+        if (res) {
+            console.log(res);
+            setAlertMsg(prev => "Role Updated Successfully");
+            setUser({ ...user, role: newRole.toUpperCase() });
+            setAlertOpen(true);
+            scrollToTop();
+            return;
+        } else {
+            console.log("error");
+            setAlertMsg(prev => "Error happened!!")
+            setAlertOpen(prev => true);
+            scrollToTop()
+        }
+    }
+
     async function UpdateProfile(e) {
         e.preventDefault();
         console.log(user);
-        if(!submitting) return;
+        if (!submitting) return;
         setSubmitting(false);
 
-        let { aboutMe, address, bloodGroup, dateOfBirth, emergencyContact, phoneNumber, section, role } = user;
+        let { name, session, aboutMe, address, bloodGroup, dateOfBirth, emergencyContact, phoneNumber, section, role } = user;
+
+        if (name === "") {
+            setUser({ ...user, name: null });
+            name = null;
+        }
+
+        if (session === "") {
+            setUser({ ...user, session: null });
+            session = null;
+        }
 
         if (aboutMe === "") {
             setUser({ ...user, aboutMe: null });
@@ -186,6 +258,8 @@ export default function Profile({ params }: { params: { email: string } }) {
 
         const res = await updateProfile({
             data: {
+                name: name,
+                session: session,
                 aboutMe: aboutMe,
                 address: address,
                 bloodGroup: bloodGroup,
@@ -193,7 +267,6 @@ export default function Profile({ params }: { params: { email: string } }) {
                 emergencyContact: emergencyContact,
                 phoneNumber: phoneNumber,
                 section: section,
-                role: role
             },
             type: "profileUpdate",
         });
@@ -310,6 +383,10 @@ export default function Profile({ params }: { params: { email: string } }) {
                 <div className="flex  mb-10">
                     <div className="flex w-2/3 flex-col gap-6 items-center " style={{ paddingRight: "180px" }}>
                         <div className="w-75 flex flex-col gap-6 ">
+                            <Input variant="outlined" color="teal" label="Name" placeholder="" value={user.name || ""} type="text" onChange={(e) => setUser({ ...user, name: e.target.value })} />
+                            <Input variant="outlined" color="teal" label="Session" placeholder="" value={user.session || ""} type="text" onChange={(e) => setUser({ ...user, session: e.target.value })} />
+
+
                             <Input variant="outlined" color="teal" label="Phone Number" placeholder="" value={user.phoneNumber || ""} type="text" onChange={(e) => setUser({ ...user, phoneNumber: e.target.value })} />
                             <Input variant="outlined" color="teal" label="Address" placeholder="" value={user.address || ""} type="text" onChange={(e) => setUser({ ...user, address: e.target.value })} />
                             <Input variant="outlined" color="teal" label="Section" placeholder="" value={user.section || ""} type="text" onChange={(e) => setUser({ ...user, section: e.target.value })} />
@@ -444,23 +521,40 @@ export default function Profile({ params }: { params: { email: string } }) {
                     />
                 </div>
 
-                {isAdmin && (
-                    <div className="flex gap-4 mt-10 " style={{ maxWidth: "250px", marginLeft: "11rem" }}>
-                        <Select variant="outlined" color="teal" label="Select Role" value={user.role || ""} onChange={(e) => setUser({ ...user, role: e })} >
-                            <Option value="ADMIN">Admin</Option>
-                            <Option value="USER">User</Option>
-                        </Select>
-                    </div>
-
-                )}
 
 
                 <div className="flex w-full gap-4 mt-10 pl-44 pr-44 justify-end" >
-                    <Button type="submit" color="purple" className="ml-auto" onClick={()=>{
-                        setSubmitting(prev=>true);
+                    <Button type="submit" color="purple" className="ml-auto" onClick={() => {
+                        setSubmitting(prev => true);
                     }} >Update</Button>
                 </div>
             </form>
+
+            <div className="flex w-full gap-7 mt-10 pl-44 pr-44 items-center" >
+                <div className="flex w-1/3 flex-col items-center gap-2">
+                    <Input variant="outlined" color="teal" label="Previous Password" placeholder="" type="text" onChange={(e) => setPrevPassword(e.target.value)} />
+                    <Input variant="outlined" color="teal" label="New Password" placeholder="" type="text" onChange={(e) => setNewPassword(e.target.value)} />
+                </div>
+                <Button color="purple" onClick={updatePasswordButton}>Update Password</Button>
+            </div>
+
+
+            {isAdmin && (
+                <div className="flex gap-7 mt-10 mb-5 " style={{ maxWidth: "400px", marginLeft: "11rem" }}>
+                    <Select variant="outlined" color="teal" label="Select Role" value={user.role.toLowerCase() || ""} onChange={(e) => setNewRole(e)} >
+                        <Option value="admin">Admin</Option>
+                        <Option value="user">User</Option>
+                    </Select>
+                    <div>
+                        <Button color="purple" style={{ maxHeight: "50px" }} onClick={() => {
+                            updateRoleButton()
+                        }}>Update Role</Button>
+                    </div>
+                </div>
+
+            )}
+
+
 
         </div>
     );

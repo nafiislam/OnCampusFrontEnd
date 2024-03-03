@@ -473,6 +473,7 @@ const SingleEvent = ({ event }: { event: any }) => {
             </Typography>
             {/* <Typography variant="small" placeholder={undefined}> */}
             <div dangerouslySetInnerHTML={{ __html: event.description }}></div>
+
             {/* </Typography> */}
 
             <hr className="border-gray-700 my-8" />
@@ -669,6 +670,7 @@ const SingleEvent = ({ event }: { event: any }) => {
 
               {/* <Typography variant="small" placeholder={undefined}> */}
               <div dangerouslySetInnerHTML={{ __html: event.rules }}></div>
+
               {/* </Typography> */}
               <hr className="border-gray-700 my-8" />
             </div>

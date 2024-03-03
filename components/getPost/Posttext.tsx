@@ -7,7 +7,7 @@ export default function PosText({ title, content }: { title: string, content: st
         {title ?? "Title"}
       </Typography>
       <div className="bg-white border border-slate-500 shadow-md p-1 m-1">
-        {content ? Parser(content) : ""}
+        {content ? <div dangerouslySetInnerHTML={{ __html: content }}></div> : ""}
       </div>
     </div>
   );
