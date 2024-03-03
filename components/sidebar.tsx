@@ -732,6 +732,68 @@ export function SidebarWithContentSeparator() {
           ) : (
             ""
           )}
+
+          <Accordion
+            open={open === 8}
+            icon={
+              <ChevronRightIcon
+                strokeWidth={2.5}
+                className={`mx-auto h-4 w-4 transition-transform ${
+                  open === 8 ? "rotate-90" : ""
+                }`}
+              />
+            }
+            placeholder={undefined}
+          >
+            <ListItem
+              className="p-0"
+              selected={open === 8}
+              placeholder={undefined}
+            >
+              <AccordionHeader
+                onClick={() => handleOpen(8)}
+                className="border-b-0 p-3"
+                placeholder={undefined}
+              >
+                <ListItemPrefix placeholder={undefined}>
+                  <BookOpenIcon className="h-5 w-5" />
+                </ListItemPrefix>
+                <Typography
+                  color="blue-gray"
+                  className="mr-auto font-normal"
+                  placeholder={undefined}
+                >
+                  Album
+                </Typography>
+              </AccordionHeader>
+            </ListItem>
+            <AccordionBody className="py-1 pl-2">
+              <List className="p-0" placeholder={undefined}>
+                <Link href={"/album/createNewAlbum"}>
+                  <ListItem placeholder={undefined}>
+                    <ListItemPrefix placeholder={undefined}>
+                      <ChatBubbleBottomCenterTextIcon
+                        strokeWidth={2}
+                        className="h-4 w-5"
+                      />
+                    </ListItemPrefix>
+                    Create Album
+                  </ListItem>
+                </Link>
+                <Link href={"/album/AllAlbums"}>
+                  <ListItem placeholder={undefined}>
+                    <ListItemPrefix placeholder={undefined}>
+                      <ChatBubbleBottomCenterTextIcon
+                        strokeWidth={2}
+                        className="h-4 w-5"
+                      />
+                    </ListItemPrefix>
+                      All albums
+                  </ListItem>
+                </Link>
+              </List>
+            </AccordionBody>
+          </Accordion>
         </List>
       </Card>
     );

@@ -148,8 +148,8 @@ export default function CreateStudentPage() {
       ei = "0".repeat(3 - studentInfo.endId.length) + studentInfo.endId;
     }
 
-    const startId = studentInfo.batch + studentInfo.department + si;
-    const endId = studentInfo.batch + studentInfo.department + ei;
+    const startId = studentInfo.batch.slice(2,4) + studentInfo.department + si;
+    const endId = studentInfo.batch.slice(2,4) + studentInfo.department + ei;
 
     console.log(startId, endId);
     try {
