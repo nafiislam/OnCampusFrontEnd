@@ -1,6 +1,12 @@
 ## Getting Started
+First, run the following command to install all dependencies:
 
-First, run the development server:
+```bash
+npm install
+```
+
+
+Second, run the development server:
 
 ```bash
 npm run dev
