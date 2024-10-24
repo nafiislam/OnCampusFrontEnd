@@ -206,5 +206,13 @@ npm install
 npm run dev
 ```
 
+### KeyCloak installation
+
+- **Pull and run the docker image**
+
+```
+docker pull nafiislam964/oncampus:0.0.4.RELEASE
+docker run -d -p 4000:8080 -e KEYCLOAK_ADMIN=oncampusbuet@gmail.com -e KEYCLOAK_ADMIN_PASSWORD=admin nafiislam964/oncampus:0.0.4.RELEASE start-dev
+```
 ### Access the application:
 Open your browser and navigate to http://localhost:3000.
